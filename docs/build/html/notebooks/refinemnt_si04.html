@@ -1,0 +1,3611 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PyExtal example for CBED refinement &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Structure Factor refinement of Si LARBED 111 systematic row" href="refinemntLARBEDSi111sys0420.html" />
+    <link rel="prev" title="Examples" href="../examples.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="PyExtal-example-for-CBED-refinement">
+<h1>PyExtal example for CBED refinement<a class="headerlink" href="#PyExtal-example-for-CBED-refinement" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="kn">import</span> <span class="n">farid</span>
+<span class="kn">from</span> <span class="nn">pyextal.dinfo</span> <span class="kn">import</span> <span class="n">CBEDDiffractionInfo</span>
+<span class="kn">from</span> <span class="nn">pyextal.roi</span> <span class="kn">import</span> <span class="n">CBEDROI</span>
+
+
+<span class="kn">from</span> <span class="nn">pyextal.optimize</span> <span class="kn">import</span> <span class="n">CoarseOptimize</span><span class="p">,</span> <span class="n">FineOptimize</span>
+<span class="kn">from</span> <span class="nn">pyextal.gof</span> <span class="kn">import</span> <span class="n">Chi2_multibackground</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inferno&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pyextal package imported. Version: 0.0.1
+</pre></div></div>
+</div>
+<section id="load-data">
+<h2>load data<a class="headerlink" href="#load-data" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>load the input data</p></li>
+<li><p>load the mtf for the detector</p></li>
+<li><p>display the data</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="s2">&quot;si04.img&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&lt;f4&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+<span class="n">mtf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;YAG 120 CCD MTF.npy&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.image.AxesImage at 0x79c80ed50c50&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_3_1.png" src="../_images/notebooks_refinemnt_si04_3_1.png" />
+</div>
+</div>
+</section>
+<section id="set-detector-parameters">
+<h2>set detector parameters<a class="headerlink" href="#set-detector-parameters" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>set the detector parameters, check <a class="reference external" href="https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/">Electron Detection Characteristics of a Slow-Scan CCD Camera, Imaging Plates and Film, and Electron Image Restoration</a> for what the parameters mean</p>
+<ul>
+<li><p>varB</p></li>
+<li><p>delta</p></li>
+<li><p>A</p></li>
+<li><p>g</p></li>
+<li><p>m</p></li>
+</ul>
+</li>
+<li><p>background for Lucy-Richardson deconvolution (currently not used)</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dtpar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.15</span><span class="p">,</span> <span class="mf">4e-5</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">0.111</span><span class="p">]</span>
+<span class="n">background</span> <span class="o">=</span> <span class="mf">38.0681229</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="initialize-diffraction-info-class">
+<h2>initialize diffraction info class<a class="headerlink" href="#initialize-diffraction-info-class" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>stores dp</p></li>
+<li><p>initial guess of thickness</p></li>
+<li><p>additional tilt x and y</p></li>
+<li><p>geometry scaling</p></li>
+<li><p>.dat file path</p></li>
+<li><p>detector parameters</p></li>
+<li><p>mtf shape</p></li>
+<li><p>background for Lucy-Richardson deconvolution</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dinfo</span> <span class="o">=</span> <span class="n">CBEDDiffractionInfo</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">3431.99</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">226.7</span><span class="p">,</span> <span class="s1">&#39;Si_systematic.dat&#39;</span><span class="p">,</span> <span class="n">dtpar</span><span class="p">,</span> <span class="n">mtf</span><span class="p">,</span> <span class="n">background</span><span class="p">,)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="region-of-interest-parameters:">
+<h2>region of interest parameters:<a class="headerlink" href="#region-of-interest-parameters:" title="Link to this heading">¶</a></h2>
+<p>defines the region of interest for refinement</p>
+<ul class="simple">
+<li><p>rotation: relative to the xaxis set in .dat</p></li>
+<li><p>gInclude: list of g-vectors to include in the refinement</p></li>
+<li><p>dpCenter: of diffraction pattern for simulation as reference point</p></li>
+<li><p>dpSize: size of the diffraction pattern for simulation</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rotation</span> <span class="o">=</span> <span class="mf">44.742</span>
+<span class="n">dpCenter</span> <span class="o">=</span> <span class="p">[</span><span class="mi">250</span><span class="p">,</span> <span class="mi">450</span><span class="p">]</span>
+<span class="n">dpSize</span> <span class="o">=</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">1200</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>gx: the horizontal axis for simulation</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span> <span class="o">=</span> <span class="n">CBEDROI</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">,</span> <span class="n">gx</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">gInclude</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">)],</span> <span class="n">dpCenter</span><span class="o">=</span><span class="n">dpCenter</span><span class="p">,</span> <span class="n">dpSize</span><span class="o">=</span><span class="n">dpSize</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+include beam initialized
+group symmetry initialized
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_12_1.png" src="../_images/notebooks_refinemnt_si04_12_1.png" />
+</div>
+</div>
+<p>select the region of interest for refinement</p>
+<ul>
+<li><div class="line-block">
+<div class="line">regions: define 3 points relative to dpCenter to defeine a parallelogram, multiple regions can be defined, [[region1_top_left, region1_top_right, region1_bottom_left, pixels],</div>
+<div class="line">[region2_top_left, region2_top_right, region2_bottom_left], …]</div>
+<div class="line">region_top_left = [row, column]</div>
+<div class="line">pixels = [pixels_row, pixels_column]</div>
+</div>
+</li>
+<li><p>mask: whether to include the region for each reflection selected in nthgx [[region1_beam1, region1_beam2, …], [region2_beam1, region2_beam2, …], …], 1 include, 0 exclude</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="o">-</span><span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span><span class="o">-</span><span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">160</span><span class="p">,</span><span class="mi">160</span><span class="p">]]]))</span>
+<span class="n">roi</span><span class="o">.</span><span class="n">displayROI</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_14_0.png" src="../_images/notebooks_refinemnt_si04_14_0.png" />
+</div>
+</div>
+</section>
+<section id="initialize-coarse-refine">
+<h2>initialize coarse refine<a class="headerlink" href="#initialize-coarse-refine" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>only support rectangular ROI, and only one region</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span> <span class="o">=</span> <span class="n">CoarseOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">,</span> <span class="n">searchRadius</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_16_0.png" src="../_images/notebooks_refinemnt_si04_16_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">optimizeOrientationThickness</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 0.001 )
+thickness: 3433.1703399999997, gl: 226.7, tiltY: -0.018218052064882362, tiltX: 0.0060726840216274725
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">displayCoarseSearch</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_18_0.png" src="../_images/notebooks_refinemnt_si04_18_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="p">[[</span><span class="mf">61.48970</span><span class="p">,</span> <span class="o">-</span><span class="mf">80.59588</span><span class="p">],</span> <span class="p">[</span><span class="mf">61.48970</span><span class="p">,</span> <span class="mf">104.16463</span><span class="p">],</span> <span class="p">[</span><span class="mf">61.48970</span><span class="p">,</span> <span class="o">-</span><span class="mf">80.59588</span><span class="p">],</span> <span class="p">[</span><span class="mi">101</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+<span class="p">[[</span><span class="mf">16.15227</span><span class="p">,</span> <span class="o">-</span><span class="mf">85.27648</span><span class="p">],</span> <span class="p">[</span><span class="mf">11.25240</span><span class="p">,</span> <span class="mf">83.03997</span><span class="p">],</span> <span class="p">[</span><span class="mf">16.15227</span><span class="p">,</span> <span class="o">-</span><span class="mf">85.27648</span><span class="p">],</span> <span class="p">[</span><span class="mi">101</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+<span class="p">[[</span><span class="mf">59.41647</span><span class="p">,</span> <span class="o">-</span><span class="mf">44.46745</span><span class="p">],</span> <span class="p">[</span><span class="mf">25.42195</span><span class="p">,</span> <span class="o">-</span><span class="mf">44.45989</span><span class="p">],</span> <span class="p">[</span><span class="mf">59.41647</span><span class="p">,</span> <span class="o">-</span><span class="mf">44.46745</span><span class="p">],</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+<span class="p">[[</span><span class="mf">59.41647</span><span class="p">,</span> <span class="mf">68.88256</span><span class="p">],</span> <span class="p">[</span><span class="mf">25.42195</span><span class="p">,</span> <span class="mf">68.89011</span><span class="p">],</span> <span class="p">[</span><span class="mf">59.41647</span><span class="p">,</span> <span class="mf">68.88256</span><span class="p">],</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],]),</span>
+                       <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">]))</span>
+
+<span class="n">roi</span><span class="o">.</span><span class="n">displayROI</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_19_0.png" src="../_images/notebooks_refinemnt_si04_19_0.png" />
+</div>
+</div>
+</section>
+<section id="initialize-fine-refine-for-structure-factor">
+<h2>initialize fine refine for structure factor<a class="headerlink" href="#initialize-fine-refine-for-structure-factor" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>reflections: list of reflections to refine</p></li>
+<li><p>errorFunc: error function to use for refinement, define in gof.py, if developing new error function, inherit from BaseGOF ABC.</p></li>
+<li><p>perturbROI: allow shift or rotation or scale of the region of interest</p></li>
+<li><p>shift disk: allow region of interest to shift different for each beam selected by nthgx</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fine</span> <span class="o">=</span> <span class="n">FineOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span>
+                    <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">,</span>
+                    <span class="n">reflections</span><span class="o">=</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">)],</span>
+                    <span class="n">sfMask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]]),</span>
+                    <span class="n">errorFunc</span><span class="o">=</span><span class="n">Chi2_multibackground</span><span class="p">(</span><span class="n">dinfo</span><span class="p">),</span>
+                    <span class="n">perturbROI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">shiftDisk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">symUpdate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+<span class="c1"># fine.getx0()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0471822</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.831778E-03</span><span class="p">,</span> <span class="mi">180</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mf">0.963641E-03</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],])</span>
+<span class="n">fine</span><span class="o">.</span><span class="n">getx0</span><span class="p">(</span><span class="n">extal</span><span class="p">[:,::</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">fine</span><span class="o">.</span><span class="n">getRange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mf">0.045</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0009</span><span class="p">,</span><span class="mf">0.00</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">],[</span><span class="mf">0.0011</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">]]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+setting the initial value and normalization range to:
+beam: (1, -1, -1)
+      lower       value       upper
+U : 4.5000000e-02   4.7182200e-02   5.0000000e-02
+UA: 5.0000000e-04   8.3177800e-04   1.0000000e-03
+------------------------------
+beam: (2, -2, -2)
+      lower       value       upper
+U : 9.0000000e-04   9.6364100e-04   1.1000000e-03
+UA: 0.0000000e+00   0.0000000e+00   0.0000000e+00
+------------------------------
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fine</span><span class="o">.</span><span class="n">display</span><span class="p">([</span><span class="mi">0</span><span class="p">,])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1, -1, -1): U 0.0471822 UA 0.0008318
+(2, -2, -2): U 0.0009636 UA 0.0000000
+Chi Square background for each disk: 3.51688
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([array([[[ 109.39624 ,   73.96656 ,   55.24126 ,   47.627796,
+             28.129421,   44.214115,   78.700386,  110.32234 ,
+            132.41826 ,  154.47206 ,  124.53743 ,   85.96586 ,
+             73.45782 ,   49.395992,   72.80916 ,  133.79439 ,
+            107.547386,  105.988945,   62.481163,   45.297016,
+             69.40972 ,   95.42645 ,  131.38573 ,  137.13596 ,
+            144.21326 ,   91.551636,   53.98436 ,   43.45992 ,
+             58.647514,   79.8623  ,  105.55121 ,  134.29573 ,
+            144.68329 ,  146.23495 ,  131.84833 ,   97.98572 ,
+             65.26421 ,   41.86169 ,   32.3359  ,   57.956135,
+            103.78283 ,  125.46804 ,  144.0162  ,  137.71368 ,
+            135.45592 ,  113.192535,   76.3919  ,   56.962902,
+             52.924446,   48.56352 ,   65.694786,   89.22204 ,
+             92.1285  ,   82.132675,   71.80733 ,  133.27448 ,
+            143.48962 ,  145.9666  ,   89.143394,   58.94282 ,
+             50.56193 ,   52.458332,  105.96425 ,  137.79572 ,
+            189.30632 ,  204.05312 ,  184.4205  ,  161.63254 ,
+            118.038635,   83.45916 ,   46.707268,   70.11311 ,
+             84.11557 ,  143.95314 ,  164.01619 ,  199.93317 ,
+            201.19763 ,  232.90535 ,  204.84831 ,  172.28738 ,
+            166.42914 ,  166.94359 ,  219.04413 ,  225.64229 ,
+            177.92184 ,  147.09476 ,  101.39753 ,   50.0521  ,
+             83.427895,  125.67608 ,  190.48329 ,  259.2464  ,
+            333.0972  ,  308.9912  ,  279.95883 ,  204.88882 ,
+            146.56084 ,   78.231735,   83.971115,  119.942604,
+            261.36502 ]],
+
+         [[2048.345   , 2316.1548  , 2239.3132  , 2087.037   ,
+           1785.44    , 1456.6011  , 1188.3196  ,  973.39734 ,
+           1026.1145  , 1081.3372  , 1287.032   , 1557.6091  ,
+           1776.3235  , 1927.1046  , 1953.5629  , 1939.8384  ,
+           1816.7239  , 1702.4653  , 1554.5153  , 1500.9764  ,
+           1342.2963  , 1354.1392  , 1392.7631  , 1434.9694  ,
+           1349.0516  , 1279.5314  , 1317.5604  , 1325.5618  ,
+           1171.6963  , 1019.51904 ,  846.6047  ,  751.76196 ,
+            672.7821  ,  658.595   ,  797.5024  ,  908.66797 ,
+            946.9499  , 1155.8613  , 1368.4197  , 1442.3013  ,
+           1440.9083  , 1276.2566  , 1110.8362  ,  898.54333 ,
+            730.2875  ,  768.0936  ,  823.30524 ,  813.8688  ,
+            846.5528  ,  835.036   ,  814.5846  ,  713.79767 ,
+            772.68677 ,  814.62213 ,  897.9715  , 1041.7777  ,
+           1160.2094  , 1210.5961  , 1381.418   , 1455.4961  ,
+           1533.6561  , 1591.1681  , 1736.8671  , 1747.0001  ,
+           1689.7726  , 1709.0397  , 1692.1816  , 1585.7244  ,
+           1633.9657  , 1583.8285  , 1589.1124  , 1482.3228  ,
+           1541.0464  , 1515.9796  , 1388.5627  , 1230.4271  ,
+           1200.2924  , 1023.43005 ,  898.3549  ,  831.7422  ,
+            973.1048  , 1294.4867  , 1294.0011  , 1224.1702  ,
+           1215.8894  , 1263.09    , 1328.8212  , 1199.6177  ,
+            769.1742  ,  544.21063 ,  840.2414  , 1041.1749  ,
+           1019.1614  , 1120.332   , 1193.0148  , 1292.8773  ,
+           1521.0027  , 1507.317   , 1585.1543  , 1569.2474  ,
+           1483.0927  ]],
+
+         [[ 175.04599 ,  109.85124 ,   90.95716 ,  183.95259 ,
+            327.14163 ,  506.65976 ,  610.4147  ,  731.88477 ,
+            715.9679  ,  754.5553  ,  667.1929  ,  622.61957 ,
+            563.7086  ,  538.99316 ,  481.0686  ,  480.66467 ,
+            381.97766 ,  338.24887 ,  286.2288  ,  279.35703 ,
+            272.20975 ,  264.83777 ,  282.213   ,  361.0852  ,
+            422.2287  ,  503.6159  ,  517.6182  ,  539.11163 ,
+            510.15906 ,  489.1581  ,  386.42673 ,  293.0808  ,
+            175.16464 ,   82.53726 ,   46.758064,   53.192966,
+             50.01382 ,   62.249466,   47.17688 ,   42.679268,
+             36.06573 ,   83.29706 ,  173.31854 ,  254.54634 ,
+            381.93768 ,  568.5464  ,  626.3396  ,  787.16925 ,
+            845.6302  ,  785.73364 ,  777.61224 ,  708.6872  ,
+            680.11957 ,  586.54004 ,  560.7495  ,  540.34406 ,
+            556.45703 ,  478.3362  ,  408.82666 ,  318.03763 ,
+            208.3028  ,  119.0818  ,   65.21559 ,   35.409515,
+             55.644825,   31.211977,   34.574375,   42.28511 ,
+             54.488842,   73.39433 ,  119.52032 ,  179.28601 ,
+            239.89659 ,  300.1702  ,  365.50107 ,  387.8253  ,
+            382.31097 ,  385.3114  ,  374.62286 ,  239.29105 ,
+            161.67007 ,  214.3023  ,  235.50638 ,  238.76714 ,
+            186.52493 ,  174.78563 ,  127.03211 ,  230.92151 ,
+            536.93616 ,  815.3393  ,  687.8584  ,  477.19714 ,
+            320.61432 ,  249.0395  ,  150.32594 ,   79.45599 ,
+             71.641815,   47.34536 ,   31.582376,   36.504597,
+             55.051613]],
+
+         [[ 242.20009 ,  102.83457 ,   65.07708 ,  149.67474 ,
+            269.31387 ,  473.88037 ,  660.95807 ,  744.7537  ,
+            707.4146  ,  602.1992  ,  440.8745  ,  257.91473 ,
+            118.229256,   53.960114,   70.0094  ,  131.55345 ,
+            187.39752 ,  307.56    ,  397.49963 ,  457.46432 ,
+            487.11884 ,  443.38226 ,  370.1096  ,  217.77176 ,
+            152.13641 ,   85.85088 ,   49.342243,   79.37962 ,
+            191.21552 ,  336.86374 ,  534.15295 ,  715.0435  ,
+            776.62305 ,  903.77496 ,  691.6665  ,  469.07886 ,
+            224.2529  ,   76.526886,   62.840244,  149.0809  ,
+            323.95065 ,  494.75314 ,  499.12057 ,  408.5208  ,
+            323.00922 ,  237.44919 ,  170.52634 ,  110.537994,
+            117.503716,  204.99956 ,  333.8224  ,  411.53723 ,
+            464.6378  ,  384.69318 ,  280.10608 ,  140.4284  ,
+             83.73492 ,   53.13359 ,   84.60796 ,  141.6448  ,
+            150.0351  ,  193.33669 ,  157.06049 ,  105.94089 ,
+             58.941437,   37.284534,   36.8729  ,   76.80742 ,
+             92.36649 ,  153.48506 ,  146.36922 ,  151.38246 ,
+            115.34984 ,   68.44329 ,   39.632927,   56.344654,
+             83.15446 ,  111.20221 ,  126.5562  ,   92.987206,
+             92.41467 ,  139.2499  ,  149.9976  ,  141.90431 ,
+            124.882416,   90.126816,   55.31901 ,   62.249203,
+             41.622387,   59.889324,   71.648605,   58.911106,
+             42.71469 ,   51.396248,   48.831192,   48.71446 ,
+             36.820045,   34.240643,   33.668507,   37.711857,
+             34.30063 ]]], dtype=float32),
+  array([[[ 171.53813 ,  157.3632  ,  124.86676 ,   83.992546,
+             60.807823,   30.505518,   33.963554,   42.92165 ,
+             29.998554,   56.65019 ,   98.08942 ,  130.41388 ,
+            144.40263 ,  147.70296 ,  126.44713 ,   86.30468 ,
+             66.36847 ,   69.683014,   77.4284  ,  100.17712 ,
+             92.88058 ,   88.34343 ,   72.333694,   45.72306 ,
+             39.285717,   97.412346,  103.81473 ,  111.777016,
+            119.39741 ,  111.0525  ,   90.163605,   52.21584 ,
+             38.66146 ,   41.59722 ,   74.52775 ,   80.61074 ,
+            108.8602  ,  160.61064 ,  157.81042 ,  150.93124 ,
+            161.08836 ,  125.67178 ,   83.88411 ,   51.183105,
+             36.003384,   54.17976 ,   69.84491 ,  128.30443 ,
+            169.99799 ,  187.19057 ,  190.2285  ,  165.1097  ,
+            175.06944 ,  154.51758 ,   85.791794,   37.414104,
+             41.853878,   60.93369 ,   83.87716 ,  102.22013 ,
+            155.89459 ,  181.00572 ,  195.36049 ,  173.32097 ,
+            145.24023 ,  111.39911 ,   92.53509 ,   75.01011 ,
+             81.42294 ,   71.726616,   59.38328 ,  113.93571 ,
+            177.16191 ,  204.14925 ,  261.00253 ,  249.7601  ,
+            226.78175 ,  176.51419 ,   90.66946 ,   58.732616,
+             59.79981 ,   71.28678 ,   98.570274,  161.79501 ,
+            186.7517  ,  231.72595 ,  204.36826 ,  207.52585 ,
+            201.13745 ,  189.34712 ,  188.11354 ,  204.23267 ,
+            186.56139 ,  175.55934 ,  134.54161 ,   97.87603 ,
+             70.809166,   44.613964,   29.062347,   10.770224,
+             26.947277]],
+
+         [[1545.2943  , 1664.5391  , 1906.97    , 2205.7476  ,
+           2318.1814  , 2326.5605  , 2192.7     , 1889.5707  ,
+           1566.0182  , 1225.7125  ,  930.0856  ,  918.53265 ,
+            923.24097 , 1109.683   , 1269.0919  , 1496.016   ,
+           1697.7294  , 1800.4231  , 1851.2146  , 1853.2202  ,
+           1795.7283  , 1663.7882  , 1495.9785  , 1408.7218  ,
+           1334.3273  , 1262.0685  , 1286.9802  , 1248.6177  ,
+           1324.6289  , 1299.6624  , 1285.8325  , 1325.0995  ,
+           1365.5458  , 1257.955   , 1131.1798  ,  873.6131  ,
+            743.33154 ,  726.5383  ,  709.4177  ,  816.33154 ,
+            877.6393  , 1098.7473  , 1287.1499  , 1529.329   ,
+           1661.2772  , 1696.5723  , 1512.3685  , 1179.5021  ,
+           1095.8085  , 1020.5588  ,  893.1595  ,  843.68536 ,
+            892.6752  ,  907.81104 ,  925.9869  ,  888.62585 ,
+            841.2366  ,  801.2712  ,  801.9603  ,  747.9966  ,
+            778.0405  ,  769.1163  ,  776.23987 ,  767.03906 ,
+            718.5462  ,  822.4411  , 1050.1777  , 1208.1182  ,
+           1316.8969  , 1462.6744  , 1560.3231  , 1569.7698  ,
+           1671.4512  , 1737.577   , 1818.1276  , 1715.8223  ,
+           1602.4506  , 1545.0652  , 1571.334   , 1551.6931  ,
+           1592.45    , 1569.0405  , 1574.4708  , 1457.7074  ,
+           1369.0735  , 1331.129   , 1311.7808  , 1166.0068  ,
+           1091.317   , 1079.2719  ,  948.1599  ,  861.55334 ,
+            798.9652  ,  722.83234 ,  610.88464 ,  791.0144  ,
+           1075.8315  , 1238.3672  , 1285.5454  , 1373.905   ,
+           1330.2819  ]],
+
+         [[ 457.21246 ,  336.2783  ,  231.41647 ,  139.51138 ,
+             93.289734,  112.902504,  173.85979 ,  314.59222 ,
+            469.51126 ,  643.16724 ,  729.5646  ,  830.3892  ,
+            887.6167  ,  854.84924 ,  821.9148  ,  746.1228  ,
+            691.1511  ,  598.56464 ,  589.8947  ,  515.2197  ,
+            483.78174 ,  451.6508  ,  472.74826 ,  412.8597  ,
+            419.07883 ,  404.9267  ,  433.2408  ,  431.44522 ,
+            469.62122 ,  522.0315  ,  469.78067 ,  542.993   ,
+            517.6105  ,  392.6219  ,  362.75052 ,  379.375   ,
+            343.62415 ,  319.43292 ,  205.15244 ,  171.76741 ,
+             95.5038  ,   67.43216 ,   55.10192 ,   57.56081 ,
+             76.90979 ,   74.23819 ,   51.27922 ,   63.743446,
+            115.87467 ,  209.33269 ,  239.32281 ,  323.02957 ,
+            476.17352 ,  695.2817  ,  762.5603  ,  816.0649  ,
+            830.2733  ,  842.2859  ,  787.615   ,  681.233   ,
+            655.8187  ,  680.3378  ,  631.5012  ,  518.7892  ,
+            482.04813 ,  466.02866 ,  429.0011  ,  307.8262  ,
+            261.5502  ,  211.69165 ,  115.792564,   87.433395,
+             76.56729 ,   70.53093 ,   79.796135,   52.93959 ,
+             62.542686,   66.18501 ,   88.27706 ,  112.36943 ,
+            155.4585  ,  222.08005 ,  276.32242 ,  312.8451  ,
+            356.94565 ,  371.59674 ,  381.74414 ,  415.22238 ,
+            408.85678 ,  328.7205  ,  339.20938 ,  393.1459  ,
+            384.3132  ,  347.86664 ,  258.71167 ,  183.56181 ,
+            182.7315  ,  205.57056 ,  210.53441 ,  196.58606 ,
+            178.51248 ]],
+
+         [[ 504.87872 ,  463.76874 ,  310.61743 ,  198.14522 ,
+            101.792114,   94.83193 ,  152.65065 ,  300.05923 ,
+            498.88687 ,  662.37085 ,  827.9837  ,  798.7518  ,
+            721.517   ,  605.4358  ,  415.8521  ,  240.47585 ,
+            115.216995,   64.39281 ,   52.202583,   93.858864,
+            187.96185 ,  251.49336 ,  334.36823 ,  397.3896  ,
+            424.3262  ,  435.13718 ,  402.88608 ,  366.52    ,
+            227.56113 ,  138.3072  ,   87.58814 ,   40.197117,
+             70.177795,  169.89755 ,  322.3773  ,  566.0987  ,
+            758.1522  ,  780.76904 ,  901.05286 ,  846.5108  ,
+            683.2922  ,  498.73544 ,  316.4584  ,  165.6815  ,
+             73.59209 ,   76.20974 ,  170.18022 ,  358.85925 ,
+            468.09045 ,  562.3904  ,  513.1342  ,  444.41446 ,
+            278.867   ,  168.14516 ,  104.040436,  104.688324,
+            175.84094 ,  301.553   ,  398.09903 ,  505.27652 ,
+            455.3882  ,  389.62195 ,  288.07855 ,  132.83572 ,
+             68.73929 ,   42.211723,   73.73341 ,  132.9591  ,
+            187.16743 ,  203.72517 ,  213.48058 ,  135.28357 ,
+             74.43353 ,   52.70987 ,   48.99708 ,   50.54391 ,
+             78.17141 ,   96.54638 ,  134.8237  ,  130.03407 ,
+            116.58331 ,   89.6028  ,   68.10118 ,   50.778694,
+             39.636703,   31.295725,   61.979362,   64.08938 ,
+             86.62132 ,   96.14463 ,   98.074455,   98.68555 ,
+            105.86026 ,   88.131454,   66.700005,   55.997334,
+             50.19468 ,   53.982147,   47.282608,   37.99873 ,
+             50.459908]]], dtype=float32),
+  array([[[  56.785404,   45.180115,   49.808754,   50.572525,
+             54.319225,   58.62691 ,   60.593132,   64.30214 ,
+             70.04748 ,   68.619736,   51.792526,   58.349243,
+             50.691742,   64.074875,   60.830738,   60.428455,
+             39.117634,   50.682777,   60.473846,   52.061245,
+             66.20024 ]],
+
+         [[1336.4869  , 1401.584   , 1348.0867  , 1256.0624  ,
+           1302.3391  , 1354.5679  , 1382.6908  , 1390.0122  ,
+           1357.5568  , 1395.9413  , 1358.8466  , 1338.8524  ,
+           1373.005   , 1396.4404  , 1339.6624  , 1336.3535  ,
+           1367.6483  , 1341.132   , 1367.5277  , 1417.9424  ,
+           1360.5728  ]],
+
+         [[ 286.26718 ,  320.54865 ,  345.63052 ,  362.17447 ,
+            367.87585 ,  373.3995  ,  358.0543  ,  346.18765 ,
+            381.68423 ,  361.45578 ,  387.31335 ,  320.49277 ,
+            383.06656 ,  353.7622  ,  383.98682 ,  382.04468 ,
+            401.72925 ,  372.34018 ,  413.2266  ,  382.342   ,
+            402.85922 ]],
+
+         [[ 493.04926 ,  531.10547 ,  501.22525 ,  504.11658 ,
+            495.30554 ,  456.2225  ,  447.7077  ,  435.31824 ,
+            461.1937  ,  466.68112 ,  407.78418 ,  440.1007  ,
+            469.2841  ,  445.5218  ,  451.98282 ,  476.81903 ,
+            440.6173  ,  498.2212  ,  458.4226  ,  405.33282 ,
+            448.18195 ]]], dtype=float32),
+  array([[[ 187.2196  ,  176.70065 ,  186.8057  ,  142.63733 ,
+            163.09244 ,  159.52141 ,  145.49327 ,  170.14685 ,
+            145.64024 ,  170.35664 ,  159.37204 ,  150.90784 ,
+            177.24348 ,  150.03636 ,  157.8239  ,  154.51437 ,
+            170.17892 ,  181.78207 ,  152.7066  ,  184.57965 ,
+            182.41083 ]],
+
+         [[1243.4032  , 1124.8627  , 1107.9746  , 1106.5033  ,
+           1009.457   ,  948.5832  ,  993.0057  ,  906.39197 ,
+            882.13763 ,  839.21313 ,  742.39233 ,  708.7806  ,
+            712.45544 ,  743.39484 ,  735.1333  ,  786.89197 ,
+            770.00574 ,  746.2604  ,  702.6667  ,  800.9392  ,
+            835.23846 ]],
+
+         [[ 211.86171 ,  191.97086 ,  173.01068 ,  173.14648 ,
+            189.12698 ,  189.61894 ,  200.548   ,  199.23921 ,
+            174.08482 ,  235.39717 ,  249.29297 ,  222.64417 ,
+            272.00003 ,  321.58734 ,  350.73267 ,  376.67017 ,
+            399.29453 ,  406.0346  ,  450.37527 ,  412.62744 ,
+            406.46848 ]],
+
+         [[ 144.63759 ,  123.51908 ,  109.181625,   96.01219 ,
+            117.08894 ,  101.75957 ,   96.08019 ,  103.59962 ,
+            117.61754 ,  100.56392 ,  108.14388 ,   96.28407 ,
+            110.29975 ,  133.05559 ,  104.81509 ,  108.78613 ,
+            106.12438 ,  127.00875 ,  125.18673 ,  115.391075,
+            108.51698 ]]], dtype=float32)],
+ [array([[[ 138.62115 ,  127.4166  ,  114.66518 ,   77.94287 ,
+             29.886768,   13.464837,   22.544127,   34.416748,
+             47.892075,   78.5272  ,  120.07094 ,  143.64777 ,
+            134.71097 ,   95.889534,   43.265697,   12.987641,
+             36.236076,   90.15724 ,  109.76355 ,   74.32262 ,
+             34.659103,   29.808989,   59.27088 ,  113.52189 ,
+            154.06621 ,  155.70259 ,  115.988075,   58.270897,
+             20.03568 ,   17.339027,   47.059258,   91.674965,
+            132.82907 ,  156.5326  ,  155.26666 ,  146.75557 ,
+             90.24084 ,   48.968292,   25.998013,   13.731954,
+             41.01313 ,   93.03717 ,  151.72034 ,  191.44418 ,
+            188.19052 ,  153.88884 ,  130.76453 ,   80.624916,
+             37.287605,   17.029388,   23.235428,   65.90691 ,
+            116.266335,   94.42942 ,   64.13727 ,  144.75302 ,
+            219.02419 ,  189.25838 ,  141.71996 ,   86.321106,
+             27.154533,   13.681435,   53.281937,  129.92548 ,
+            199.989   ,  251.71634 ,  277.16272 ,  247.31425 ,
+            185.36945 ,   87.6453  ,   30.442892,   12.889113,
+             48.16577 ,  115.16495 ,  172.0945  ,  204.40794 ,
+            225.44322 ,  241.50104 ,  211.27689 ,  150.753   ,
+            158.96748 ,  187.52551 ,  221.86378 ,  255.71762 ,
+            252.8714  ,  207.36871 ,  132.64702 ,   78.00079 ,
+             43.72396 ,   81.61634 ,  161.05495 ,  250.07666 ,
+            366.01144 ,  402.4035  ,  370.53946 ,  269.67117 ,
+            139.17679 ,   45.314438,   17.95126 ,   74.413345,
+            201.20567 ]],
+
+         [[1867.2886  , 2128.3823  , 2245.9805  , 2124.8452  ,
+           1827.3242  , 1528.9255  , 1264.7424  , 1046.5273  ,
+            975.426   , 1071.2681  , 1262.655   , 1477.4862  ,
+           1670.2295  , 1810.0884  , 1870.5002  , 1836.7678  ,
+           1717.1831  , 1604.8875  , 1493.1185  , 1363.2063  ,
+           1307.4586  , 1309.3989  , 1309.462   , 1323.693   ,
+           1303.9456  , 1271.4125  , 1307.6838  , 1334.9866  ,
+           1274.4199  , 1132.6095  , 1011.19714 ,  883.63074 ,
+            843.6521  ,  798.06067 ,  754.2333  , 1048.6317  ,
+           1217.122   , 1062.9664  , 1292.9178  , 1629.4978  ,
+           1534.0166  , 1302.5848  , 1143.8445  , 1004.09143 ,
+            924.8054  ,  787.7538  ,  832.9142  ,  930.92456 ,
+            922.27563 ,  895.0355  ,  811.5868  ,  757.959   ,
+            732.2379  ,  795.25525 ,  920.01587 , 1000.0416  ,
+           1037.3658  , 1128.7014  , 1229.1456  , 1336.7853  ,
+           1466.2385  , 1561.2463  , 1611.3457  , 1596.707   ,
+           1590.0125  , 1548.2395  , 1519.2169  , 1541.4028  ,
+           1542.202   , 1579.0028  , 1545.9467  , 1529.9409  ,
+           1500.4631  , 1384.152   , 1320.8059  , 1173.564   ,
+           1137.591   , 1000.4402  ,  706.1449  ,  977.59424 ,
+           1287.2157  , 1246.5067  , 1196.4327  , 1184.7615  ,
+           1188.5256  , 1242.4744  , 1446.7842  ,  991.4595  ,
+            404.804   ,  847.52075 , 1049.6886  ,  905.09753 ,
+            979.59094 ,  999.0615  , 1144.938   , 1267.2582  ,
+           1414.2413  , 1517.657   , 1535.8816  , 1473.4082  ,
+           1321.684   ]],
+
+         [[ 177.24915 ,   88.077286,   76.80632 ,  163.14767 ,
+            317.51    ,  481.5927  ,  628.19196 ,  724.64233 ,
+            732.08417 ,  684.4248  ,  617.18225 ,  558.814   ,
+            536.3559  ,  520.2435  ,  489.45306 ,  451.87433 ,
+            398.8302  ,  308.7246  ,  276.9834  ,  314.72748 ,
+            327.1256  ,  325.47827 ,  315.61902 ,  292.02866 ,
+            354.9054  ,  480.34314 ,  540.3036  ,  549.878   ,
+            525.8814  ,  475.00293 ,  373.64648 ,  289.87933 ,
+            216.81294 ,   90.827415,   45.45144 ,   57.826565,
+             47.325348,   44.403526,   51.618797,   75.11218 ,
+             72.6615  ,   94.78439 ,  158.3529  ,  240.18262 ,
+            362.1137  ,  524.3763  ,  652.1654  ,  757.82385 ,
+            859.5843  ,  866.2602  ,  802.08215 ,  722.86725 ,
+            662.2816  ,  642.32007 ,  644.6333  ,  635.86865 ,
+            615.04346 ,  564.0039  ,  454.29706 ,  334.70306 ,
+            225.4199  ,  149.79901 ,  105.598114,   83.16397 ,
+             77.38105 ,   74.82186 ,   71.81256 ,   68.435135,
+             72.102165,   92.01581 ,  131.00179 ,  183.32085 ,
+            241.50586 ,  288.8645  ,  320.4065  ,  336.4535  ,
+            343.2207  ,  378.56897 ,  303.21857 ,  132.96829 ,
+            144.2847  ,  227.63298 ,  237.19269 ,  234.43274 ,
+            196.43352 ,  178.16174 ,   86.76178 ,  328.14874 ,
+            863.8845  ,  787.9029  ,  423.23718 ,  359.30835 ,
+            282.62625 ,  203.89478 ,  138.695   ,   98.259094,
+             82.74745 ,   76.58655 ,   74.28217 ,   69.42491 ,
+             69.04877 ]],
+
+         [[ 284.83582 ,  136.36697 ,   53.80716 ,   87.367676,
+            277.99225 ,  493.86176 ,  610.2086  ,  685.9542  ,
+            701.7864  ,  620.9463  ,  479.68683 ,  300.23297 ,
+            137.60477 ,   51.19508 ,   47.035927,  102.117065,
+            185.15788 ,  296.84793 ,  423.29324 ,  506.6183  ,
+            524.0657  ,  506.62097 ,  435.39087 ,  308.42282 ,
+            190.77417 ,  107.46566 ,   50.445747,   46.780777,
+            127.91208 ,  283.17242 ,  451.14532 ,  612.3213  ,
+            676.6842  ,  674.3871  ,  662.72    ,  560.7123  ,
+            334.04532 ,  117.44979 ,   50.71487 ,  115.252365,
+            256.60315 ,  396.86118 ,  450.96918 ,  428.63495 ,
+            297.21283 ,  130.3342  ,  114.23806 ,  122.38423 ,
+             97.56142 ,  165.37106 ,  307.0619  ,  395.73376 ,
+            399.96112 ,  343.91986 ,  234.78539 ,  129.75906 ,
+             67.196594,   50.39645 ,   83.7256  ,  142.24094 ,
+            196.37099 ,  199.49382 ,  160.08499 ,   93.67125 ,
+             53.094925,   39.38836 ,   49.520065,   70.73976 ,
+            106.24983 ,  145.77036 ,  157.62881 ,  134.42426 ,
+             87.57183 ,   46.775932,   48.191612,   79.23018 ,
+            103.54697 ,  116.825905,   95.60118 ,   71.49835 ,
+            124.87268 ,  158.35066 ,  148.08932 ,  119.17769 ,
+             89.43792 ,   72.804955,   53.78578 ,   46.41202 ,
+             57.938377,   54.10272 ,   48.127117,   52.082184,
+             57.478615,   62.608604,   64.20209 ,   61.51927 ,
+             53.77012 ,   46.719772,   44.513462,   47.180653,
+             50.604847]]], dtype=float32),
+  array([[[  70.913666,   94.66898 ,  126.01481 ,  149.15765 ,
+            147.87453 ,  119.04822 ,   74.37325 ,   33.15274 ,
+             13.71771 ,   18.235275,   30.03199 ,   39.4472  ,
+             56.082115,   88.52534 ,  124.519   ,  142.56644 ,
+            133.502   ,   99.40839 ,   50.86653 ,   15.509735,
+             22.538883,   66.83736 ,  106.67316 ,  100.38256 ,
+             60.23613 ,   31.409735,   34.93833 ,   66.56199 ,
+            110.89037 ,  149.98802 ,  160.31406 ,  133.79672 ,
+             80.915306,   35.214787,   14.218903,   24.201607,
+             51.509483,   90.041   ,  128.9482  ,  156.98582 ,
+            168.40408 ,  160.7843  ,  126.57898 ,   75.950066,
+             31.838303,   12.993435,   25.988861,   63.891388,
+             98.43629 ,  143.93492 ,  187.81476 ,  195.99387 ,
+            180.17186 ,  143.56447 ,   95.9242  ,   54.105568,
+             25.64669 ,   16.261614,   28.04123 ,   63.059288,
+            116.05685 ,  167.4141  ,  196.60799 ,  206.19846 ,
+            179.54951 ,  119.78985 ,   65.65066 ,   30.632692,
+             60.73445 ,   52.374725,   12.890949,   46.467278,
+            115.57403 ,  178.8772  ,  247.26918 ,  275.4089  ,
+            264.95306 ,  227.3336  ,  149.42535 ,   65.7508  ,
+             18.43408 ,   19.69145 ,   68.70736 ,  123.16678 ,
+            180.86996 ,  226.40729 ,  233.83829 ,  206.06866 ,
+            203.35805 ,  211.92044 ,  170.68993 ,  156.05861 ,
+            159.6221  ,  165.46199 ,  145.00436 ,  144.35439 ,
+            128.7209  ,   67.27131 ,   26.194832,   23.204449,
+             16.245995]],
+
+         [[1478.662   , 1529.3994  , 1736.4485  , 1991.0299  ,
+           2198.3625  , 2269.9966  , 2195.017   , 1977.1674  ,
+           1662.4292  , 1341.2906  , 1093.1592  ,  961.3701  ,
+            952.9933  , 1060.3193  , 1249.4519  , 1467.6821  ,
+           1670.7589  , 1822.8472  , 1894.1448  , 1878.0793  ,
+           1789.4839  , 1647.7788  , 1505.6292  , 1379.449   ,
+           1290.4954  , 1289.9818  , 1286.1512  , 1273.299   ,
+           1263.9373  , 1264.4507  , 1286.1832  , 1354.5741  ,
+           1381.9531  , 1395.4714  , 1394.7142  , 1206.7775  ,
+            907.4022  ,  775.22034 ,  772.3987  ,  810.3522  ,
+            951.068   , 1156.2178  , 1386.6884  , 1617.5078  ,
+           1760.4027  , 1788.9385  , 1711.9839  , 1410.0754  ,
+           1035.7112  ,  959.7318  ,  975.0665  ,  887.6614  ,
+            881.8424  ,  899.87476 , 1035.5846  , 1059.0691  ,
+            943.1102  ,  875.2667  ,  813.82495 ,  735.8069  ,
+            754.0277  ,  775.0449  ,  812.8384  ,  906.74536 ,
+            948.3519  ,  867.11    ,  908.0631  , 1171.4198  ,
+           1341.5895  , 1417.138   , 1546.3604  , 1626.5067  ,
+           1618.7334  , 1606.3062  , 1560.8015  , 1518.4954  ,
+           1503.2301  , 1500.2118  , 1542.7644  , 1574.0198  ,
+           1569.0084  , 1562.1028  , 1488.4971  , 1406.7039  ,
+           1308.6427  , 1204.2103  , 1194.2982  , 1178.303   ,
+           1159.736   , 1155.321   , 1062.7548  , 1010.46704 ,
+            872.703   ,  635.66327 ,  783.9536  , 1120.454   ,
+           1267.8615  , 1346.4683  , 1389.8738  , 1394.274   ,
+           1376.7141  ]],
+
+         [[ 398.18927 ,  329.98218 ,  224.47363 ,  123.165016,
+             69.959854,   82.80159 ,  163.9491  ,  297.07507 ,
+            454.76074 ,  604.50006 ,  706.9508  ,  757.679   ,
+            763.46857 ,  726.3658  ,  672.85925 ,  613.657   ,
+            554.565   ,  509.50848 ,  474.91504 ,  446.0916  ,
+            420.83002 ,  399.81757 ,  380.72644 ,  362.62036 ,
+            358.2198  ,  358.1007  ,  362.7691  ,  381.0312  ,
+            399.36707 ,  426.06653 ,  459.48694 ,  465.14673 ,
+            493.10394 ,  492.14807 ,  366.1256  ,  236.98016 ,
+            270.99323 ,  317.32947 ,  233.8454  ,  146.26459 ,
+             90.80228 ,   57.151653,   47.552128,   55.417046,
+             68.18431 ,   76.82762 ,   74.03454 ,   66.45145 ,
+            107.3286  ,  187.56657 ,  289.21387 ,  428.5514  ,
+            532.994   ,  533.7218  ,  586.0436  ,  754.521   ,
+            843.40704 ,  810.4149  ,  758.27423 ,  706.54956 ,
+            667.34033 ,  660.4723  ,  662.77875 ,  680.09814 ,
+            655.53986 ,  553.9635  ,  387.5537  ,  272.86267 ,
+            236.77348 ,  191.06807 ,  132.0444  ,  100.19372 ,
+             85.72132 ,   78.635544,   76.80459 ,   72.87612 ,
+             69.63132 ,   72.465   ,   77.836945,  103.6305  ,
+            144.77196 ,  196.46976 ,  243.01283 ,  268.68298 ,
+            284.4193  ,  304.22064 ,  327.9262  ,  341.34283 ,
+            334.6167  ,  331.7987  ,  316.99878 ,  294.60248 ,
+            318.00745 ,  303.18555 ,  165.56284 ,   98.51731 ,
+            171.06903 ,  205.81116 ,  217.27185 ,  191.3922  ,
+            160.70396 ]],
+
+         [[ 504.70657 ,  462.05258 ,  359.68887 ,  215.5648  ,
+             87.072235,   39.688286,   95.65737 ,  234.00719 ,
+            406.3729  ,  569.8225  ,  692.5564  ,  747.1885  ,
+            717.21436 ,  610.8811  ,  447.7564  ,  271.35394 ,
+            127.949524,   51.044907,   43.65969 ,   89.38619 ,
+            170.1696  ,  261.974   ,  348.95953 ,  418.96368 ,
+            492.39313 ,  510.16397 ,  474.57977 ,  407.6554  ,
+            320.47226 ,  224.05853 ,  134.27557 ,   66.25349 ,
+             38.809612,   71.42029 ,  174.96025 ,  379.57397 ,
+            617.0106  ,  741.3214  ,  776.18384 ,  755.16187 ,
+            666.83704 ,  518.1571  ,  335.68027 ,  169.9398  ,
+             61.895485,   46.141502,  115.30294 ,  227.17548 ,
+            365.36554 ,  464.48294 ,  457.3104  ,  383.25082 ,
+            270.41486 ,  139.01407 ,   72.00219 ,   73.409294,
+            145.58087 ,  251.42204 ,  350.96817 ,  410.51108 ,
+            404.94202 ,  329.56512 ,  226.22047 ,  142.07867 ,
+             83.221954,   45.660732,   56.533432,  117.62381 ,
+            165.52325 ,  195.35803 ,  196.94348 ,  143.64735 ,
+             84.78807 ,   48.849594,   40.053307,   49.30991 ,
+             69.63268 ,   95.57339 ,  121.27505 ,  149.91025 ,
+            147.66962 ,  109.939255,   61.875885,   45.618916,
+             59.011715,   63.073685,   65.21747 ,   74.91575 ,
+             88.36926 ,   89.36229 ,   98.70416 ,  130.67764 ,
+            135.2215  ,  103.342804,   69.745544,   61.01497 ,
+             59.93321 ,   54.032722,   48.80162 ,   47.808815,
+             45.652115]]], dtype=float32),
+  array([[[  49.592186,   49.50084 ,   48.517807,   48.224915,
+             46.04545 ,   43.721237,   45.889526,   47.995285,
+             48.490707,   49.339943,   50.186043,   51.205902,
+             52.026665,   52.40557 ,   53.158012,   53.709656,
+             53.073685,   53.312904,   53.381973,   52.611122,
+             52.55275 ]],
+
+         [[1320.6416  , 1327.3531  , 1309.1766  , 1286.355   ,
+           1231.2476  , 1193.297   , 1287.437   , 1342.7142  ,
+           1324.842   , 1322.4381  , 1307.3436  , 1313.8982  ,
+           1314.7186  , 1312.1869  , 1315.2892  , 1306.2494  ,
+           1299.8472  , 1319.0553  , 1334.7875  , 1326.7213  ,
+           1327.6887  ]],
+
+         [[ 327.05206 ,  321.44653 ,  327.96875 ,  354.5365  ,
+            353.2566  ,  345.96118 ,  359.89246 ,  358.0354  ,
+            355.59894 ,  357.50244 ,  356.25018 ,  358.10468 ,
+            360.364   ,  361.1125  ,  361.34503 ,  357.96704 ,
+            365.011   ,  348.23395 ,  329.36774 ,  345.46222 ,
+            348.6009  ]],
+
+         [[ 520.4851  ,  523.9835  ,  514.34094 ,  523.54    ,
+            540.60754 ,  478.58398 ,  431.75098 ,  458.1842  ,
+            474.3825  ,  477.73004 ,  486.12943 ,  488.5518  ,
+            486.3377  ,  485.53397 ,  483.21384 ,  480.4732  ,
+            483.8701  ,  476.47272 ,  485.92996 ,  490.85587 ,
+            488.114   ]]], dtype=float32),
+  array([[[ 182.57455 ,  179.88655 ,  176.27708 ,  171.3525  ,
+            164.45203 ,  157.99153 ,  153.31726 ,  146.78891 ,
+            139.9849  ,  134.30078 ,  130.38477 ,  127.96129 ,
+            127.97228 ,  129.62468 ,  132.90887 ,  137.5524  ,
+            143.56934 ,  150.17793 ,  156.65141 ,  161.08005 ,
+            169.8882  ]],
+
+         [[1260.9392  , 1265.854   , 1269.2152  , 1268.9719  ,
+           1262.0205  , 1240.697   , 1219.657   , 1190.4454  ,
+           1148.9393  , 1098.8221  , 1041.1884  ,  977.5266  ,
+            912.9236  ,  854.4972  ,  798.5233  ,  755.0631  ,
+            720.08044 ,  701.4381  ,  688.94965 ,  664.3867  ,
+            678.014   ]],
+
+         [[ 213.82603 ,  202.96606 ,  190.45749 ,  176.36055 ,
+            162.63112 ,  148.96558 ,  136.35396 ,  127.84253 ,
+            124.618645,  126.57316 ,  134.7176  ,  148.56747 ,
+            170.17894 ,  195.40201 ,  225.24266 ,  257.08374 ,
+            291.24762 ,  323.47687 ,  361.35498 ,  371.5277  ,
+            350.4757  ]],
+
+         [[ 157.05472 ,  156.0411  ,  154.24232 ,  151.5075  ,
+            146.39398 ,  141.40872 ,  138.46567 ,  133.28702 ,
+            127.210686,  121.660545,  116.78317 ,  112.56106 ,
+            109.96343 ,  108.62253 ,  108.828316,  110.28492 ,
+            113.51226 ,  117.526665,  123.60857 ,  130.15659 ,
+            132.67453 ]]], dtype=float32)])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_23_3.png" src="../_images/notebooks_refinemnt_si04_23_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_23_4.png" src="../_images/notebooks_refinemnt_si04_23_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_23_5.png" src="../_images/notebooks_refinemnt_si04_23_5.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_23_6.png" src="../_images/notebooks_refinemnt_si04_23_6.png" />
+</div>
+</div>
+<p>start the refinement</p>
+<ul class="simple">
+<li><p>x0: initial guess for the structure factor, if not provided, use the structure factor save in fine (1,1,1,1) (bird’s atomic scatter factor) if no previous fine refinement</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> qt
+<span class="n">fine</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+<span class="c1"># fine.optimize()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+setting the initial value and normalization range to:
+beam: (1, -1, -1)
+      lower       value       upper
+U : 4.5000000e-02   4.7182200e-02   5.0000000e-02
+UA: 5.0000000e-04   8.3177800e-04   1.0000000e-03
+------------------------------
+beam: (2, -2, -2)
+      lower       value       upper
+U : 9.0000000e-04   9.6364100e-04   1.1000000e-03
+UA: 0.0000000e+00   0.0000000e+00   0.0000000e+00
+------------------------------
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+MESA: error: ZINK: failed to choose pdev
+glx: failed to create drisw screen
+/home/hcni/project/bloch-python/src/pyextal/optimize.py:656: RuntimeWarning: invalid value encountered in divide
+  return ((self.x0-self.x0Range[0])/(self.x0Range[1]-self.x0Range[0]))[self.sfMask]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+start optimization
+normal:[[0.0471822  0.00083178]
+ [0.00096364 0.        ]]
+SF:
+(1, -1, -1): 4.7182200e-02 8.3177800e-04
+(2, -2, -2): 9.6364100e-04 0.0000000e+00
+thickness: 3430.84 gl: 226.91080 rotation: 44.77882
+corner: -0.00237 -0.86979
+GOF: 3.08907  func eval: 227
+Error: 3.063747718685963  func eval: 227
+********************
+SF:
+(1, -1, -1): 4.7291310e-02 8.3177800e-04
+(2, -2, -2): 9.6364100e-04 0.0000000e+00
+thickness: 3425.48 gl: 226.84112 rotation: 44.22193
+corner: 1.22121 -2.95196
+GOF: 2.79851  func eval: 513
+Error: 2.77556872758709  func eval: 513
+********************
+SF:
+(1, -1, -1): 4.7182200e-02 8.4836690e-04
+(2, -2, -2): 9.6364100e-04 0.0000000e+00
+thickness: 3430.83 gl: 226.91446 rotation: 44.21622
+corner: 1.17192 -3.05009
+GOF: 2.85847  func eval: 173
+Error: 2.8350354804367317  func eval: 173
+********************
+SF:
+(1, -1, -1): 4.7182200e-02 8.3177800e-04
+(2, -2, -2): 9.6682305e-04 0.0000000e+00
+thickness: 3430.87 gl: 226.91331 rotation: 44.21658
+corner: 1.17304 -3.05064
+GOF: 2.85320  func eval: 38
+Error: 2.8298159740010247  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7254940e-02 8.4283727e-04
+(2, -2, -2): 9.6576237e-04 0.0000000e+00
+thickness: 3427.46 gl: 226.86455 rotation: 44.22268
+corner: 1.22095 -3.00101
+GOF: 2.81508  func eval: 180
+Error: 2.7920076964331453  func eval: 180
+********************
+SF:
+(1, -1, -1): 4.7303433e-02 8.2256194e-04
+(2, -2, -2): 9.6717661e-04 0.0000000e+00
+thickness: 3425.13 gl: 226.84142 rotation: 44.21726
+corner: 1.23620 -2.97706
+GOF: 2.79508  func eval: 110
+Error: 2.7721707703637297  func eval: 110
+********************
+SF:
+(1, -1, -1): 4.7343844e-02 8.1396029e-04
+(2, -2, -2): 9.6835515e-04 0.0000000e+00
+thickness: 3423.27 gl: 226.81633 rotation: 44.22483
+corner: 1.25381 -2.93635
+GOF: 2.79176  func eval: 151
+Error: 2.7688778736552253  func eval: 151
+********************
+SF:
+(1, -1, -1): 4.7411196e-02 8.2727237e-04
+(2, -2, -2): 9.6501596e-04 0.0000000e+00
+thickness: 3420.00 gl: 226.78262 rotation: 44.22258
+corner: 1.28930 -2.91399
+GOF: 2.80744  func eval: 147
+Error: 2.7844303318711576  func eval: 147
+********************
+SF:
+(1, -1, -1): 4.7442627e-02 8.0583651e-04
+(2, -2, -2): 9.6557904e-04 0.0000000e+00
+thickness: 3418.49 gl: 226.76248 rotation: 44.22239
+corner: 1.29796 -2.88816
+GOF: 2.81626  func eval: 114
+Error: 2.7931761194448  func eval: 114
+********************
+SF:
+(1, -1, -1): 4.7294041e-02 8.3512878e-04
+(2, -2, -2): 9.6572417e-04 0.0000000e+00
+thickness: 3425.48 gl: 226.83890 rotation: 44.22276
+corner: 1.22488 -2.94454
+GOF: 2.80043  func eval: 143
+Error: 2.7774768266521517  func eval: 143
+********************
+SF:
+(1, -1, -1): 4.7208268e-02 8.2663901e-04
+(2, -2, -2): 9.6679759e-04 0.0000000e+00
+thickness: 3429.61 gl: 226.89810 rotation: 44.22462
+corner: 1.17486 -2.99943
+GOF: 2.83367  func eval: 148
+Error: 2.8104448162141393  func eval: 148
+********************
+SF:
+(1, -1, -1): 4.7368919e-02 8.2714042e-04
+(2, -2, -2): 9.6538713e-04 0.0000000e+00
+thickness: 3421.95 gl: 226.80672 rotation: 44.22603
+corner: 1.25131 -2.90959
+GOF: 2.79592  func eval: 180
+Error: 2.7730012487192623  func eval: 180
+********************
+SF:
+(1, -1, -1): 4.7375341e-02 8.1345703e-04
+(2, -2, -2): 9.6586468e-04 0.0000000e+00
+thickness: 3421.77 gl: 226.80484 rotation: 44.22432
+corner: 1.25287 -2.91195
+GOF: 2.79454  func eval: 36
+Error: 2.771635462026127  func eval: 36
+********************
+SF:
+(1, -1, -1): 4.7434093e-02 8.0459383e-04
+(2, -2, -2): 9.6943031e-04 0.0000000e+00
+thickness: 3418.97 gl: 226.77042 rotation: 44.22630
+corner: 1.31100 -2.90740
+GOF: 2.81531  func eval: 111
+Error: 2.792238329277664  func eval: 111
+********************
+SF:
+(1, -1, -1): 4.7321057e-02 8.2611463e-04
+(2, -2, -2): 9.6484711e-04 0.0000000e+00
+thickness: 3424.30 gl: 226.82612 rotation: 44.22314
+corner: 1.23662 -2.93764
+GOF: 2.79342  func eval: 144
+Error: 2.7705183185514857  func eval: 144
+********************
+SF:
+(1, -1, -1): 4.7324575e-02 8.0854755e-04
+(2, -2, -2): 9.6732416e-04 0.0000000e+00
+thickness: 3424.15 gl: 226.82545 rotation: 44.22355
+corner: 1.23870 -2.93923
+GOF: 2.79003  func eval: 38
+Error: 2.7671598840932377  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7309794e-02 8.0234993e-04
+(2, -2, -2): 9.6796983e-04 0.0000000e+00
+thickness: 3424.53 gl: 226.83361 rotation: 44.22554
+corner: 1.24444 -2.94893
+GOF: 2.79174  func eval: 66
+Error: 2.768859112849001  func eval: 66
+********************
+SF:
+(1, -1, -1): 4.7284310e-02 8.1895795e-04
+(2, -2, -2): 9.6781959e-04 0.0000000e+00
+thickness: 3425.94 gl: 226.84353 rotation: 44.22619
+corner: 1.23424 -2.95823
+GOF: 2.79863  func eval: 75
+Error: 2.7756887967469264  func eval: 75
+********************
+SF:
+(1, -1, -1): 4.7356376e-02 8.1460306e-04
+(2, -2, -2): 9.6627195e-04 0.0000000e+00
+thickness: 3422.64 gl: 226.80916 rotation: 44.22285
+corner: 1.26100 -2.93518
+GOF: 2.79219  func eval: 159
+Error: 2.7692996165791497  func eval: 159
+********************
+SF:
+(1, -1, -1): 4.7362141e-02 7.9862597e-04
+(2, -2, -2): 9.6978707e-04 0.0000000e+00
+thickness: 3422.42 gl: 226.80904 rotation: 44.22252
+corner: 1.26233 -2.93177
+GOF: 2.79238  func eval: 38
+Error: 2.7694902263703893  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7353582e-02 8.0435277e-04
+(2, -2, -2): 9.6875791e-04 0.0000000e+00
+thickness: 3422.77 gl: 226.80890 rotation: 44.22409
+corner: 1.25998 -2.92766
+GOF: 2.79155  func eval: 78
+Error: 2.7686637503201843  func eval: 78
+********************
+SF:
+(1, -1, -1): 4.7324958e-02 8.0330402e-04
+(2, -2, -2): 9.7001952e-04 0.0000000e+00
+thickness: 3424.11 gl: 226.82319 rotation: 44.22708
+corner: 1.25292 -2.93767
+GOF: 2.79117  func eval: 74
+Error: 2.7682935370773567  func eval: 74
+********************
+SF:
+(1, -1, -1): 4.7324899e-02 7.9684260e-04
+(2, -2, -2): 9.6904591e-04 0.0000000e+00
+thickness: 3424.13 gl: 226.82198 rotation: 44.22588
+corner: 1.24759 -2.93657
+GOF: 2.79027  func eval: 42
+Error: 2.767403774574155  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7296040e-02 8.0144334e-04
+(2, -2, -2): 9.6883515e-04 0.0000000e+00
+thickness: 3425.41 gl: 226.83805 rotation: 44.22732
+corner: 1.23525 -2.94673
+GOF: 2.79412  func eval: 74
+Error: 2.771215470110784  func eval: 74
+********************
+SF:
+(1, -1, -1): 4.7341594e-02 8.0374664e-04
+(2, -2, -2): 9.6877400e-04 0.0000000e+00
+thickness: 3423.45 gl: 226.82840 rotation: 44.22240
+corner: 1.23956 -2.94492
+GOF: 2.79060  func eval: 80
+Error: 2.767729712314293  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7335754e-02 8.0278718e-04
+(2, -2, -2): 9.6674319e-04 0.0000000e+00
+thickness: 3423.83 gl: 226.82761 rotation: 44.22311
+corner: 1.24042 -2.94447
+GOF: 2.78941  func eval: 37
+Error: 2.766548281810323  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7339352e-02 8.0261490e-04
+(2, -2, -2): 9.6565108e-04 0.0000000e+00
+thickness: 3423.54 gl: 226.82515 rotation: 44.22291
+corner: 1.24318 -2.94281
+GOF: 2.78864  func eval: 81
+Error: 2.7657855925012806  func eval: 81
+********************
+SF:
+(1, -1, -1): 4.7317624e-02 8.0159006e-04
+(2, -2, -2): 9.6590676e-04 0.0000000e+00
+thickness: 3424.47 gl: 226.82726 rotation: 44.22433
+corner: 1.24092 -2.94267
+GOF: 2.78932  func eval: 82
+Error: 2.766453227058786  func eval: 82
+********************
+SF:
+(1, -1, -1): 4.7329469e-02 8.1165907e-04
+(2, -2, -2): 9.6354209e-04 0.0000000e+00
+thickness: 3423.95 gl: 226.82349 rotation: 44.22311
+corner: 1.24342 -2.94025
+GOF: 2.78859  func eval: 78
+Error: 2.7657305608030227  func eval: 78
+********************
+SF:
+(1, -1, -1): 4.7330993e-02 8.1659789e-04
+(2, -2, -2): 9.6170748e-04 0.0000000e+00
+thickness: 3423.88 gl: 226.82260 rotation: 44.22326
+corner: 1.24396 -2.93936
+GOF: 2.78859  func eval: 41
+Error: 2.7657325619556863  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7333055e-02 8.0202846e-04
+(2, -2, -2): 9.6274247e-04 0.0000000e+00
+thickness: 3423.81 gl: 226.82171 rotation: 44.22336
+corner: 1.24518 -2.93850
+GOF: 2.78705  func eval: 41
+Error: 2.7642011798796107  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7335882e-02 7.9985543e-04
+(2, -2, -2): 9.6121523e-04 0.0000000e+00
+thickness: 3423.69 gl: 226.82024 rotation: 44.22338
+corner: 1.24661 -2.93742
+GOF: 2.78681  func eval: 42
+Error: 2.763969796602843  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7352178e-02 8.0782954e-04
+(2, -2, -2): 9.6103217e-04 0.0000000e+00
+thickness: 3422.98 gl: 226.81751 rotation: 44.22280
+corner: 1.24887 -2.93480
+GOF: 2.78831  func eval: 77
+Error: 2.765451149862321  func eval: 77
+********************
+SF:
+(1, -1, -1): 4.7339000e-02 8.1028113e-04
+(2, -2, -2): 9.5820859e-04 0.0000000e+00
+thickness: 3423.52 gl: 226.81724 rotation: 44.22385
+corner: 1.24728 -2.93181
+GOF: 2.78693  func eval: 119
+Error: 2.764089365474513  func eval: 119
+********************
+SF:
+(1, -1, -1): 4.7355238e-02 8.0031834e-04
+(2, -2, -2): 9.5676190e-04 0.0000000e+00
+thickness: 3422.79 gl: 226.81460 rotation: 44.22347
+corner: 1.24964 -2.92984
+GOF: 2.78518  func eval: 96
+Error: 2.7623521148181354  func eval: 96
+********************
+SF:
+(1, -1, -1): 4.7363827e-02 7.9653809e-04
+(2, -2, -2): 9.5450184e-04 0.0000000e+00
+thickness: 3422.55 gl: 226.80921 rotation: 44.22344
+corner: 1.25483 -2.92728
+GOF: 2.78536  func eval: 69
+Error: 2.7625252145235657  func eval: 69
+********************
+SF:
+(1, -1, -1): 4.7334568e-02 7.9914040e-04
+(2, -2, -2): 9.5642498e-04 0.0000000e+00
+thickness: 3423.73 gl: 226.81677 rotation: 44.22542
+corner: 1.24786 -2.92972
+GOF: 2.78453  func eval: 81
+Error: 2.7617027407786887  func eval: 81
+********************
+SF:
+(1, -1, -1): 4.7328698e-02 7.9624401e-04
+(2, -2, -2): 9.5488925e-04 0.0000000e+00
+thickness: 3424.12 gl: 226.81819 rotation: 44.22606
+corner: 1.24498 -2.93278
+GOF: 2.78424  func eval: 37
+Error: 2.7614220791175716  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7340878e-02 7.8733073e-04
+(2, -2, -2): 9.5703567e-04 0.0000000e+00
+thickness: 3423.49 gl: 226.81688 rotation: 44.22391
+corner: 1.24768 -2.93257
+GOF: 2.78431  func eval: 76
+Error: 2.7614901183081453  func eval: 76
+********************
+SF:
+(1, -1, -1): 4.7347328e-02 7.8940662e-04
+(2, -2, -2): 9.5124265e-04 0.0000000e+00
+thickness: 3423.19 gl: 226.81270 rotation: 44.22353
+corner: 1.25251 -2.93223
+GOF: 2.78286  func eval: 83
+Error: 2.760044785796619  func eval: 83
+********************
+SF:
+(1, -1, -1): 4.7351143e-02 7.8592368e-04
+(2, -2, -2): 9.4791845e-04 0.0000000e+00
+thickness: 3423.04 gl: 226.81124 rotation: 44.22344
+corner: 1.25431 -2.93101
+GOF: 2.78175  func eval: 39
+Error: 2.7589516561539447  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7325242e-02 7.7934727e-04
+(2, -2, -2): 9.4980034e-04 0.0000000e+00
+thickness: 3424.21 gl: 226.81934 rotation: 44.22607
+corner: 1.24578 -2.93311
+GOF: 2.78316  func eval: 81
+Error: 2.760348710857454  func eval: 81
+********************
+SF:
+(1, -1, -1): 4.7329177e-02 7.8701258e-04
+(2, -2, -2): 9.4470302e-04 0.0000000e+00
+thickness: 3424.05 gl: 226.81929 rotation: 44.22522
+corner: 1.24431 -2.93346
+GOF: 2.78125  func eval: 39
+Error: 2.758450617555712  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7325277e-02 7.8690654e-04
+(2, -2, -2): 9.4059213e-04 0.0000000e+00
+thickness: 3424.22 gl: 226.81970 rotation: 44.22517
+corner: 1.24319 -2.93399
+GOF: 2.78087  func eval: 39
+Error: 2.7580761518634733  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7339076e-02 7.7187431e-04
+(2, -2, -2): 9.3731804e-04 0.0000000e+00
+thickness: 3423.67 gl: 226.81501 rotation: 44.22402
+corner: 1.24833 -2.93223
+GOF: 2.78062  func eval: 78
+Error: 2.7578270083568137  func eval: 78
+********************
+SF:
+(1, -1, -1): 4.7342535e-02 7.6375108e-04
+(2, -2, -2): 9.3146097e-04 0.0000000e+00
+thickness: 3423.54 gl: 226.81280 rotation: 44.22413
+corner: 1.25028 -2.93019
+GOF: 2.78153  func eval: 41
+Error: 2.758727527055584  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7351755e-02 7.8378908e-04
+(2, -2, -2): 9.3408541e-04 0.0000000e+00
+thickness: 3423.04 gl: 226.80760 rotation: 44.22366
+corner: 1.25552 -2.92690
+GOF: 2.77851  func eval: 74
+Error: 2.7557318015176744  func eval: 74
+********************
+SF:
+(1, -1, -1): 4.7360593e-02 7.8526968e-04
+(2, -2, -2): 9.2884710e-04 0.0000000e+00
+thickness: 3422.81 gl: 226.80582 rotation: 44.22489
+corner: 1.25526 -2.92262
+GOF: 2.77886  func eval: 71
+Error: 2.7560830038101947  func eval: 71
+********************
+SF:
+(1, -1, -1): 4.7326262e-02 7.7578961e-04
+(2, -2, -2): 9.2674527e-04 0.0000000e+00
+thickness: 3424.23 gl: 226.81585 rotation: 44.22661
+corner: 1.24503 -2.92743
+GOF: 2.78100  func eval: 78
+Error: 2.7582032250576334  func eval: 78
+********************
+SF:
+(1, -1, -1): 4.7331446e-02 7.7790087e-04
+(2, -2, -2): 9.3115635e-04 0.0000000e+00
+thickness: 3424.00 gl: 226.81608 rotation: 44.22579
+corner: 1.24382 -2.92972
+GOF: 2.77986  func eval: 38
+Error: 2.757077076396004  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7356241e-02 7.6880297e-04
+(2, -2, -2): 9.2778106e-04 0.0000000e+00
+thickness: 3422.91 gl: 226.81224 rotation: 44.22370
+corner: 1.24858 -2.92843
+GOF: 2.78020  func eval: 80
+Error: 2.757415021052126  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7353886e-02 7.8178763e-04
+(2, -2, -2): 9.2469718e-04 0.0000000e+00
+thickness: 3423.01 gl: 226.81161 rotation: 44.22396
+corner: 1.24940 -2.92779
+GOF: 2.77816  func eval: 36
+Error: 2.7553926061411373  func eval: 36
+********************
+SF:
+(1, -1, -1): 4.7358822e-02 7.8509207e-04
+(2, -2, -2): 9.2049022e-04 0.0000000e+00
+thickness: 3422.79 gl: 226.81010 rotation: 44.22364
+corner: 1.25036 -2.92647
+GOF: 2.77785  func eval: 37
+Error: 2.7550776747406505  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7338441e-02 7.9571838e-04
+(2, -2, -2): 9.2937359e-04 0.0000000e+00
+thickness: 3423.65 gl: 226.81290 rotation: 44.22503
+corner: 1.24716 -2.92670
+GOF: 2.77839  func eval: 77
+Error: 2.755616234951332  func eval: 77
+********************
+SF:
+(1, -1, -1): 4.7367900e-02 7.9849881e-04
+(2, -2, -2): 9.2480980e-04 0.0000000e+00
+thickness: 3422.30 gl: 226.80718 rotation: 44.22251
+corner: 1.25232 -2.92490
+GOF: 2.77817  func eval: 76
+Error: 2.755401861472208  func eval: 76
+********************
+SF:
+(1, -1, -1): 4.7358353e-02 8.0241710e-04
+(2, -2, -2): 9.1569700e-04 0.0000000e+00
+thickness: 3422.72 gl: 226.80191 rotation: 44.22347
+corner: 1.25712 -2.92179
+GOF: 2.77853  func eval: 86
+Error: 2.7557588170786373  func eval: 86
+********************
+SF:
+(1, -1, -1): 4.7353130e-02 7.8766992e-04
+(2, -2, -2): 9.3025449e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80632 rotation: 44.22575
+corner: 1.25421 -2.92071
+GOF: 2.77816  func eval: 38
+Error: 2.7553916055648053  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7381460e-02 7.8512216e-04
+(2, -2, -2): 9.2099608e-04 0.0000000e+00
+thickness: 3421.68 gl: 226.79795 rotation: 44.22383
+corner: 1.26473 -2.92005
+GOF: 2.77936  func eval: 83
+Error: 2.7565795398149335  func eval: 83
+********************
+SF:
+(1, -1, -1): 4.7347403e-02 7.9351083e-04
+(2, -2, -2): 9.2762828e-04 0.0000000e+00
+thickness: 3423.21 gl: 226.80528 rotation: 44.22540
+corner: 1.25702 -2.92104
+GOF: 2.77787  func eval: 86
+Error: 2.755100437852203  func eval: 86
+********************
+SF:
+(1, -1, -1): 4.7338337e-02 7.7901640e-04
+(2, -2, -2): 9.2743886e-04 0.0000000e+00
+thickness: 3423.65 gl: 226.81235 rotation: 44.22706
+corner: 1.24532 -2.92251
+GOF: 2.77924  func eval: 79
+Error: 2.7564562187820183  func eval: 79
+********************
+SF:
+(1, -1, -1): 4.7361741e-02 7.9443998e-04
+(2, -2, -2): 9.2535752e-04 0.0000000e+00
+thickness: 3422.57 gl: 226.80597 rotation: 44.22450
+corner: 1.25686 -2.92502
+GOF: 2.77795  func eval: 80
+Error: 2.7551752309330175  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7358848e-02 7.9435867e-04
+(2, -2, -2): 9.1872952e-04 0.0000000e+00
+thickness: 3422.74 gl: 226.80413 rotation: 44.22374
+corner: 1.25710 -2.92269
+GOF: 2.77812  func eval: 41
+Error: 2.7553470799180326  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7357656e-02 7.9296518e-04
+(2, -2, -2): 9.2113056e-04 0.0000000e+00
+thickness: 3422.77 gl: 226.80307 rotation: 44.22399
+corner: 1.25729 -2.92066
+GOF: 2.77748  func eval: 39
+Error: 2.7547139652439805  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7347514e-02 7.8660541e-04
+(2, -2, -2): 9.2080852e-04 0.0000000e+00
+thickness: 3423.26 gl: 226.80570 rotation: 44.22568
+corner: 1.25361 -2.92083
+GOF: 2.77785  func eval: 80
+Error: 2.7550766741643185  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7361925e-02 7.8293095e-04
+(2, -2, -2): 9.1399126e-04 0.0000000e+00
+thickness: 3422.61 gl: 226.80084 rotation: 44.22389
+corner: 1.25688 -2.91895
+GOF: 2.77846  func eval: 85
+Error: 2.755685524862321  func eval: 85
+********************
+SF:
+(1, -1, -1): 4.7350429e-02 7.9130669e-04
+(2, -2, -2): 9.2478723e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80644 rotation: 44.22521
+corner: 1.25203 -2.92048
+GOF: 2.77765  func eval: 81
+Error: 2.754882312211834  func eval: 81
+********************
+SF:
+(1, -1, -1): 4.7344910e-02 7.9549278e-04
+(2, -2, -2): 9.2399398e-04 0.0000000e+00
+thickness: 3423.48 gl: 226.80796 rotation: 44.22583
+corner: 1.24966 -2.92183
+GOF: 2.77803  func eval: 37
+Error: 2.755257278192239  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7355924e-02 7.8725889e-04
+(2, -2, -2): 9.2122017e-04 0.0000000e+00
+thickness: 3422.88 gl: 226.80521 rotation: 44.22396
+corner: 1.25286 -2.92091
+GOF: 2.77818  func eval: 76
+Error: 2.75540536348937  func eval: 76
+********************
+SF:
+(1, -1, -1): 4.7352838e-02 7.9185952e-04
+(2, -2, -2): 9.2356834e-04 0.0000000e+00
+thickness: 3422.99 gl: 226.80516 rotation: 44.22444
+corner: 1.25360 -2.92058
+GOF: 2.77745  func eval: 37
+Error: 2.7546856989626023  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7350895e-02 7.8872534e-04
+(2, -2, -2): 9.2091586e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80516 rotation: 44.22485
+corner: 1.25327 -2.92026
+GOF: 2.77800  func eval: 56
+Error: 2.7552250096055326  func eval: 56
+********************
+SF:
+(1, -1, -1): 4.7358434e-02 7.8771644e-04
+(2, -2, -2): 9.2070367e-04 0.0000000e+00
+thickness: 3422.48 gl: 226.80344 rotation: 44.22325
+corner: 1.25597 -2.91801
+GOF: 2.77824  func eval: 36
+Error: 2.755466148501537  func eval: 36
+********************
+SF:
+(1, -1, -1): 4.7349159e-02 7.9465025e-04
+(2, -2, -2): 9.2303951e-04 0.0000000e+00
+thickness: 3422.86 gl: 226.80859 rotation: 44.22490
+corner: 1.25071 -2.91882
+GOF: 2.77775  func eval: 71
+Error: 2.7549838707095287  func eval: 71
+********************
+SF:
+(1, -1, -1): 4.7355541e-02 7.9759130e-04
+(2, -2, -2): 9.2424307e-04 0.0000000e+00
+thickness: 3422.86 gl: 226.80794 rotation: 44.22504
+corner: 1.24950 -2.91876
+GOF: 2.77777  func eval: 42
+Error: 2.755001380795338  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7354573e-02 7.9574422e-04
+(2, -2, -2): 9.2354990e-04 0.0000000e+00
+thickness: 3422.92 gl: 226.80599 rotation: 44.22440
+corner: 1.25068 -2.91886
+GOF: 2.77781  func eval: 38
+Error: 2.75504415543353  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7356050e-02 7.9259663e-04
+(2, -2, -2): 9.2194315e-04 0.0000000e+00
+thickness: 3422.85 gl: 226.80473 rotation: 44.22427
+corner: 1.25230 -2.91897
+GOF: 2.77764  func eval: 39
+Error: 2.7548763087538424  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7350385e-02 7.9372001e-04
+(2, -2, -2): 9.2321578e-04 0.0000000e+00
+thickness: 3423.23 gl: 226.80564 rotation: 44.22534
+corner: 1.25157 -2.92008
+GOF: 2.77729  func eval: 37
+Error: 2.7545276079021517  func eval: 37
+********************
+SF:
+(1, -1, -1): 4.7351542e-02 7.8977006e-04
+(2, -2, -2): 9.2180002e-04 0.0000000e+00
+thickness: 3423.06 gl: 226.80624 rotation: 44.22486
+corner: 1.25182 -2.91974
+GOF: 2.77759  func eval: 39
+Error: 2.754819526047003  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7347127e-02 7.9096977e-04
+(2, -2, -2): 9.2377961e-04 0.0000000e+00
+thickness: 3423.25 gl: 226.80665 rotation: 44.22520
+corner: 1.25111 -2.91960
+GOF: 2.77777  func eval: 40
+Error: 2.755001380795338  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7354191e-02 7.9225770e-04
+(2, -2, -2): 9.2232575e-04 0.0000000e+00
+thickness: 3422.64 gl: 226.80514 rotation: 44.22347
+corner: 1.25345 -2.91828
+GOF: 2.77777  func eval: 36
+Error: 2.7549978787781764  func eval: 36
+********************
+SF:
+(1, -1, -1): 4.7352020e-02 7.9247968e-04
+(2, -2, -2): 9.2345082e-04 0.0000000e+00
+thickness: 3423.01 gl: 226.80414 rotation: 44.22511
+corner: 1.25342 -2.91691
+GOF: 2.77796  func eval: 80
+Error: 2.755190239577997  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7351157e-02 7.9108671e-04
+(2, -2, -2): 9.2227194e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80433 rotation: 44.22534
+corner: 1.25280 -2.91697
+GOF: 2.77808  func eval: 38
+Error: 2.755306056288422  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7354162e-02 7.9297109e-04
+(2, -2, -2): 9.2236736e-04 0.0000000e+00
+thickness: 3422.92 gl: 226.80449 rotation: 44.22501
+corner: 1.25298 -2.91706
+GOF: 2.77732  func eval: 42
+Error: 2.7545598764888575  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7353222e-02 7.9502714e-04
+(2, -2, -2): 9.2375070e-04 0.0000000e+00
+thickness: 3422.95 gl: 226.80442 rotation: 44.22499
+corner: 1.25300 -2.91692
+GOF: 2.77745  func eval: 44
+Error: 2.7546877001152663  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7353159e-02 7.9533247e-04
+(2, -2, -2): 9.2277175e-04 0.0000000e+00
+thickness: 3422.95 gl: 226.80424 rotation: 44.22507
+corner: 1.25300 -2.91692
+GOF: 2.77810  func eval: 69
+Error: 2.7553283191118085  func eval: 69
+********************
+SF:
+(1, -1, -1): 4.7352258e-02 7.9307401e-04
+(2, -2, -2): 9.2330935e-04 0.0000000e+00
+thickness: 3423.00 gl: 226.80446 rotation: 44.22514
+corner: 1.25261 -2.91700
+GOF: 2.77750  func eval: 41
+Error: 2.754734977346952  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7352922e-02 7.9473814e-04
+(2, -2, -2): 9.2291322e-04 0.0000000e+00
+thickness: 3422.97 gl: 226.80454 rotation: 44.22509
+corner: 1.25255 -2.91702
+GOF: 2.77767  func eval: 48
+Error: 2.7548978211449797  func eval: 48
+********************
+SF:
+(1, -1, -1): 4.7352396e-02 7.9342071e-04
+(2, -2, -2): 9.2322682e-04 0.0000000e+00
+thickness: 3423.00 gl: 226.80467 rotation: 44.22509
+corner: 1.25255 -2.91702
+GOF: 2.77763  func eval: 62
+Error: 2.7548602995325306  func eval: 62
+********************
+SF:
+(1, -1, -1): 4.7352903e-02 7.9322073e-04
+(2, -2, -2): 9.2265017e-04 0.0000000e+00
+thickness: 3422.98 gl: 226.80455 rotation: 44.22502
+corner: 1.25243 -2.91706
+GOF: 2.77757  func eval: 40
+Error: 2.7548032666816087  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7352276e-02 7.9459143e-04
+(2, -2, -2): 9.2357240e-04 0.0000000e+00
+thickness: 3423.00 gl: 226.80483 rotation: 44.22505
+corner: 1.25220 -2.91716
+GOF: 2.77780  func eval: 38
+Error: 2.755030397508965  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7351634e-02 7.9328935e-04
+(2, -2, -2): 9.2327816e-04 0.0000000e+00
+thickness: 3423.03 gl: 226.80494 rotation: 44.22512
+corner: 1.25194 -2.91711
+GOF: 2.77784  func eval: 40
+Error: 2.755066418256916  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7352076e-02 7.9439876e-04
+(2, -2, -2): 9.2301407e-04 0.0000000e+00
+thickness: 3423.01 gl: 226.80495 rotation: 44.22512
+corner: 1.25168 -2.91711
+GOF: 2.77755  func eval: 75
+Error: 2.754787007316214  func eval: 75
+********************
+SF:
+(1, -1, -1): 4.7351300e-02 7.9296824e-04
+(2, -2, -2): 9.2234762e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80515 rotation: 44.22510
+corner: 1.25139 -2.91707
+GOF: 2.77792  func eval: 44
+Error: 2.7551479652279713  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7352073e-02 7.9425326e-04
+(2, -2, -2): 9.2331724e-04 0.0000000e+00
+thickness: 3423.01 gl: 226.80524 rotation: 44.22504
+corner: 1.25149 -2.91722
+GOF: 2.77813  func eval: 39
+Error: 2.7553588366899335  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7351513e-02 7.9417251e-04
+(2, -2, -2): 9.2308131e-04 0.0000000e+00
+thickness: 3423.04 gl: 226.80524 rotation: 44.22504
+corner: 1.25137 -2.91724
+GOF: 2.77774  func eval: 55
+Error: 2.754974865522541  func eval: 55
+********************
+SF:
+(1, -1, -1): 4.7352064e-02 7.9338715e-04
+(2, -2, -2): 9.2283871e-04 0.0000000e+00
+thickness: 3423.02 gl: 226.80513 rotation: 44.22498
+corner: 1.25150 -2.91749
+GOF: 2.77755  func eval: 40
+Error: 2.754785506451716  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7351646e-02 7.9430095e-04
+(2, -2, -2): 9.2345353e-04 0.0000000e+00
+thickness: 3423.03 gl: 226.80518 rotation: 44.22493
+corner: 1.25151 -2.91765
+GOF: 2.77748  func eval: 51
+Error: 2.754709462650487  func eval: 51
+********************
+SF:
+(1, -1, -1): 4.7351217e-02 7.9343290e-04
+(2, -2, -2): 9.2325737e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80535 rotation: 44.22498
+corner: 1.25161 -2.91779
+GOF: 2.77777  func eval: 38
+Error: 2.7549978787781764  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7351451e-02 7.9401843e-04
+(2, -2, -2): 9.2311799e-04 0.0000000e+00
+thickness: 3423.04 gl: 226.80533 rotation: 44.22498
+corner: 1.25155 -2.91779
+GOF: 2.77762  func eval: 63
+Error: 2.754854296074539  func eval: 63
+********************
+SF:
+(1, -1, -1): 4.7351279e-02 7.9358698e-04
+(2, -2, -2): 9.2322069e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80543 rotation: 44.22501
+corner: 1.25140 -2.91789
+GOF: 2.77772  func eval: 50
+Error: 2.7549538534195697  func eval: 50
+********************
+SF:
+(1, -1, -1): 4.7351415e-02 7.9392854e-04
+(2, -2, -2): 9.2313939e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80551 rotation: 44.22497
+corner: 1.25148 -2.91817
+GOF: 2.77783  func eval: 44
+Error: 2.7550579133580944  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7351226e-02 7.9410731e-04
+(2, -2, -2): 9.2337428e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80561 rotation: 44.22492
+corner: 1.25144 -2.91842
+GOF: 2.77762  func eval: 41
+Error: 2.754851294345543  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7351504e-02 7.9349810e-04
+(2, -2, -2): 9.2296440e-04 0.0000000e+00
+thickness: 3423.05 gl: 226.80561 rotation: 44.22487
+corner: 1.25144 -2.91837
+GOF: 2.77780  func eval: 78
+Error: 2.755035650534708  func eval: 78
+********************
+SF:
+(1, -1, -1): 4.7351096e-02 7.9391895e-04
+(2, -2, -2): 9.2315059e-04 0.0000000e+00
+thickness: 3423.06 gl: 226.80578 rotation: 44.22489
+corner: 1.25126 -2.91839
+GOF: 2.77771  func eval: 48
+Error: 2.754945848808914  func eval: 48
+********************
+SF:
+(1, -1, -1): 4.7350300e-02 7.9433274e-04
+(2, -2, -2): 9.2352937e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80579 rotation: 44.22489
+corner: 1.25133 -2.91853
+GOF: 2.77746  func eval: 54
+Error: 2.7546907018442623  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7350178e-02 7.9418775e-04
+(2, -2, -2): 9.2359570e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80592 rotation: 44.22496
+corner: 1.25127 -2.91853
+GOF: 2.77784  func eval: 43
+Error: 2.755066918545082  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350905e-02 7.9397495e-04
+(2, -2, -2): 9.2324332e-04 0.0000000e+00
+thickness: 3423.07 gl: 226.80586 rotation: 44.22496
+corner: 1.25141 -2.91851
+GOF: 2.77735  func eval: 54
+Error: 2.754582889744493  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7349834e-02 7.9391116e-04
+(2, -2, -2): 9.2328470e-04 0.0000000e+00
+thickness: 3423.12 gl: 226.80598 rotation: 44.22503
+corner: 1.25120 -2.91857
+GOF: 2.77738  func eval: 38
+Error: 2.754612156602203  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7350449e-02 7.9340467e-04
+(2, -2, -2): 9.2296650e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80598 rotation: 44.22494
+corner: 1.25090 -2.91865
+GOF: 2.77797  func eval: 49
+Error: 2.7552024966380637  func eval: 49
+********************
+SF:
+(1, -1, -1): 4.7350331e-02 7.9413939e-04
+(2, -2, -2): 9.2341210e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80598 rotation: 44.22494
+corner: 1.25084 -2.91865
+GOF: 2.77785  func eval: 84
+Error: 2.7550779248847337  func eval: 84
+********************
+SF:
+(1, -1, -1): 4.7350732e-02 7.9388997e-04
+(2, -2, -2): 9.2323414e-04 0.0000000e+00
+thickness: 3423.08 gl: 226.80612 rotation: 44.22486
+corner: 1.25095 -2.91872
+GOF: 2.77794  func eval: 39
+Error: 2.7551679767546107  func eval: 39
+********************
+SF:
+(1, -1, -1): 4.7350018e-02 7.9384744e-04
+(2, -2, -2): 9.2326173e-04 0.0000000e+00
+thickness: 3423.11 gl: 226.80612 rotation: 44.22486
+corner: 1.25095 -2.91872
+GOF: 2.77782  func eval: 102
+Error: 2.7550464067302767  func eval: 102
+********************
+SF:
+(1, -1, -1): 4.7350329e-02 7.9412849e-04
+(2, -2, -2): 9.2342484e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80598 rotation: 44.22486
+corner: 1.25095 -2.91872
+GOF: 2.77773  func eval: 84
+Error: 2.7549641093269726  func eval: 84
+********************
+SF:
+(1, -1, -1): 4.7349756e-02 7.9390733e-04
+(2, -2, -2): 9.2336743e-04 0.0000000e+00
+thickness: 3423.12 gl: 226.80621 rotation: 44.22490
+corner: 1.25095 -2.91883
+GOF: 2.77774  func eval: 38
+Error: 2.754976366387039  func eval: 38
+********************
+SF:
+(1, -1, -1): 4.7350296e-02 7.9398978e-04
+(2, -2, -2): 9.2341031e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80633 rotation: 44.22497
+corner: 1.25085 -2.91889
+GOF: 2.77733  func eval: 41
+Error: 2.7545656298027663  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350917e-02 7.9398486e-04
+(2, -2, -2): 9.2333319e-04 0.0000000e+00
+thickness: 3423.07 gl: 226.80614 rotation: 44.22487
+corner: 1.25102 -2.91906
+GOF: 2.77800  func eval: 40
+Error: 2.755226260325948  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7349998e-02 7.9392348e-04
+(2, -2, -2): 9.2336030e-04 0.0000000e+00
+thickness: 3423.11 gl: 226.80612 rotation: 44.22482
+corner: 1.25101 -2.91905
+GOF: 2.77752  func eval: 50
+Error: 2.754757740458504  func eval: 50
+********************
+SF:
+(1, -1, -1): 4.7350124e-02 7.9362701e-04
+(2, -2, -2): 9.2323275e-04 0.0000000e+00
+thickness: 3423.11 gl: 226.80613 rotation: 44.22477
+corner: 1.25098 -2.91905
+GOF: 2.77768  func eval: 62
+Error: 2.7549073266201334  func eval: 62
+********************
+SF:
+(1, -1, -1): 4.7350167e-02 7.9373149e-04
+(2, -2, -2): 9.2327277e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80620 rotation: 44.22487
+corner: 1.25134 -2.91918
+GOF: 2.77761  func eval: 41
+Error: 2.7548400378618085  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350286e-02 7.9402402e-04
+(2, -2, -2): 9.2338482e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80620 rotation: 44.22487
+corner: 1.25135 -2.91918
+GOF: 2.77759  func eval: 95
+Error: 2.754823278208248  func eval: 95
+********************
+SF:
+(1, -1, -1): 4.7350261e-02 7.9396308e-04
+(2, -2, -2): 9.2336148e-04 0.0000000e+00
+thickness: 3423.11 gl: 226.80621 rotation: 44.22489
+corner: 1.25121 -2.91908
+GOF: 2.77750  func eval: 47
+Error: 2.7547362280673666  func eval: 47
+********************
+SF:
+(1, -1, -1): 4.7350630e-02 7.9385843e-04
+(2, -2, -2): 9.2329808e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80611 rotation: 44.22484
+corner: 1.25116 -2.91892
+GOF: 2.77735  func eval: 42
+Error: 2.754582139312244  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350613e-02 7.9374906e-04
+(2, -2, -2): 9.2325464e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80619 rotation: 44.22492
+corner: 1.25135 -2.91915
+GOF: 2.77765  func eval: 50
+Error: 2.754882562355917  func eval: 50
+********************
+SF:
+(1, -1, -1): 4.7350334e-02 7.9391849e-04
+(2, -2, -2): 9.2333922e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80608 rotation: 44.22493
+corner: 1.25128 -2.91892
+GOF: 2.77757  func eval: 44
+Error: 2.7548017658171107  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7350325e-02 7.9389985e-04
+(2, -2, -2): 9.2334547e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80608 rotation: 44.22493
+corner: 1.25147 -2.91894
+GOF: 2.77779  func eval: 77
+Error: 2.7550243940509733  func eval: 77
+********************
+SF:
+(1, -1, -1): 4.7350548e-02 7.9381229e-04
+(2, -2, -2): 9.2327065e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80600 rotation: 44.22493
+corner: 1.25143 -2.91892
+GOF: 2.77742  func eval: 54
+Error: 2.7546546810963113  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7350303e-02 7.9388205e-04
+(2, -2, -2): 9.2331291e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80610 rotation: 44.22492
+corner: 1.25130 -2.91883
+GOF: 2.77783  func eval: 44
+Error: 2.7550579133580944  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7350537e-02 7.9373938e-04
+(2, -2, -2): 9.2324169e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80596 rotation: 44.22493
+corner: 1.25119 -2.91852
+GOF: 2.77742  func eval: 54
+Error: 2.7546551813844773  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7350655e-02 7.9361460e-04
+(2, -2, -2): 9.2313995e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80590 rotation: 44.22486
+corner: 1.25120 -2.91853
+GOF: 2.77796  func eval: 63
+Error: 2.7551939917392416  func eval: 63
+********************
+SF:
+(1, -1, -1): 4.7350394e-02 7.9384042e-04
+(2, -2, -2): 9.2330265e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80586 rotation: 44.22496
+corner: 1.25131 -2.91831
+GOF: 2.77778  func eval: 49
+Error: 2.755013637855405  func eval: 49
+********************
+SF:
+(1, -1, -1): 4.7350586e-02 7.9367402e-04
+(2, -2, -2): 9.2318277e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80596 rotation: 44.22485
+corner: 1.25072 -2.91817
+GOF: 2.77779  func eval: 46
+Error: 2.7550213923219773  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350434e-02 7.9380576e-04
+(2, -2, -2): 9.2327767e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80588 rotation: 44.22495
+corner: 1.25095 -2.91836
+GOF: 2.77768  func eval: 40
+Error: 2.754912329501793  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350546e-02 7.9370869e-04
+(2, -2, -2): 9.2320774e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80588 rotation: 44.22491
+corner: 1.25100 -2.91836
+GOF: 2.77785  func eval: 71
+Error: 2.7550789254610657  func eval: 71
+********************
+SF:
+(1, -1, -1): 4.7350457e-02 7.9378554e-04
+(2, -2, -2): 9.2326310e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80591 rotation: 44.22499
+corner: 1.25106 -2.91849
+GOF: 2.77771  func eval: 40
+Error: 2.7549373439100924  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350494e-02 7.9378153e-04
+(2, -2, -2): 9.2325236e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80600 rotation: 44.22494
+corner: 1.25150 -2.91879
+GOF: 2.77758  func eval: 40
+Error: 2.7548115214363476  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350486e-02 7.9373292e-04
+(2, -2, -2): 9.2323305e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80604 rotation: 44.22496
+corner: 1.25135 -2.91879
+GOF: 2.77777  func eval: 53
+Error: 2.7550048828125  func eval: 53
+********************
+SF:
+(1, -1, -1): 4.7350418e-02 7.9377717e-04
+(2, -2, -2): 9.2325704e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22486
+corner: 1.25106 -2.91877
+GOF: 2.77763  func eval: 48
+Error: 2.7548597992443646  func eval: 48
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9378622e-04
+(2, -2, -2): 9.2325041e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80605 rotation: 44.22484
+corner: 1.25096 -2.91869
+GOF: 2.77786  func eval: 42
+Error: 2.755091432665215  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350464e-02 7.9374402e-04
+(2, -2, -2): 9.2323667e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80609 rotation: 44.22484
+corner: 1.25095 -2.91869
+GOF: 2.77781  func eval: 80
+Error: 2.755038402119621  func eval: 80
+********************
+SF:
+(1, -1, -1): 4.7350458e-02 7.9376102e-04
+(2, -2, -2): 9.2324017e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80602 rotation: 44.22489
+corner: 1.25109 -2.91874
+GOF: 2.77775  func eval: 40
+Error: 2.7549823698450306  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350407e-02 7.9375812e-04
+(2, -2, -2): 9.2324329e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22495
+corner: 1.25101 -2.91865
+GOF: 2.77796  func eval: 46
+Error: 2.755185987128586  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350453e-02 7.9372862e-04
+(2, -2, -2): 9.2322730e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80607 rotation: 44.22491
+corner: 1.25121 -2.91863
+GOF: 2.77796  func eval: 64
+Error: 2.755188488569416  func eval: 64
+********************
+SF:
+(1, -1, -1): 4.7350381e-02 7.9376415e-04
+(2, -2, -2): 9.2323887e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80589 rotation: 44.22491
+corner: 1.25107 -2.91860
+GOF: 2.77735  func eval: 46
+Error: 2.754581138735912  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350409e-02 7.9373866e-04
+(2, -2, -2): 9.2321992e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80592 rotation: 44.22507
+corner: 1.25106 -2.91860
+GOF: 2.77749  func eval: 58
+Error: 2.754722470142802  func eval: 58
+********************
+SF:
+(1, -1, -1): 4.7350326e-02 7.9372086e-04
+(2, -2, -2): 9.2320955e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80608 rotation: 44.22498
+corner: 1.25101 -2.91849
+GOF: 2.77772  func eval: 54
+Error: 2.754952602699155  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7350353e-02 7.9372923e-04
+(2, -2, -2): 9.2321593e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22502
+corner: 1.25124 -2.91849
+GOF: 2.77771  func eval: 60
+Error: 2.754941096071337  func eval: 60
+********************
+SF:
+(1, -1, -1): 4.7350430e-02 7.9375265e-04
+(2, -2, -2): 9.2323379e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80607 rotation: 44.22505
+corner: 1.25120 -2.91830
+GOF: 2.77818  func eval: 60
+Error: 2.755404613057121  func eval: 60
+********************
+SF:
+(1, -1, -1): 4.7350369e-02 7.9373411e-04
+(2, -2, -2): 9.2321965e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80597 rotation: 44.22505
+corner: 1.25120 -2.91830
+GOF: 2.77793  func eval: 85
+Error: 2.75516122286437  func eval: 85
+********************
+SF:
+(1, -1, -1): 4.7350382e-02 7.9374943e-04
+(2, -2, -2): 9.2323117e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80589 rotation: 44.22499
+corner: 1.25109 -2.91856
+GOF: 2.77750  func eval: 43
+Error: 2.754730224609375  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350401e-02 7.9373245e-04
+(2, -2, -2): 9.2321854e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80607 rotation: 44.22497
+corner: 1.25105 -2.91856
+GOF: 2.77752  func eval: 58
+Error: 2.754751486856429  func eval: 58
+********************
+SF:
+(1, -1, -1): 4.7350364e-02 7.9372615e-04
+(2, -2, -2): 9.2321588e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80606 rotation: 44.22495
+corner: 1.25113 -2.91839
+GOF: 2.77759  func eval: 56
+Error: 2.7548272805135756  func eval: 56
+********************
+SF:
+(1, -1, -1): 4.7350415e-02 7.9374177e-04
+(2, -2, -2): 9.2322779e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80588 rotation: 44.22499
+corner: 1.25109 -2.91847
+GOF: 2.77775  func eval: 52
+Error: 2.7549818695568646  func eval: 52
+********************
+SF:
+(1, -1, -1): 4.7350375e-02 7.9372941e-04
+(2, -2, -2): 9.2321836e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80601 rotation: 44.22498
+corner: 1.25127 -2.91849
+GOF: 2.77801  func eval: 54
+Error: 2.75524402055584  func eval: 54
+********************
+SF:
+(1, -1, -1): 4.7350383e-02 7.9373962e-04
+(2, -2, -2): 9.2322604e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80595 rotation: 44.22500
+corner: 1.25131 -2.91861
+GOF: 2.77719  func eval: 53
+Error: 2.754423047675461  func eval: 53
+********************
+SF:
+(1, -1, -1): 4.7350396e-02 7.9372830e-04
+(2, -2, -2): 9.2321762e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80606 rotation: 44.22499
+corner: 1.25129 -2.91861
+GOF: 2.77802  func eval: 53
+Error: 2.755246772140753  func eval: 53
+********************
+SF:
+(1, -1, -1): 4.7350371e-02 7.9372410e-04
+(2, -2, -2): 9.2321585e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22496
+corner: 1.25154 -2.91873
+GOF: 2.77752  func eval: 41
+Error: 2.7547507364241803  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350364e-02 7.9372752e-04
+(2, -2, -2): 9.2322083e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80602 rotation: 44.22501
+corner: 1.25128 -2.91888
+GOF: 2.77751  func eval: 42
+Error: 2.7547429819576075  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350384e-02 7.9373400e-04
+(2, -2, -2): 9.2322592e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80616 rotation: 44.22511
+corner: 1.25128 -2.91896
+GOF: 2.77748  func eval: 45
+Error: 2.7547119640913165  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350405e-02 7.9373490e-04
+(2, -2, -2): 9.2322434e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80625 rotation: 44.22498
+corner: 1.25111 -2.91888
+GOF: 2.77794  func eval: 42
+Error: 2.7551654753137806  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350372e-02 7.9372906e-04
+(2, -2, -2): 9.2322156e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80615 rotation: 44.22491
+corner: 1.25117 -2.91892
+GOF: 2.77779  func eval: 40
+Error: 2.7550258949154713  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350385e-02 7.9372655e-04
+(2, -2, -2): 9.2321920e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80605 rotation: 44.22492
+corner: 1.25124 -2.91876
+GOF: 2.77757  func eval: 45
+Error: 2.7548062684106047  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350384e-02 7.9373587e-04
+(2, -2, -2): 9.2322596e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80605 rotation: 44.22492
+corner: 1.25124 -2.91874
+GOF: 2.77759  func eval: 74
+Error: 2.754823778496414  func eval: 74
+********************
+SF:
+(1, -1, -1): 4.7350370e-02 7.9373156e-04
+(2, -2, -2): 9.2322257e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80606 rotation: 44.22493
+corner: 1.25124 -2.91874
+GOF: 2.77758  func eval: 73
+Error: 2.754814523165343  func eval: 73
+********************
+SF:
+(1, -1, -1): 4.7350375e-02 7.9372928e-04
+(2, -2, -2): 9.2321925e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80606 rotation: 44.22493
+corner: 1.25124 -2.91874
+GOF: 2.77824  func eval: 105
+Error: 2.7554686499423666  func eval: 105
+********************
+SF:
+(1, -1, -1): 4.7350382e-02 7.9373450e-04
+(2, -2, -2): 9.2322456e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80599 rotation: 44.22487
+corner: 1.25123 -2.91893
+GOF: 2.77756  func eval: 45
+Error: 2.754789008468878  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350396e-02 7.9373556e-04
+(2, -2, -2): 9.2322398e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80600 rotation: 44.22487
+corner: 1.25123 -2.91891
+GOF: 2.77758  func eval: 74
+Error: 2.754815523741675  func eval: 74
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373239e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80600 rotation: 44.22485
+corner: 1.25129 -2.91897
+GOF: 2.77708  func eval: 52
+Error: 2.7543154857197747  func eval: 52
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9374446e-04
+(2, -2, -2): 9.2322977e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80605 rotation: 44.22490
+corner: 1.25124 -2.91903
+GOF: 2.77741  func eval: 41
+Error: 2.7546441750448256  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350375e-02 7.9374315e-04
+(2, -2, -2): 9.2322789e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80609 rotation: 44.22491
+corner: 1.25117 -2.91896
+GOF: 2.77798  func eval: 42
+Error: 2.755214003265881  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350380e-02 7.9373630e-04
+(2, -2, -2): 9.2322526e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80606 rotation: 44.22490
+corner: 1.25114 -2.91893
+GOF: 2.77741  func eval: 63
+Error: 2.75464367475666  func eval: 63
+********************
+SF:
+(1, -1, -1): 4.7350384e-02 7.9372775e-04
+(2, -2, -2): 9.2321967e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80611 rotation: 44.22488
+corner: 1.25138 -2.91901
+GOF: 2.77777  func eval: 43
+Error: 2.7549973784900104  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9374098e-04
+(2, -2, -2): 9.2322767e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80611 rotation: 44.22496
+corner: 1.25164 -2.91927
+GOF: 2.77720  func eval: 45
+Error: 2.7544370557441087  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373903e-04
+(2, -2, -2): 9.2322579e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80602 rotation: 44.22494
+corner: 1.25153 -2.91890
+GOF: 2.77729  func eval: 46
+Error: 2.7545251064613216  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373846e-04
+(2, -2, -2): 9.2322568e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80590 rotation: 44.22491
+corner: 1.25150 -2.91883
+GOF: 2.77802  func eval: 51
+Error: 2.755244520844006  func eval: 51
+********************
+SF:
+(1, -1, -1): 4.7350381e-02 7.9373721e-04
+(2, -2, -2): 9.2322498e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80598 rotation: 44.22495
+corner: 1.25140 -2.91875
+GOF: 2.77795  func eval: 42
+Error: 2.755183985975922  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373812e-04
+(2, -2, -2): 9.2322606e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80592 rotation: 44.22497
+corner: 1.25135 -2.91892
+GOF: 2.77782  func eval: 46
+Error: 2.7550461565861935  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350379e-02 7.9373500e-04
+(2, -2, -2): 9.2322446e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80612 rotation: 44.22499
+corner: 1.25133 -2.91873
+GOF: 2.77760  func eval: 56
+Error: 2.7548302822425716  func eval: 56
+********************
+SF:
+(1, -1, -1): 4.7350374e-02 7.9373313e-04
+(2, -2, -2): 9.2322394e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80602 rotation: 44.22495
+corner: 1.25150 -2.91893
+GOF: 2.77787  func eval: 41
+Error: 2.7551049404456966  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350375e-02 7.9373398e-04
+(2, -2, -2): 9.2322416e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22494
+corner: 1.25151 -2.91889
+GOF: 2.77785  func eval: 61
+Error: 2.7550811767578125  func eval: 61
+********************
+SF:
+(1, -1, -1): 4.7350379e-02 7.9373636e-04
+(2, -2, -2): 9.2322476e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80597 rotation: 44.22496
+corner: 1.25133 -2.91877
+GOF: 2.77742  func eval: 45
+Error: 2.7546496782146517  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350379e-02 7.9373105e-04
+(2, -2, -2): 9.2322199e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80600 rotation: 44.22502
+corner: 1.25142 -2.91858
+GOF: 2.77763  func eval: 43
+Error: 2.7548638015496927  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350379e-02 7.9373252e-04
+(2, -2, -2): 9.2322284e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80592 rotation: 44.22499
+corner: 1.25133 -2.91874
+GOF: 2.77747  func eval: 40
+Error: 2.754700707607582  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373252e-04
+(2, -2, -2): 9.2322252e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80603 rotation: 44.22496
+corner: 1.25127 -2.91875
+GOF: 2.77769  func eval: 44
+Error: 2.7549208344006146  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373448e-04
+(2, -2, -2): 9.2322405e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80613 rotation: 44.22496
+corner: 1.25126 -2.91896
+GOF: 2.77778  func eval: 55
+Error: 2.7550148885758197  func eval: 55
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373504e-04
+(2, -2, -2): 9.2322413e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80637 rotation: 44.22496
+corner: 1.25078 -2.91873
+GOF: 2.77763  func eval: 53
+Error: 2.7548623006851947  func eval: 53
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373248e-04
+(2, -2, -2): 9.2322285e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80627 rotation: 44.22499
+corner: 1.25098 -2.91881
+GOF: 2.77741  func eval: 43
+Error: 2.7546451756211576  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373413e-04
+(2, -2, -2): 9.2322392e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80612 rotation: 44.22500
+corner: 1.25106 -2.91878
+GOF: 2.77742  func eval: 56
+Error: 2.7546494280705685  func eval: 56
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373096e-04
+(2, -2, -2): 9.2322229e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80612 rotation: 44.22497
+corner: 1.25106 -2.91882
+GOF: 2.77771  func eval: 71
+Error: 2.754938094342341  func eval: 71
+********************
+SF:
+(1, -1, -1): 4.7350378e-02 7.9373419e-04
+(2, -2, -2): 9.2322375e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80646 rotation: 44.22497
+corner: 1.25106 -2.91919
+GOF: 2.77753  func eval: 70
+Error: 2.754762493196081  func eval: 70
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373181e-04
+(2, -2, -2): 9.2322267e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80632 rotation: 44.22486
+corner: 1.25102 -2.91901
+GOF: 2.77763  func eval: 42
+Error: 2.7548602995325306  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373369e-04
+(2, -2, -2): 9.2322352e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80605 rotation: 44.22489
+corner: 1.25117 -2.91895
+GOF: 2.77769  func eval: 50
+Error: 2.7549235859855274  func eval: 50
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373245e-04
+(2, -2, -2): 9.2322285e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80616 rotation: 44.22502
+corner: 1.25141 -2.91886
+GOF: 2.77741  func eval: 43
+Error: 2.7546451756211576  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373355e-04
+(2, -2, -2): 9.2322357e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80616 rotation: 44.22502
+corner: 1.25141 -2.91886
+GOF: 2.77806  func eval: 117
+Error: 2.7552885462026127  func eval: 117
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373359e-04
+(2, -2, -2): 9.2322345e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80616 rotation: 44.22497
+corner: 1.25144 -2.91917
+GOF: 2.77766  func eval: 53
+Error: 2.7548908171106556  func eval: 53
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373207e-04
+(2, -2, -2): 9.2322254e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80618 rotation: 44.22495
+corner: 1.25144 -2.91904
+GOF: 2.77769  func eval: 60
+Error: 2.754917332383453  func eval: 60
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373238e-04
+(2, -2, -2): 9.2322275e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80609 rotation: 44.22507
+corner: 1.25143 -2.91856
+GOF: 2.77789  func eval: 49
+Error: 2.7551159467853483  func eval: 49
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373243e-04
+(2, -2, -2): 9.2322285e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80599 rotation: 44.22502
+corner: 1.25133 -2.91879
+GOF: 2.77708  func eval: 41
+Error: 2.7543154857197747  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373319e-04
+(2, -2, -2): 9.2322325e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80627 rotation: 44.22502
+corner: 1.25090 -2.91861
+GOF: 2.77772  func eval: 47
+Error: 2.7549548539959017  func eval: 47
+********************
+SF:
+(1, -1, -1): 4.7350377e-02 7.9373316e-04
+(2, -2, -2): 9.2322333e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80614 rotation: 44.22502
+corner: 1.25090 -2.91861
+GOF: 2.77754  func eval: 85
+Error: 2.754770497806737  func eval: 85
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373213e-04
+(2, -2, -2): 9.2322278e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80607 rotation: 44.22501
+corner: 1.25098 -2.91885
+GOF: 2.77767  func eval: 45
+Error: 2.7549063260438014  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373235e-04
+(2, -2, -2): 9.2322288e-04 0.0000000e+00
+thickness: 3423.09 gl: 226.80626 rotation: 44.22493
+corner: 1.25098 -2.91886
+GOF: 2.77777  func eval: 60
+Error: 2.755003381948002  func eval: 60
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373242e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80617 rotation: 44.22483
+corner: 1.25095 -2.91887
+GOF: 2.77708  func eval: 51
+Error: 2.7543154857197747  func eval: 51
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373291e-04
+(2, -2, -2): 9.2322317e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80629 rotation: 44.22484
+corner: 1.25095 -2.91887
+GOF: 2.77758  func eval: 90
+Error: 2.754817274750256  func eval: 90
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373292e-04
+(2, -2, -2): 9.2322312e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80627 rotation: 44.22497
+corner: 1.25090 -2.91894
+GOF: 2.77782  func eval: 46
+Error: 2.7550524101882683  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373222e-04
+(2, -2, -2): 9.2322280e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80626 rotation: 44.22497
+corner: 1.25125 -2.91897
+GOF: 2.77768  func eval: 55
+Error: 2.754910578493212  func eval: 55
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373237e-04
+(2, -2, -2): 9.2322287e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80639 rotation: 44.22494
+corner: 1.25090 -2.91908
+GOF: 2.77777  func eval: 47
+Error: 2.755003632092085  func eval: 47
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373241e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80658 rotation: 44.22494
+corner: 1.25075 -2.91907
+GOF: 2.77708  func eval: 58
+Error: 2.7543154857197747  func eval: 58
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373273e-04
+(2, -2, -2): 9.2322307e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80626 rotation: 44.22481
+corner: 1.25085 -2.91898
+GOF: 2.77793  func eval: 45
+Error: 2.755158221135374  func eval: 45
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373275e-04
+(2, -2, -2): 9.2322303e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80612 rotation: 44.22482
+corner: 1.25094 -2.91886
+GOF: 2.77758  func eval: 43
+Error: 2.7548117715804303  func eval: 43
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373230e-04
+(2, -2, -2): 9.2322276e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80622 rotation: 44.22493
+corner: 1.25093 -2.91890
+GOF: 2.77756  func eval: 41
+Error: 2.754792760630123  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373198e-04
+(2, -2, -2): 9.2322262e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80629 rotation: 44.22497
+corner: 1.25117 -2.91899
+GOF: 2.77755  func eval: 42
+Error: 2.754787007316214  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373223e-04
+(2, -2, -2): 9.2322279e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80630 rotation: 44.22498
+corner: 1.25109 -2.91908
+GOF: 2.77768  func eval: 52
+Error: 2.754910328349129  func eval: 52
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373228e-04
+(2, -2, -2): 9.2322277e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80632 rotation: 44.22500
+corner: 1.25109 -2.91908
+GOF: 2.77756  func eval: 66
+Error: 2.754792260341957  func eval: 66
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373224e-04
+(2, -2, -2): 9.2322279e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80633 rotation: 44.22495
+corner: 1.25094 -2.91908
+GOF: 2.77768  func eval: 62
+Error: 2.754910328349129  func eval: 62
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373227e-04
+(2, -2, -2): 9.2322277e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80633 rotation: 44.22495
+corner: 1.25094 -2.91908
+GOF: 2.77756  func eval: 91
+Error: 2.754792260341957  func eval: 91
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373240e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80630 rotation: 44.22490
+corner: 1.25107 -2.91930
+GOF: 2.77708  func eval: 40
+Error: 2.7543154857197747  func eval: 40
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373212e-04
+(2, -2, -2): 9.2322270e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80631 rotation: 44.22491
+corner: 1.25107 -2.91930
+GOF: 2.77792  func eval: 84
+Error: 2.7551454637871413  func eval: 84
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373232e-04
+(2, -2, -2): 9.2322280e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80631 rotation: 44.22491
+corner: 1.25107 -2.91930
+GOF: 2.77796  func eval: 101
+Error: 2.755191240154329  func eval: 101
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373229e-04
+(2, -2, -2): 9.2322281e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80633 rotation: 44.22491
+corner: 1.25107 -2.91930
+GOF: 2.77796  func eval: 81
+Error: 2.755191240154329  func eval: 81
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373231e-04
+(2, -2, -2): 9.2322280e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80632 rotation: 44.22495
+corner: 1.25107 -2.91931
+GOF: 2.77796  func eval: 57
+Error: 2.755191240154329  func eval: 57
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373240e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80636 rotation: 44.22489
+corner: 1.25115 -2.91931
+GOF: 2.77708  func eval: 46
+Error: 2.7543152355756915  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373221e-04
+(2, -2, -2): 9.2322275e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80617 rotation: 44.22486
+corner: 1.25120 -2.91913
+GOF: 2.77756  func eval: 44
+Error: 2.754791760053791  func eval: 44
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373234e-04
+(2, -2, -2): 9.2322282e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80609 rotation: 44.22491
+corner: 1.25125 -2.91900
+GOF: 2.77749  func eval: 42
+Error: 2.7547197185578893  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373254e-04
+(2, -2, -2): 9.2322294e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80641 rotation: 44.22497
+corner: 1.25121 -2.91913
+GOF: 2.77777  func eval: 41
+Error: 2.7550048828125  func eval: 41
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373228e-04
+(2, -2, -2): 9.2322279e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80622 rotation: 44.22493
+corner: 1.25121 -2.91905
+GOF: 2.77796  func eval: 46
+Error: 2.755191240154329  func eval: 46
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373239e-04
+(2, -2, -2): 9.2322286e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80618 rotation: 44.22487
+corner: 1.25118 -2.91912
+GOF: 2.77708  func eval: 42
+Error: 2.7543154857197747  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373236e-04
+(2, -2, -2): 9.2322283e-04 0.0000000e+00
+thickness: 3423.11 gl: 226.80619 rotation: 44.22497
+corner: 1.25133 -2.91912
+GOF: 2.77749  func eval: 57
+Error: 2.7547197185578893  func eval: 57
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373227e-04
+(2, -2, -2): 9.2322279e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80617 rotation: 44.22493
+corner: 1.25101 -2.91867
+GOF: 2.77796  func eval: 47
+Error: 2.755191240154329  func eval: 47
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373250e-04
+(2, -2, -2): 9.2322291e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80617 rotation: 44.22493
+corner: 1.25101 -2.91867
+GOF: 2.77769  func eval: 113
+Error: 2.7549235859855274  func eval: 113
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373245e-04
+(2, -2, -2): 9.2322289e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80596 rotation: 44.22487
+corner: 1.25096 -2.91873
+GOF: 2.77741  func eval: 51
+Error: 2.7546451756211576  func eval: 51
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373247e-04
+(2, -2, -2): 9.2322290e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80614 rotation: 44.22487
+corner: 1.25096 -2.91873
+GOF: 2.77769  func eval: 77
+Error: 2.7549235859855274  func eval: 77
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373238e-04
+(2, -2, -2): 9.2322285e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80620 rotation: 44.22495
+corner: 1.25104 -2.91885
+GOF: 2.77708  func eval: 42
+Error: 2.7543154857197747  func eval: 42
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373233e-04
+(2, -2, -2): 9.2322282e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80611 rotation: 44.22496
+corner: 1.25107 -2.91885
+GOF: 2.77749  func eval: 57
+Error: 2.7547194684138065  func eval: 57
+********************
+SF:
+(1, -1, -1): 4.7350376e-02 7.9373243e-04
+(2, -2, -2): 9.2322287e-04 0.0000000e+00
+thickness: 3423.10 gl: 226.80617 rotation: 44.22494
+corner: 1.25082 -2.91884
+GOF: 2.77708  func eval: 49
+Error: 2.7543154857197747  func eval: 49
+********************
+Optimization terminated successfully.
+         Current function value: 2.777078
+         Iterations: 98
+         Function evaluations: 233
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">fine</span><span class="o">.</span><span class="n">display</span><span class="p">([</span><span class="mi">0</span><span class="p">,])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1, -1, -1): U 0.0473504 UA 0.0007937
+(2, -2, -2): U 0.0009232 UA 0.0000000
+Chi Square background for each disk: 2.77708
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([array([[[ 122.603516,   87.00329 ,   72.371346,   53.09177 ,
+             25.50181 ,   51.780037,   61.017807,   97.8967  ,
+            105.329384,  159.33693 ,  170.13115 ,  115.242134,
+             98.43761 ,   51.90651 ,   58.070084,   92.55951 ,
+            128.23131 ,   93.8825  ,   71.29088 ,   51.915596,
+             67.487495,   88.19801 ,  138.54913 ,  174.19174 ,
+            135.16019 ,  102.675415,   69.48671 ,   43.05283 ,
+             36.499447,   70.69781 ,   91.27959 ,  120.781624,
+            123.13015 ,  146.33473 ,  132.49521 ,   96.51876 ,
+             77.12936 ,   52.317577,   39.6853  ,   79.50824 ,
+             92.224724,  114.14242 ,  134.35925 ,  136.80196 ,
+            146.2433  ,  103.56879 ,   84.94141 ,   83.56645 ,
+             50.260094,   51.470497,   63.311462,   70.85064 ,
+             81.03875 ,   79.73408 ,   96.99628 ,  118.62076 ,
+            165.31316 ,  148.82146 ,   92.11967 ,   77.75542 ,
+             40.98478 ,   58.468098,   81.75309 ,  148.55745 ,
+            189.33308 ,  183.73148 ,  228.12004 ,  184.66045 ,
+            114.81267 ,   81.60892 ,   62.68261 ,   54.681995,
+             97.26853 ,  141.38297 ,  153.47113 ,  179.68564 ,
+            195.61057 ,  231.16522 ,  231.02155 ,  175.81935 ,
+            165.32924 ,  218.65619 ,  224.25987 ,  221.18678 ,
+            179.59038 ,  132.08557 ,  111.722145,   84.438866,
+             85.74762 ,  115.75576 ,  182.96616 ,  247.9766  ,
+            317.68796 ,  323.16467 ,  299.4425  ,  237.1481  ,
+            136.38841 ,   73.68668 ,   60.43006 ,  125.16873 ,
+            221.37296 ]],
+
+         [[1820.4485  , 2140.5452  , 2386.7468  , 2238.4229  ,
+           1959.2672  , 1731.2318  , 1355.9625  , 1182.9989  ,
+           1087.6776  , 1151.8779  , 1294.0853  , 1580.1648  ,
+           1805.3809  , 2010.2535  , 2011.7526  , 1924.1501  ,
+           1895.0332  , 1721.257   , 1575.5139  , 1535.5659  ,
+           1537.1924  , 1368.2832  , 1394.2201  , 1282.5874  ,
+           1380.5808  , 1325.1322  , 1405.5564  , 1288.25    ,
+           1223.18    , 1107.4253  ,  958.0341  ,  851.3041  ,
+            827.04736 ,  619.6608  ,  495.1052  ,  689.7158  ,
+           1084.4878  , 1429.483   , 1568.4971  , 1629.558   ,
+           1497.0848  , 1285.2081  , 1103.5646  , 1020.0726  ,
+            774.6516  ,  736.18506 ,  793.1433  ,  861.46515 ,
+            820.00256 ,  786.0028  ,  733.22614 ,  701.975   ,
+            710.4874  ,  789.18677 ,  936.35144 , 1035.4584  ,
+           1096.8982  , 1191.449   , 1335.6816  , 1352.4839  ,
+           1482.5934  , 1545.2456  , 1678.3258  , 1672.1754  ,
+           1762.8917  , 1713.9331  , 1680.3196  , 1683.3949  ,
+           1566.2986  , 1597.0269  , 1661.9324  , 1570.1489  ,
+           1614.0543  , 1531.3452  , 1451.9653  , 1309.2035  ,
+           1246.295   , 1073.253   ,  840.1099  ,  855.3639  ,
+           1093.1389  , 1282.5371  , 1290.5367  , 1284.3046  ,
+           1219.8186  , 1264.0919  , 1309.5571  , 1129.8673  ,
+            699.7466  ,  603.9517  ,  891.1947  ,  999.5767  ,
+           1060.0048  , 1033.4026  , 1145.272   , 1253.9694  ,
+           1334.0306  , 1537.3655  , 1559.0723  , 1615.6912  ,
+           1593.5994  ]],
+
+         [[ 199.65878 ,  127.66763 ,   91.919395,  128.6348  ,
+            266.10385 ,  416.80405 ,  618.7283  ,  727.67883 ,
+            745.7643  ,  771.47986 ,  739.93176 ,  589.7903  ,
+            533.1396  ,  502.5632  ,  470.06067 ,  415.37827 ,
+            400.96298 ,  409.06396 ,  355.00317 ,  250.16019 ,
+            246.46416 ,  249.38615 ,  340.4285  ,  419.6063  ,
+            461.74283 ,  457.20407 ,  478.4327  ,  527.39386 ,
+            490.3526  ,  481.7994  ,  393.96368 ,  321.5917  ,
+            212.62332 ,   82.64336 ,   53.547756,   77.19317 ,
+             49.91464 ,   38.59841 ,   38.962563,   35.464695,
+             49.516327,   90.87788 ,  153.64487 ,  226.35828 ,
+            341.73383 ,  494.74466 ,  667.15466 ,  771.80164 ,
+            813.14197 ,  815.5745  ,  797.74646 ,  732.03186 ,
+            615.01056 ,  584.54816 ,  592.6741  ,  502.55994 ,
+            518.0176  ,  468.6956  ,  416.50238 ,  331.02695 ,
+            220.2927  ,  145.14522 ,   80.522316,   48.909916,
+             47.2736  ,   38.25071 ,   42.98317 ,   35.83755 ,
+             61.88539 ,   68.25069 ,  119.05301 ,  173.88556 ,
+            265.92804 ,  316.92032 ,  333.26538 ,  408.3887  ,
+            388.85327 ,  380.34055 ,  363.9133  ,  217.8657  ,
+            185.91548 ,  205.4036  ,  247.57173 ,  242.06158 ,
+            231.64029 ,  186.45306 ,  128.4928  ,  264.89    ,
+            615.089   ,  835.5399  ,  655.16455 ,  463.02615 ,
+            338.64163 ,  254.29971 ,  165.69432 ,   82.95515 ,
+             69.84661 ,   46.949795,   34.490475,   35.05229 ,
+             50.78897 ]],
+
+         [[ 288.52863 ,  129.623   ,   67.24693 ,  105.36426 ,
+            211.8171  ,  398.5419  ,  608.4718  ,  673.5344  ,
+            696.57806 ,  620.81555 ,  425.07852 ,  274.33606 ,
+            152.32552 ,   53.991505,   59.359055,  101.01527 ,
+            197.87143 ,  304.20593 ,  398.93127 ,  458.87494 ,
+            485.5521  ,  435.95557 ,  364.5783  ,  241.09073 ,
+            168.67657 ,   91.102684,   51.52268 ,   74.04592 ,
+            177.04074 ,  317.53317 ,  519.28174 ,  712.2876  ,
+            753.2404  ,  889.9586  ,  682.9885  ,  480.6999  ,
+            220.37299 ,   92.56577 ,   66.971855,  127.56972 ,
+            297.81595 ,  498.22043 ,  491.514   ,  399.2525  ,
+            327.22968 ,  252.07977 ,  174.44264 ,  106.03961 ,
+            119.144554,  203.51248 ,  332.6474  ,  406.79425 ,
+            456.70538 ,  387.0662  ,  291.23706 ,  144.87712 ,
+             87.14331 ,   54.070705,   79.9953  ,  140.4839  ,
+            155.23772 ,  191.97093 ,  163.99522 ,  113.25364 ,
+             62.221783,   38.323017,   35.00781 ,   74.20661 ,
+             86.87965 ,  151.89136 ,  146.87262 ,  153.56622 ,
+            118.95718 ,   70.98523 ,   40.97527 ,   52.079403,
+             82.63411 ,  106.9497  ,  127.79898 ,   95.713135,
+             90.98989 ,  138.06592 ,  150.85779 ,  144.9869  ,
+            127.09086 ,   96.5981  ,   53.761707,   60.116   ,
+             40.16122 ,   59.221565,   70.237144,   59.585888,
+             41.92397 ,   53.70883 ,   45.48108 ,   50.26182 ,
+             41.52954 ,   31.269571,   35.09225 ,   40.76834 ,
+             40.179234]]], dtype=float32),
+  array([[[ 142.26016 ,  154.57864 ,  164.12625 ,  110.88151 ,
+             69.842735,   51.47897 ,   39.511616,   21.579521,
+             40.583412,   51.043896,   62.309048,  106.509415,
+            134.73131 ,  167.75238 ,  132.25676 ,  109.973755,
+             57.450596,   67.26299 ,   70.86047 ,   79.311386,
+            103.34591 ,  108.84471 ,   76.95023 ,   42.939453,
+             42.858875,   72.60763 ,   82.02833 ,  120.62427 ,
+            116.01903 ,  128.45735 ,  100.40269 ,   78.95866 ,
+             42.77066 ,   33.24228 ,   37.47767 ,   74.12555 ,
+             98.17761 ,  121.59405 ,  142.61119 ,  160.4688  ,
+            161.25385 ,  135.34402 ,  108.52589 ,   67.23294 ,
+             43.99107 ,   39.58278 ,   57.135937,  131.40498 ,
+            158.06084 ,  168.71716 ,  197.43748 ,  193.79124 ,
+            194.5408  ,  140.94574 ,  105.31594 ,   77.59005 ,
+             55.02525 ,   43.132504,   72.51253 ,  118.74829 ,
+            155.32036 ,  167.723   ,  160.02563 ,  172.14934 ,
+            178.13611 ,  144.22955 ,   90.10339 ,   90.03858 ,
+             77.430885,   55.819656,   60.781628,   94.29447 ,
+            139.18748 ,  203.68819 ,  227.5372  ,  254.6526  ,
+            223.29958 ,  203.81548 ,  140.80296 ,  100.120026,
+             72.59597 ,   65.404144,   91.1759  ,  132.19351 ,
+            165.53156 ,  180.7784  ,  185.43356 ,  176.2926  ,
+            192.23819 ,  225.91544 ,  210.79202 ,  186.24283 ,
+            159.84315 ,  157.83167 ,  158.33511 ,  141.80693 ,
+            119.33615 ,   67.50926 ,   45.960865,   33.808792,
+             51.327873]],
+
+         [[1442.5261  , 1548.1178  , 1749.552   , 2081.4722  ,
+           2355.932   , 2374.3354  , 2249.303   , 2131.6414  ,
+           1724.5779  , 1361.8042  , 1086.7239  ,  968.945   ,
+            869.25024 ,  994.73535 , 1164.7666  , 1432.9299  ,
+           1665.1152  , 1797.8912  , 1941.1072  , 1888.9348  ,
+           1865.9563  , 1666.086   , 1548.7267  , 1478.1459  ,
+           1336.6776  , 1316.4127  , 1266.8333  , 1252.7494  ,
+           1311.6204  , 1329.8741  , 1292.9772  , 1340.2493  ,
+           1308.0791  , 1335.2206  , 1303.8901  , 1031.0228  ,
+            905.0544  ,  746.0808  ,  739.7276  ,  717.9553  ,
+            827.7121  , 1005.06976 , 1298.0463  , 1443.134   ,
+           1686.2148  , 1739.0914  , 1594.2317  , 1474.352   ,
+           1186.8918  ,  954.5422  ,  975.45917 ,  925.0001  ,
+            897.64386 ,  912.71313 ,  912.3739  ,  914.8089  ,
+            885.0034  ,  877.88275 ,  816.4392  ,  781.20917 ,
+            731.5214  ,  610.24133 ,  583.3316  ,  622.51135 ,
+            884.0143  , 1046.91    , 1208.2904  , 1265.7998  ,
+           1374.6298  , 1466.4398  , 1445.2615  , 1534.798   ,
+           1687.6033  , 1660.786   , 1667.912   , 1669.573   ,
+           1635.4199  , 1634.2532  , 1574.4619  , 1577.3806  ,
+           1549.691   , 1533.8273  , 1459.2412  , 1397.1023  ,
+           1387.476   , 1328.3661  , 1262.4131  , 1191.6425  ,
+           1155.0273  , 1089.2354  , 1063.6096  ,  972.98865 ,
+           1008.9729  ,  893.69904 ,  812.5356  ,  930.0977  ,
+           1152.3009  , 1261.6038  , 1338.5374  , 1289.0535  ,
+           1317.2812  ]],
+
+         [[ 522.1542  ,  447.47937 ,  296.4019  ,  175.36111 ,
+             89.45631 ,   67.033615,  125.82736 ,  247.66931 ,
+            446.81317 ,  550.0119  ,  694.7884  ,  772.1712  ,
+            876.0396  ,  808.35406 ,  751.7561  ,  758.69543 ,
+            674.68274 ,  647.14453 ,  652.5806  ,  525.934   ,
+            522.66516 ,  482.8733  ,  450.19592 ,  431.06137 ,
+            425.56668 ,  409.4556  ,  419.3832  ,  440.8491  ,
+            453.63913 ,  470.61087 ,  510.70514 ,  515.47235 ,
+            534.14734 ,  486.88678 ,  374.88165 ,  289.2456  ,
+            335.6856  ,  312.35608 ,  250.92812 ,  169.69554 ,
+            107.197266,   74.00769 ,   46.2468  ,   30.809376,
+             52.887886,   61.855755,   56.522385,   82.056435,
+            106.129555,  187.29454 ,  210.8376  ,  286.5742  ,
+            426.31152 ,  622.68585 ,  761.7651  ,  790.15247 ,
+            863.8561  ,  799.6766  ,  820.84235 ,  732.18225 ,
+            693.1779  ,  675.5615  ,  581.7808  ,  520.3275  ,
+            493.34656 ,  477.36313 ,  446.56473 ,  362.28387 ,
+            282.2973  ,  208.3033  ,  130.9066  ,  117.1783  ,
+             71.42625 ,   64.427765,   73.811325,   60.36021 ,
+             45.33023 ,   62.18427 ,   67.57815 ,  132.23007 ,
+            151.3126  ,  195.69011 ,  223.16974 ,  314.58044 ,
+            339.3458  ,  385.6646  ,  378.17096 ,  377.30402 ,
+            394.3957  ,  377.98822 ,  369.56183 ,  356.9308  ,
+            353.73553 ,  351.03625 ,  256.01364 ,  195.0294  ,
+            161.51826 ,  213.60632 ,  228.23798 ,  234.94241 ,
+            177.138   ]],
+
+         [[ 483.4238  ,  493.56137 ,  357.06747 ,  218.45985 ,
+            124.503075,   78.19109 ,   97.19439 ,  224.24304 ,
+            395.62708 ,  654.64154 ,  801.5855  ,  832.1611  ,
+            734.6168  ,  703.988   ,  506.46585 ,  296.21704 ,
+            151.18196 ,   86.494286,   55.57669 ,   76.327705,
+            143.3016  ,  210.08885 ,  294.40353 ,  383.6068  ,
+            411.00287 ,  422.75354 ,  401.75595 ,  396.0963  ,
+            289.24933 ,  179.94154 ,  108.60405 ,   41.051994,
+             53.03498 ,  134.04759 ,  259.24323 ,  455.56647 ,
+            642.367   ,  761.9196  ,  809.4806  ,  928.45404 ,
+            704.40405 ,  593.07574 ,  392.83325 ,  210.4399  ,
+             92.80851 ,   54.060093,  134.33965 ,  286.0399  ,
+            433.61517 ,  563.9362  ,  528.79724 ,  460.63843 ,
+            361.84863 ,  187.49669 ,  118.14056 ,   96.92106 ,
+            135.37846 ,  283.07028 ,  351.81894 ,  477.42862 ,
+            508.05377 ,  407.09048 ,  342.8732  ,  174.78494 ,
+             90.39775 ,   40.69719 ,   63.418755,  112.05648 ,
+            166.65715 ,  206.57777 ,  214.49844 ,  170.75266 ,
+             86.20599 ,   57.019444,   54.933517,   39.236816,
+             71.94227 ,   89.80444 ,  118.96428 ,  140.4251  ,
+            123.267006,   97.04307 ,   78.55613 ,   61.430798,
+             38.475246,   33.072124,   50.58443 ,   63.236156,
+             77.64785 ,   95.504684,   98.42377 ,   97.57027 ,
+            103.61352 ,   99.616516,   81.23624 ,   54.30288 ,
+             54.517563,   52.293434,   45.483406,   41.71339 ,
+             37.22879 ]]], dtype=float32),
+  array([[[  68.31124 ,   67.03467 ,   54.35134 ,   45.89336 ,
+             51.41985 ,   52.800056,   43.84447 ,   58.91176 ,
+             55.213303,   45.804535,   52.141693,   55.222595,
+             61.045277,   60.49281 ,   47.29338 ,   45.769135,
+             56.63411 ,   52.557426,   63.518654,   52.755238,
+             38.193314]],
+
+         [[1427.981   , 1515.8143  , 1392.25    , 1365.3663  ,
+           1416.7245  , 1367.708   , 1287.6058  , 1322.7833  ,
+           1349.8093  , 1393.2462  , 1401.4626  , 1406.4877  ,
+           1414.5481  , 1385.243   , 1385.4749  , 1413.9575  ,
+           1401.6799  , 1371.7104  , 1365.8622  , 1358.8344  ,
+           1403.1927  ]],
+
+         [[ 267.12265 ,  279.29382 ,  297.3318  ,  324.58948 ,
+            360.98758 ,  360.8647  ,  361.64148 ,  368.14288 ,
+            358.49078 ,  345.54932 ,  385.46555 ,  386.394   ,
+            363.34393 ,  358.75085 ,  381.13254 ,  371.68097 ,
+            397.1353  ,  405.24667 ,  377.7345  ,  395.22156 ,
+            401.28458 ]],
+
+         [[ 479.95502 ,  509.69464 ,  521.58887 ,  485.8332  ,
+            514.602   ,  461.39392 ,  451.12106 ,  438.15137 ,
+            456.6125  ,  441.77753 ,  447.5658  ,  417.70773 ,
+            459.9466  ,  453.74988 ,  463.4456  ,  474.57755 ,
+            446.97348 ,  446.17673 ,  496.519   ,  391.41824 ,
+            421.4452  ]]], dtype=float32),
+  array([[[ 197.97568 ,  174.558   ,  188.47647 ,  159.01169 ,
+            173.41328 ,  166.39757 ,  158.8057  ,  149.52983 ,
+            168.36873 ,  149.6404  ,  162.17581 ,  147.69316 ,
+            153.57353 ,  167.91208 ,  154.83902 ,  163.76004 ,
+            158.73169 ,  154.6408  ,  169.69858 ,  151.79034 ,
+            180.81781 ]],
+
+         [[1267.5094  , 1221.172   , 1230.7866  , 1116.213   ,
+           1024.7955  , 1066.7091  ,  960.5013  ,  895.6975  ,
+            923.073   ,  891.35895 ,  812.98035 ,  828.1795  ,
+            720.25854 ,  711.33154 ,  718.4964  ,  758.1103  ,
+            733.5806  ,  818.9112  ,  805.1173  ,  778.7898  ,
+            792.6326  ]],
+
+         [[ 197.57683 ,  202.75626 ,  190.8639  ,  173.30371 ,
+            165.85051 ,  177.10757 ,  192.94753 ,  203.33047 ,
+            220.58041 ,  191.96053 ,  259.9893  ,  277.48712 ,
+            263.33563 ,  293.71936 ,  350.88773 ,  390.98703 ,
+            395.5371  ,  438.25864 ,  410.0052  ,  448.23062 ,
+            425.0775  ]],
+
+         [[ 139.34706 ,  117.25518 ,  105.84767 ,   97.41632 ,
+            119.08676 ,   95.56163 ,   90.55265 ,  105.05301 ,
+            119.69588 ,  103.24944 ,  108.03854 ,  101.95767 ,
+            118.95042 ,  141.51532 ,  110.317635,  113.17107 ,
+            104.530945,  135.85379 ,  125.16732 ,  124.86701 ,
+            115.23069 ]]], dtype=float32)],
+ [array([[[ 148.79161 ,  137.72552 ,   99.92807 ,   53.05166 ,
+             20.601774,   19.29321 ,   39.046738,   54.870377,
+             68.17687 ,   97.34293 ,  135.59953 ,  148.22998 ,
+            122.88241 ,   75.82394 ,   30.691212,   16.97352 ,
+             54.741165,  119.547104,  145.64874 ,  105.843834,
+             55.558014,   50.169662,   87.21564 ,  137.91003 ,
+            169.76828 ,  156.60931 ,  106.78833 ,   49.35855 ,
+             18.745495,   26.845402,   64.97616 ,  111.20007 ,
+            151.70972 ,  167.27127 ,  158.99858 ,  140.50803 ,
+             80.70711 ,   44.62482 ,   24.739052,   20.615673,
+             58.498215,  114.73183 ,  173.9526  ,  210.20801 ,
+            193.66223 ,  153.44588 ,  126.59834 ,   73.96467 ,
+             33.483166,   19.55412 ,   34.245728,   84.208725,
+            130.99463 ,   95.83194 ,   74.79939 ,  170.54219 ,
+            228.19958 ,  185.89658 ,  136.97992 ,   79.05934 ,
+             25.204025,   19.654774,   69.05538 ,  153.27785 ,
+            225.06943 ,  270.9172  ,  282.69812 ,  243.88928 ,
+            177.65688 ,   81.700615,   33.778275,   16.294254,
+             60.475906,  135.50142 ,  196.77084 ,  223.65257 ,
+            231.05273 ,  233.88486 ,  199.6484  ,  138.58786 ,
+            140.99956 ,  166.94273 ,  198.03665 ,  233.62344 ,
+            239.13734 ,  201.84265 ,  131.9006  ,   80.539925,
+             48.196198,   87.45792 ,  168.13846 ,  252.99008 ,
+            369.66595 ,  407.2688  ,  376.3165  ,  276.91882 ,
+            145.22687 ,   49.68052 ,   21.512281,   78.60401 ,
+            204.70311 ]],
+
+         [[1878.6505  , 2160.7944  , 2324.719   , 2226.2625  ,
+           1913.5049  , 1581.9441  , 1283.1365  , 1043.4974  ,
+            949.7425  , 1023.126   , 1205.0403  , 1430.2393  ,
+           1652.9854  , 1829.366   , 1914.9113  , 1883.965   ,
+           1755.9177  , 1632.9062  , 1538.8372  , 1428.3754  ,
+           1363.0745  , 1362.516   , 1368.3654  , 1363.7372  ,
+           1334.3999  , 1312.1964  , 1353.4606  , 1390.1702  ,
+           1320.9471  , 1160.1594  , 1028.9259  ,  886.72754 ,
+            846.7133  ,  782.64606 ,  753.2521  , 1060.3114  ,
+           1205.5602  , 1124.5104  , 1372.6036  , 1678.4375  ,
+           1567.2174  , 1329.0151  , 1171.0435  , 1041.4425  ,
+            922.1853  ,  783.86096 ,  837.5124  ,  944.51666 ,
+            939.1218  ,  915.31226 ,  826.34766 ,  761.49805 ,
+            729.75494 ,  798.0295  ,  932.72205 , 1003.6002  ,
+           1060.1317  , 1174.5483  , 1282.6293  , 1401.779   ,
+           1518.3395  , 1587.5615  , 1633.7115  , 1609.9164  ,
+           1607.525   , 1578.2426  , 1562.0204  , 1590.8947  ,
+           1594.2212  , 1621.551   , 1566.7363  , 1545.182   ,
+           1488.9087  , 1366.4475  , 1304.6458  , 1158.4845  ,
+           1134.6753  ,  999.4744  ,  702.10266 ,  999.974   ,
+           1323.1394  , 1272.6573  , 1214.0898  , 1191.9203  ,
+           1190.1927  , 1252.6991  , 1476.1072  , 1043.7335  ,
+            398.64227 ,  779.7897  ,  997.9031  ,  862.0708  ,
+            941.37964 ,  977.7916  , 1133.8605  , 1272.1887  ,
+           1432.8457  , 1548.4772  , 1575.2611  , 1521.3424  ,
+           1382.7953  ]],
+
+         [[ 188.47629 ,   85.78032 ,   62.410866,  137.08707 ,
+            292.71597 ,  463.58    ,  614.83606 ,  718.1911  ,
+            729.75836 ,  685.1231  ,  627.58124 ,  575.54565 ,
+            554.0033  ,  534.60864 ,  495.41727 ,  457.69165 ,
+            409.82544 ,  325.3379  ,  276.71042 ,  307.1878  ,
+            332.36765 ,  323.13986 ,  298.0927  ,  284.89395 ,
+            364.6927  ,  491.13754 ,  549.1161  ,  546.04236 ,
+            533.52924 ,  481.6267  ,  377.03833 ,  298.33514 ,
+            215.0249  ,   81.26825 ,   35.360016,   47.221573,
+             37.08555 ,   34.679585,   47.360573,   72.71326 ,
+             67.60153 ,   87.23186 ,  144.19064 ,  227.42969 ,
+            350.03387 ,  516.6788  ,  650.383   ,  763.8494  ,
+            878.6956  ,  898.1094  ,  834.5729  ,  745.88605 ,
+            670.67596 ,  634.4994  ,  624.21    ,  610.8741  ,
+            596.7132  ,  560.15594 ,  461.5648  ,  340.5496  ,
+            226.73277 ,  141.38762 ,   89.80718 ,   63.914616,
+             58.77771 ,   60.163887,   61.543007,   62.096313,
+             67.61217 ,   88.23357 ,  128.67238 ,  185.43803 ,
+            251.9448  ,  310.1501  ,  353.34485 ,  380.6539  ,
+            391.41953 ,  433.2508  ,  339.37967 ,  144.6824  ,
+            159.70065 ,  254.38985 ,  267.16776 ,  268.15384 ,
+            224.56001 ,  205.28238 ,   94.516205,  293.2434  ,
+            882.497   ,  880.45764 ,  494.23526 ,  428.44604 ,
+            354.31915 ,  260.20953 ,  182.2213  ,  126.21185 ,
+             99.11629 ,   83.57527 ,   73.74673 ,   60.3096  ,
+             48.931225]],
+
+         [[ 300.89587 ,  144.61087 ,   56.13244 ,   77.02728 ,
+            263.10464 ,  497.71753 ,  628.6104  ,  703.18964 ,
+            728.9141  ,  661.8564  ,  530.9776  ,  356.9606  ,
+            180.2038  ,   69.72436 ,   41.955288,   81.05003 ,
+            154.11171 ,  250.16118 ,  363.60272 ,  441.64914 ,
+            461.18195 ,  451.9994  ,  394.58163 ,  280.54825 ,
+            176.67772 ,  103.025505,   50.17832 ,   49.39337 ,
+            130.8244  ,  282.6181  ,  450.65656 ,  617.64417 ,
+            687.56976 ,  703.5026  ,  707.99066 ,  606.7651  ,
+            364.07922 ,  128.18387 ,   47.39435 ,  104.062225,
+            243.34967 ,  390.7538  ,  464.30542 ,  471.25595 ,
+            331.51334 ,  154.07178 ,  133.37927 ,  139.61078 ,
+             99.7722  ,  147.0537  ,  282.70517 ,  384.0916  ,
+            412.94208 ,  380.55493 ,  275.20627 ,  161.06041 ,
+             86.50694 ,   50.940758,   70.56703 ,  126.92413 ,
+            186.07777 ,  200.88878 ,  171.50198 ,  109.09645 ,
+             64.4468  ,   41.92033 ,   44.817364,   63.163628,
+            100.575386,  147.44458 ,  168.20659 ,  155.09526 ,
+            106.940414,   56.682816,   44.029854,   65.690346,
+             91.47667 ,  112.49921 ,  100.345505,   72.57955 ,
+            127.105194,  171.8107  ,  166.7551  ,  137.6321  ,
+            101.28412 ,   78.01132 ,   55.248947,   45.902534,
+             57.83969 ,   57.43199 ,   50.925087,   56.185432,
+             61.601257,   64.86245 ,   66.35473 ,   65.12224 ,
+             58.09795 ,   49.75875 ,   45.46452 ,   46.748104,
+             50.386078]]], dtype=float32),
+  array([[[  94.84631  ,  116.773056 ,  141.34737  ,  153.38739  ,
+            138.4336   ,   99.76265  ,   54.794304 ,   22.953184 ,
+             16.713251 ,   31.737965 ,   49.6474   ,   60.49063  ,
+             75.447136 ,  106.07467  ,  137.99019  ,  145.44727  ,
+            121.51861  ,   79.08713  ,   36.400898 ,   15.834804 ,
+             37.696407 ,   93.95879  ,  139.12039  ,  132.77235  ,
+             84.788086 ,   48.656807 ,   52.664917 ,   89.530624 ,
+            134.52777  ,  165.10712  ,  163.89606  ,  127.88207  ,
+             71.73041  ,   29.574608 ,   17.412964 ,   36.648155 ,
+             70.017334 ,  110.2092   ,  148.85046  ,  172.23415  ,
+            175.48666  ,  157.08179  ,  116.310295 ,   65.05167  ,
+             26.295109 ,   16.928759 ,   41.13634  ,   85.0015   ,
+            118.77358  ,  164.13834  ,  204.55182  ,  204.15714  ,
+            179.98479  ,  141.48586  ,   93.609665 ,   48.426956 ,
+             24.540756 ,   21.24317  ,   40.363457 ,   80.92282  ,
+            135.62183  ,  186.85931  ,  210.77536  ,  212.77974  ,
+            175.13991  ,  109.71035  ,   56.714478 ,   32.97564  ,
+             68.29828  ,   49.058945 ,   15.5927305,   62.578415 ,
+            137.096    ,  204.71971  ,  268.8773   ,  283.57077  ,
+            264.28473  ,  222.59196  ,  142.08339  ,   62.240906 ,
+             19.38844  ,   27.48724  ,   82.604965 ,  143.88646  ,
+            203.55243  ,  246.98082  ,  240.95471  ,  197.3135   ,
+            198.59908  ,  197.76918  ,  157.644    ,  144.07483  ,
+            142.79779  ,  150.47462  ,  130.75955  ,  133.27896  ,
+            123.89673  ,   67.356995 ,   29.679495 ,   26.396812 ,
+             18.401386 ]],
+
+         [[1465.7189   , 1549.6317   , 1736.1213   , 1994.8705   ,
+           2232.3184   , 2343.1401   , 2285.0667   , 2063.2917   ,
+           1728.0902   , 1376.7876   , 1102.7356   ,  946.99475  ,
+            914.1899   , 1002.75244  , 1187.8668   , 1421.6454   ,
+           1650.6156   , 1835.6077   , 1932.7396   , 1919.9851   ,
+           1828.5154   , 1686.787    , 1546.3044   , 1430.7238   ,
+           1346.5209   , 1344.5787   , 1337.1589   , 1316.3547   ,
+           1301.7078   , 1302.2502   , 1332.1692   , 1403.6779   ,
+           1429.2454   , 1446.1091   , 1429.0404   , 1213.5348   ,
+            909.0485   ,  785.5803   ,  776.80396  ,  822.681    ,
+            956.20624  , 1163.6587   , 1414.6862   , 1647.0765   ,
+           1797.9193   , 1835.3181   , 1757.1947   , 1436.9872   ,
+           1046.7639   ,  966.50397  ,  983.2853   ,  892.9942   ,
+            891.5657   ,  999.7117   , 1101.3522   , 1080.1248   ,
+            962.63666  ,  896.9646   ,  828.28284  ,  755.8822   ,
+            754.1244   ,  767.669    ,  804.87006  ,  908.7587   ,
+            954.45557  ,  879.99164  ,  942.03064  , 1215.2876   ,
+           1379.7588   , 1461.4314   , 1584.2062   , 1643.5287   ,
+           1634.7249   , 1626.6171   , 1586.0996   , 1555.4521   ,
+           1549.4346   , 1564.6953   , 1605.0786   , 1609.4429   ,
+           1589.6409   , 1565.1827   , 1482.638    , 1401.8778   ,
+           1300.7803   , 1201.1553   , 1193.0472   , 1181.1302   ,
+           1165.7131   , 1168.2728   , 1066.9589   , 1015.95355  ,
+            864.07806  ,  623.6897   ,  783.50287  , 1127.2693   ,
+           1270.3828   , 1341.3562   , 1378.2843   , 1387.5118   ,
+           1379.9045   ]],
+
+         [[ 414.9825   ,  351.42325  ,  241.8263   ,  129.85945  ,
+             63.869614 ,   64.53989  ,  137.8658   ,  267.71332  ,
+            425.97986  ,  582.667    ,  696.1363   ,  755.11127  ,
+            769.74     ,  741.88715  ,  692.7228   ,  636.37274  ,
+            578.63     ,  527.9943   ,  487.57623  ,  457.34802  ,
+            429.8303   ,  407.825    ,  388.8694   ,  370.5745   ,
+            366.6146   ,  365.0951   ,  367.6995   ,  384.2442   ,
+            400.69952  ,  427.5199   ,  459.42072  ,  463.17297  ,
+            497.13303  ,  482.46808  ,  351.00284  ,  234.28386  ,
+            292.70178  ,  329.26733  ,  240.03903  ,  150.38676  ,
+             91.8388   ,   53.732212 ,   40.88759  ,   47.225933 ,
+             60.13764  ,   70.77481  ,   67.89787  ,   60.239685 ,
+             99.10585  ,  173.54124  ,  272.6051   ,  407.13135  ,
+            496.2228   ,  517.9303   ,  602.8897   ,  782.2599   ,
+            877.56396  ,  840.50635  ,  789.7494   ,  736.5357   ,
+            675.13696  ,  649.69745  ,  658.2189   ,  668.0166   ,
+            644.4247   ,  538.6493   ,  375.3889   ,  268.70547  ,
+            237.29976  ,  187.6657   ,  121.0146   ,   83.22626  ,
+             65.948494 ,   59.91227  ,   61.57745  ,   62.70156  ,
+             62.750717 ,   64.44603  ,   72.77275  ,  100.50139  ,
+            145.05882  ,  202.1418   ,  257.2611   ,  291.61685  ,
+            313.08524  ,  339.56345  ,  372.28836  ,  388.8797   ,
+            379.62653  ,  373.2014   ,  349.45508  ,  319.8868   ,
+            347.97467  ,  332.34103  ,  183.17792  ,  111.0685   ,
+            198.84337  ,  242.89906  ,  256.256    ,  228.81746  ,
+            189.94746  ]],
+
+         [[ 508.4214   ,  471.98438  ,  367.1149   ,  227.98743  ,
+             97.78424  ,   40.27527  ,   86.88957  ,  223.7728   ,
+            404.15082  ,  577.8614   ,  708.2395   ,  770.29236  ,
+            747.66516  ,  652.61633  ,  501.84756  ,  325.81195  ,
+            169.964    ,   70.648544 ,   40.232765 ,   69.61507  ,
+            137.22832  ,  219.92587  ,  299.8524   ,  361.368    ,
+            425.187    ,  447.06702  ,  422.14313  ,  371.21356  ,
+            297.23264  ,  210.83986  ,  127.56593  ,   63.258682 ,
+             39.66078  ,   73.80721  ,  179.51382  ,  388.15146  ,
+            617.8953   ,  738.85535  ,  787.02216  ,  786.7409   ,
+            703.0792   ,  555.08026  ,  373.65314  ,  196.38739  ,
+             73.383194 ,   41.918163 ,  101.13834  ,  211.30438  ,
+            360.8217   ,  480.31232  ,  494.09625  ,  435.29434  ,
+            322.788    ,  183.61324  ,   90.56572  ,   73.34004  ,
+            130.94078  ,  229.19928  ,  329.34955  ,  408.55478  ,
+            422.85776  ,  362.35648  ,  268.55826  ,  180.22351  ,
+            107.87956  ,   52.20598  ,   49.016457 ,  103.02617  ,
+            152.47035  ,  192.36487  ,  203.88242  ,  157.26643  ,
+            100.076126 ,   58.58409  ,   41.613056 ,   44.676563 ,
+             61.511982 ,   87.74568  ,  118.95297  ,  157.88916  ,
+            164.41418  ,  129.39946  ,   75.50664  ,   48.09807  ,
+             54.32291  ,   56.279396 ,   57.448074 ,   68.42098  ,
+             85.293655 ,   86.25488  ,  102.7901   ,  139.87321  ,
+            150.98239  ,  120.38765  ,   80.51443  ,   68.17131  ,
+             63.98254  ,   55.317642 ,   50.10221  ,   49.76838  ,
+             47.496365 ]]], dtype=float32),
+  array([[[  74.63546 ,   75.181885,   74.1985  ,   73.86314 ,
+             71.359055,   69.130196,   72.255646,   75.010895,
+             75.186775,   74.96429 ,   74.548965,   74.81031 ,
+             74.87173 ,   74.71831 ,   74.958725,   74.696266,
+             74.21364 ,   74.60624 ,   74.9492  ,   74.474655,
+             74.46737 ]],
+
+         [[1374.8771  , 1386.4048  , 1367.02    , 1338.741   ,
+           1280.0283  , 1240.8353  , 1339.1083  , 1395.593   ,
+           1381.0356  , 1380.7369  , 1363.172   , 1371.6487  ,
+           1374.4844  , 1371.3213  , 1374.1674  , 1365.5491  ,
+           1358.9583  , 1374.7457  , 1392.9694  , 1387.0531  ,
+           1384.9019  ]],
+
+         [[ 331.97168 ,  322.05426 ,  330.80328 ,  362.0686  ,
+            359.75507 ,  351.4008  ,  366.6324  ,  365.43448 ,
+            361.94693 ,  363.4367  ,  362.50366 ,  364.39514 ,
+            366.17523 ,  367.57974 ,  367.42682 ,  363.31107 ,
+            369.92468 ,  356.95026 ,  334.64734 ,  349.09937 ,
+            354.7169  ]],
+
+         [[ 454.56024 ,  457.51294 ,  447.80374 ,  457.76645 ,
+            473.4708  ,  413.25192 ,  367.39682 ,  391.1523  ,
+            405.30954 ,  409.37564 ,  418.74356 ,  422.142   ,
+            421.5222  ,  421.47974 ,  419.92233 ,  417.96457 ,
+            421.87894 ,  414.76178 ,  421.3925  ,  427.67743 ,
+            425.1053  ]]], dtype=float32),
+  array([[[ 161.73463 ,  158.43153 ,  154.28218 ,  149.05501 ,
+            142.34912 ,  136.54276 ,  132.62962 ,  126.94052 ,
+            121.22804 ,  116.65869 ,  114.00558 ,  112.73691 ,
+            113.79041 ,  116.3524  ,  120.50282 ,  125.30096 ,
+            131.52393 ,  137.67772 ,  143.70819 ,  147.83508 ,
+            158.50247 ]],
+
+         [[1289.3468  , 1296.0339  , 1300.2823  , 1299.9406  ,
+           1292.9772  , 1271.6039  , 1248.7932  , 1220.1764  ,
+           1177.387   , 1125.3644  , 1065.582   ,  999.904   ,
+            931.6309  ,  869.502   ,  809.63025 ,  761.7186  ,
+            722.498   ,  699.98035 ,  682.3303  ,  651.10443 ,
+            669.8417  ]],
+
+         [[ 239.00914 ,  226.75726 ,  212.35782 ,  195.91724 ,
+            180.44008 ,  164.49673 ,  148.51366 ,  138.77864 ,
+            134.56882 ,  136.24814 ,  144.50262 ,  159.16222 ,
+            182.15152 ,  209.68243 ,  242.00635 ,  277.67087 ,
+            314.36096 ,  350.61447 ,  392.9128  ,  399.7588  ,
+            373.41293 ]],
+
+         [[ 169.0756  ,  167.47215 ,  164.98215 ,  161.33519 ,
+            155.35503 ,  149.76544 ,  146.56578 ,  140.96812 ,
+            134.74734 ,  129.14748 ,  124.59125 ,  120.72969 ,
+            118.84007 ,  118.28934 ,  119.569214,  122.043076,
+            126.54263 ,  131.4127  ,  139.09897 ,  145.53743 ,
+            147.86758 ]]], dtype=float32)])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_26_3.png" src="../_images/notebooks_refinemnt_si04_26_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_26_4.png" src="../_images/notebooks_refinemnt_si04_26_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_26_5.png" src="../_images/notebooks_refinemnt_si04_26_5.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_si04_26_6.png" src="../_images/notebooks_refinemnt_si04_26_6.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fine</span><span class="o">.</span><span class="n">errorFunc</span><span class="p">(</span><span class="n">fine</span><span class="o">.</span><span class="n">evaluateParam</span><span class="p">(),</span> <span class="n">fine</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">templates</span><span class="p">,</span> <span class="n">fine</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2779.2666
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;kt: 12.1174, -12.1174, 25.7133 = </span><span class="si">{</span><span class="n">roi</span><span class="o">.</span><span class="n">transformDP</span><span class="p">(</span><span class="n">roi</span><span class="o">.</span><span class="n">kt2pixel</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">12.1174</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">12.1174</span><span class="p">,</span><span class="w"> </span><span class="mf">25.7133</span><span class="p">]]))</span><span class="o">*</span><span class="n">roi</span><span class="o">.</span><span class="n">initPixsiz</span><span class="o">/</span><span class="n">roi</span><span class="o">.</span><span class="n">pixsiz</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">roi</span><span class="o">.</span><span class="n">dpCenter</span><span class="o">+</span><span class="n">roi</span><span class="o">.</span><span class="n">allshift</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;gl: </span><span class="si">{</span><span class="n">roi</span><span class="o">.</span><span class="n">gl</span><span class="si">}</span><span class="s1"> rotation: </span><span class="si">{</span><span class="n">roi</span><span class="o">.</span><span class="n">rotation</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;thickness: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">thickness</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;norm:: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">errorFunc</span><span class="o">.</span><span class="n">scale</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;background: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">errorFunc</span><span class="o">.</span><span class="n">background</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+kt: 12.1174, -12.1174, 25.7133 = [[416.10777583 456.98849595]]
+gl: 226.77354262586226 rotation: 44.23690197629627
+thickness: 3421.6441471701332
+norm:: 1797.220458984375
+background: [[ 16.015116]
+ [222.49435 ]
+ [ 33.66471 ]
+ [ 38.898853]]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyextal.callBloch</span> <span class="kn">import</span> <span class="n">terminate</span>
+<span class="n">terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Package Architecture</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinemntLARBEDSi111sys0420.html">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinemnt_HVcal.html">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples.html">Examples</a><ul>
+      <li>Previous: <a href="../examples.html" title="previous chapter">Examples</a></li>
+      <li>Next: <a href="refinemntLARBEDSi111sys0420.html" title="next chapter">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/notebooks/refinemnt_si04.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

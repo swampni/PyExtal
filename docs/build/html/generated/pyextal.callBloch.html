@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pyextal.callBloch &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyextal.gof" href="pyextal.gof.html" />
+    <link rel="prev" title="API" href="../api.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-pyextal.callBloch">
+<span id="pyextal-callbloch"></span><h1>pyextal.callBloch<a class="headerlink" href="#module-pyextal.callBloch" title="Link to this heading">¶</a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LARBED</span></code>(param, thickness[, height, width, ...])</p></td>
+<td><p>calculate the LARBED pattern for given thickness</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LARBED_tilt</span></code>(param, thickness, nout)</p></td>
+<td><p>calculate the LARBED pattern for given thickness</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjustSF</span></code>(reflections, values)</p></td>
+<td><p>adjust the structure factor to the given values :param reflections: list of tuples (nref,) reflection indices, split by space, :param e.g. [: :type e.g. [: 1, 1, 1), (1, 1, 0 :param values: (4, nref) np.float32 np.array of structure factor values :param Ugh phase U'gh phase:.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch</span></code>(fname[, t_x, t_y, reflections, ...])</p></td>
+<td><p>simulate the diffraction pattern point to point (no interpolation)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch_parse</span></code>(fname[, t_x, t_y, HKL])</p></td>
+<td><p>parse the .dat file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch_run</span></code>(param[, HKL, subaper, subnx, ...])</p></td>
+<td><p>construct tilt net and run the simulation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrateCBED</span></code>(dp, center, centerTiltx, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrateLARBED</span></code>(param, gl)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">e2Xray</span></code>(beam, getESF)</p></td>
+<td><p>Calculate the X-ray scattering factor for a given beam using the diffraction information.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookupReflections</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookupSF</span></code>(reflections[, IAM])</p></td>
+<td><p>look up the default structure factor for given reflections from atom.f90 (Bird and King Acta Cryst.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code>(fname, thickness, displayParam[, ...])</p></td>
+<td><p>wrapper for bloch and cbedp, simulate and return the diffraction pattern</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">symmetrizeVHKL</span></code>()</p></td>
+<td><p>symmetrize the structure factor adjusted in .dat</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">terminate</span></code>()</p></td>
+<td><p>deallocate the arrays in blochwave module</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt</span></code>(param, t_x, t_y)</p></td>
+<td><p>calculate the tilt vector for given tilt in x and y direction</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tiltUnit</span></code>(param)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt_run</span></code>(param, tilts[, indices, ncores, HKL])</p></td>
+<td><p>run the simulation for given tilts</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateSymUgh</span></code>(reflections, values[, sym])</p></td>
+<td><p>update the Ugh matrix with the given values, all symmetry related beams are updated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateUgh</span></code>(reflections, values[, beamDict])</p></td>
+<td><p>update the Ugh matrix in common block with the given values :param dinfo: DiffractionInfo class, diffraction information :param reflections: list of tuples (nref,) reflection indices, :param e.g. [: :type e.g. [: 1, 1, 1), (1, 1, 0 :param values: (nref, 4) np.float32 np.array of structure factor values :param Ugh phase U'gh phase: :param Ugh should always be positive: :param beamDict: dict, positions of the beams in Ugh matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength</span></code>()</p></td>
+<td><p>return the wavelength of the electron beam in angstrom</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code>(ndiag, itilt, ix, iy, gamma, ...)</p></td>
+<td><p>Data class to store the data of each tilt from the callback</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCollector</span></code>()</p></td>
+<td><p>Data collector class to retrieve the data as callback function</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimParams</span></code>(ntilt, nout, nx, hklout, disks, ...)</p></td>
+<td><p>Data class to store the data from the simulation</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Package Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pyextal.callBloch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.gof.html">pyextal.gof</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.metric.html">pyextal.metric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.optimize.html">pyextal.optimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.roi.html">pyextal.roi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.symmetry.html">pyextal.symmetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.blochwave.html">pyextal.blochwave</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+      <li>Previous: <a href="../api.html" title="previous chapter">API</a></li>
+      <li>Next: <a href="pyextal.gof.html" title="next chapter">pyextal.gof</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/pyextal.callBloch.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

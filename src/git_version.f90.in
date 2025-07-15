@@ -1,0 +1,5 @@
+
+module git_version_mod
+  implicit none
+  character(len=56), parameter, public :: GIT_HASH_STR = "@PROJECT_BUILD_ID@"
+end module git_version_mod

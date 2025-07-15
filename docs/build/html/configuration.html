@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Input .dat File Configuration &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview of ROI definition in pyextal" href="ROI.html" />
+    <link rel="prev" title="Understand How to Define/Index LARBED Dataset" href="LARBEDindex.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="input-dat-file-configuration">
+<h1>Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration<a class="headerlink" href="#input-dat-file-configuration" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">.dat</span></code> file is the primary input for the Bloch wave simulation, defining the crystal structure, experimental conditions, and calculation parameters. The file is parsed sequentially, and keywords must appear in the correct order. Lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> are treated as comments.</p>
+<section id="crystal-structure-definition">
+<h2>1. Crystal Structure Definition<a class="headerlink" href="#crystal-structure-definition" title="Link to this heading">¶</a></h2>
+<p>This section defines the crystallographic properties of the sample.</p>
+<section id="title-line">
+<h3>Title Line<a class="headerlink" href="#title-line" title="Link to this heading">¶</a></h3>
+<p>The first line of the file is a descriptive title.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Cu2O</span>
+</pre></div>
+</div>
+</section>
+<section id="crystal-cell-atom-and-space-group">
+<h3>Crystal, Cell, Atom, and Space Group<a class="headerlink" href="#crystal-cell-atom-and-space-group" title="Link to this heading">¶</a></h3>
+<p>These keywords define the fundamental crystal structure. This block is parsed by an internal <code class="docutils literal notranslate"><span class="pre">xtal1</span></code> routine.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">crystal</span> <span class="pre">[name]</span> <span class="pre">:</span> <span class="pre">[options]</span></code></p>
+<ul>
+<li><p>Defines the crystal name. A colon <code class="docutils literal notranslate"><span class="pre">:</span></code> can be used to separate the name from optional keywords.</p></li>
+<li><p><strong>Options</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dw</span> <span class="pre">=</span> <span class="pre">[type]</span></code>: Specifies the format for the Debye-Waller (temperature) factors provided on the <code class="docutils literal notranslate"><span class="pre">atom</span></code> lines. If omitted, <code class="docutils literal notranslate"><span class="pre">iso</span></code> is the default.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">iso</span></code>: Isotropic B-factor (<span class="math notranslate nohighlight">\(B_{iso}\)</span>). The <code class="docutils literal notranslate"><span class="pre">atom</span></code> line expects one value for the DW factor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bij</span></code>: Anisotropic beta factors (<span class="math notranslate nohighlight">\(\beta_{ij}\)</span>). The <code class="docutils literal notranslate"><span class="pre">atom</span></code> line expects 6 values (<span class="math notranslate nohighlight">\(\beta_{11}, \beta_{22}, \beta_{33}, \beta_{12}, \beta_{13}, \beta_{23}\)</span>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uij</span></code>: Anisotropic U factors (<span class="math notranslate nohighlight">\(U_{ij}\)</span>). The <code class="docutils literal notranslate"><span class="pre">atom</span></code> line expects 6 values (<span class="math notranslate nohighlight">\(U_{11}, U_{22}, U_{33}, U_{12}, U_{13}, U_{23}\)</span>).</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">=</span> <span class="pre">[type]</span></code>: Specifies how atomic site occupancy is handled. If omitted, <code class="docutils literal notranslate"><span class="pre">1</span></code> (full occupancy) is the default.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Assumes full occupancy (value is 1.0). The occupancy value is not read from the <code class="docutils literal notranslate"><span class="pre">atom</span></code> line.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">par</span></code>: Partial occupancy. The occupancy value must be provided as the last number on each <code class="docutils literal notranslate"><span class="pre">atom</span></code> line.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">[a]</span> <span class="pre">[b]</span> <span class="pre">[c]</span> <span class="pre">[alpha]</span> <span class="pre">[beta]</span> <span class="pre">[gamma]</span></code></p>
+<ul>
+<li><p>Unit cell parameters: lattice constants in Angstroms, angles in degrees.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atom</span> <span class="pre">[label]</span> <span class="pre">[x]</span> <span class="pre">[y]</span> <span class="pre">[z]</span> <span class="pre">[dw_factor(s)]</span> <span class="pre">[occupancy]</span></code></p>
+<ul>
+<li><p>Defines an atom in the unit cell.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code>: Chemical symbol (e.g., <code class="docutils literal notranslate"><span class="pre">Cu</span></code>, <code class="docutils literal notranslate"><span class="pre">O</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z</span></code>: Fractional coordinates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dw_factor(s)</span></code>: One or six values for the Debye-Waller factor, depending on the <code class="docutils literal notranslate"><span class="pre">dw</span></code> setting.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occupancy</span></code>: (Optional) The site occupancy, required only if <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">=</span> <span class="pre">par</span></code> is set.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spg</span> <span class="pre">[number]</span> <span class="pre">[setting]</span></code></p>
+<ul>
+<li><p>Space group number and origin setting.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following line sets isotropic DW factors and full occupancy by default.</span>
+<span class="n">crystal</span> <span class="n">Cu2O</span> <span class="p">:</span> <span class="n">dw</span> <span class="o">=</span> <span class="n">iso</span> <span class="n">occ</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">cell</span> <span class="mf">4.259600</span> <span class="mf">4.259600</span> <span class="mf">4.259600</span> <span class="mf">90.000000</span> <span class="mf">90.000000</span> <span class="mf">90.000000</span>
+
+<span class="c1"># The atom lines provide one value for the DW factor (B_iso)</span>
+<span class="n">atom</span> <span class="n">Cu</span>  <span class="mf">0.00</span> <span class="mf">0.00</span> <span class="mf">0.00</span> <span class="mf">0.6813</span>
+<span class="n">atom</span> <span class="n">O</span>   <span class="mf">0.25</span> <span class="mf">0.25</span> <span class="mf">0.25</span> <span class="mf">0.7757</span>
+<span class="n">spg</span> <span class="mi">224</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="experimental-diffraction-parameters">
+<h2>2. Experimental &amp; Diffraction Parameters<a class="headerlink" href="#experimental-diffraction-parameters" title="Link to this heading">¶</a></h2>
+<p>This section sets up the electron beam and diffraction geometry.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">v0</span> <span class="pre">[potential]</span></code> (Optional)</p>
+<ul>
+<li><p>Mean inner potential of the crystal in Volts.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hv</span> <span class="pre">[voltage]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The accelerating voltage of the electron microscope in kV.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zone</span> <span class="pre">[h]</span> <span class="pre">[k]</span> <span class="pre">[l]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The integer Miller indices of the zone axis pointing towards the electron source.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">norm</span> <span class="pre">[h]</span> <span class="pre">[k]</span> <span class="pre">[l]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The integer Miller indices of the sample surface normal, pointing out of the exit surface.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kt</span> <span class="pre">[kx]</span> <span class="pre">[ky]</span> <span class="pre">[kz]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The tangential component of the incident wavevector, defining the center of the CBED pattern.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xaxis</span> <span class="pre">[h]</span> <span class="pre">[k]</span> <span class="pre">[l]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>A reciprocal lattice vector that will be oriented horizontally in the output diffraction pattern.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">conv</span> <span class="pre">[angle]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The convergence semi-angle in unit of xaxis. For example, if conv 0.5, the (xaxis) disk will be touching the bright field disk.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samp</span> <span class="pre">[pixels]</span></code> (<strong>Mandatory</strong>)</p>
+<ul>
+<li><p>The number of pixels to sample from the center to the edge of the convergent beam disk.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hv</span> <span class="mf">119.523003</span>
+<span class="n">zone</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="n">norm</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="n">kt</span> <span class="mf">2.59327</span> <span class="o">-</span><span class="mf">8.68843</span> <span class="mf">4.34422</span>
+<span class="n">xaxis</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="n">conv</span> <span class="mi">2</span>
+<span class="n">samp</span> <span class="mi">60</span>
+</pre></div>
+</div>
+</section>
+<section id="beam-selection">
+<h2>3. Beam Selection<a class="headerlink" href="#beam-selection" title="Link to this heading">¶</a></h2>
+<p>This section determines which diffracted beams (reflections) are included in the Bloch wave calculation matrix. You must use <strong>one</strong> of the following two methods.</p>
+<section id="method-1-manual-beam-selection-hkl">
+<h3>Method 1: Manual Beam Selection (<code class="docutils literal notranslate"><span class="pre">hkl</span></code>)<a class="headerlink" href="#method-1-manual-beam-selection-hkl" title="Link to this heading">¶</a></h3>
+<p>Manually specify every beam to be included.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hkl</span> <span class="pre">[nbeams]</span></code></p>
+<ul>
+<li><p>Keyword followed by the total number of beams.</p></li>
+</ul>
+</li>
+<li><p>The following <code class="docutils literal notranslate"><span class="pre">[nbeams]</span></code> lines must contain the <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">k</span> <span class="pre">l</span></code> indices for each beam.</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hkl</span> <span class="mi">312</span>
+<span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>
+<span class="o">-</span><span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>
+<span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>
+<span class="o">...</span> <span class="p">(</span><span class="mi">309</span> <span class="n">more</span> <span class="n">lines</span><span class="p">)</span> <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="method-2-automatic-beam-selection-sele">
+<h3>Method 2: Automatic Beam Selection (<code class="docutils literal notranslate"><span class="pre">sele</span></code>)<a class="headerlink" href="#method-2-automatic-beam-selection-sele" title="Link to this heading">¶</a></h3>
+<p>Select beams automatically based on geometric criteria.
+Parameters for automatic beam selection (described in <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/030439919400190X">Zuo and Weickenmeier, 1990</a>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sele</span> <span class="pre">[sgmax]</span> <span class="pre">[gmax]</span> <span class="pre">[bmin]</span> <span class="pre">[kflag]</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">sgmax</span></code>: Maximum excitation error to include a beam.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gmax</span></code>: Maximum length of the g-vector to include.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bmin</span></code>: Bethe potential cutoff.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kflag</span></code>: keep 0.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="calculation-output-parameters">
+<h2>4. Calculation &amp; Output Parameters<a class="headerlink" href="#calculation-output-parameters" title="Link to this heading">¶</a></h2>
+<p>These keywords control the accuracy of the calculation and define which beams are saved in the output.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sgmin</span> <span class="pre">[value]</span></code></p>
+<ul>
+<li><p><strong>Mandatory</strong>. Minimum excitation error. Beams with excitation errors smaller than <code class="docutils literal notranslate"><span class="pre">sgmin</span></code> are included in the full diagonalization. beams are included if <span class="math notranslate nohighlight">\(2KS_g &lt; S_{g_{min}}\)</span></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">omeg</span> <span class="pre">[value]</span></code></p>
+<ul>
+<li><p><strong>Mandatory</strong>. A parameter related to the Bethe potential that affects accuracy. Larger is more accurate. beams are included if <span class="math notranslate nohighlight">\(\Omega_g &lt; \Omega\)</span></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aper</span> <span class="pre">[radius]</span></code> or <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">[nbeams]</span></code></p>
+<ul>
+<li><p><strong>Mandatory</strong>. Choose one method to specify output beams:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">aper</span> <span class="pre">[radius]</span></code>: Simulates an objective aperture, including all beams within this <code class="docutils literal notranslate"><span class="pre">radius</span></code> (in Å⁻¹).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">[nbeams]</span></code>: Manually specify <code class="docutils literal notranslate"><span class="pre">[nbeams]</span></code> beams. Must be followed by <code class="docutils literal notranslate"><span class="pre">[nbeams]</span></code> lines containing the <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">k</span> <span class="pre">l</span></code> indices.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">abs</span> <span class="pre">[potential]</span></code></p>
+<ul>
+<li><p><strong>Mandatory</strong>. Mean absorption potential in Volts.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Example from <code class="docutils literal notranslate"><span class="pre">Cu2O_LARBED.dat</span></code>:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sgmax</span> <span class="mf">3.5</span>
+<span class="n">sgmin</span> <span class="mf">0.15</span>
+<span class="n">omeg</span> <span class="mi">25</span>
+
+<span class="n">aper</span> <span class="mf">1.0</span>
+<span class="nb">abs</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</section>
+<section id="structure-factor-adjustment-optional">
+<h2>5. Structure Factor Adjustment (Optional)<a class="headerlink" href="#structure-factor-adjustment-optional" title="Link to this heading">¶</a></h2>
+<p>This section allows for manual adjustment of structure factors for refinement purposes.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">adj</span> <span class="pre">[nref]</span></code></p>
+<ul>
+<li><p>Keyword followed by the number of reflections whose structure factors will be adjusted.</p></li>
+</ul>
+</li>
+<li><p>The following <code class="docutils literal notranslate"><span class="pre">[nref]</span></code> lines contain the reflection and its new structure factor values:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">k</span> <span class="pre">l</span> <span class="pre">U_g_amp</span> <span class="pre">U_g_phase</span> <span class="pre">U'_g_amp</span> <span class="pre">U'_g_phase</span></code><br />
+phase is in degree</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="architecture.html">Package Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#bloch-wave-simulation-engine">Bloch Wave Simulation Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#interface-for-optimization-and-analysis">Interface for Optimization and Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="architecture.html#detail-explaination-of-the-workflow">detail explaination of the workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="architecture.html">Package Architecture</a><ul>
+      <li>Previous: <a href="LARBEDindex.html" title="previous chapter">Understand How to Define/Index LARBED Dataset</a></li>
+      <li>Next: <a href="ROI.html" title="next chapter">Overview of ROI definition in pyextal</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/configuration.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

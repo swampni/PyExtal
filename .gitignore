@@ -1,0 +1,24 @@
+fib example
+dat
+box
+log
+*.pyc
+*.i
+*__genmod.f90
+*.mod
+*.i90
+*.o
+*.npy
+*.npy
+*.so
+refineGeometric.ipynb
+*.wav
+*.img
+examples/Cu2O/geo_region_select.png
+bloch/parabloch
+test.py
+log.txt
+Larbed
+GaN.ipynb
+.vscode
+.coverage

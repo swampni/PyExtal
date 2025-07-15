@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Package Architecture &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Understand How to Define/Index LARBED Dataset" href="LARBEDindex.html" />
+    <link rel="prev" title="Getting started with PyExtal" href="usage.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="package-architecture">
+<h1>Package Architecture<a class="headerlink" href="#package-architecture" title="Link to this heading">¶</a></h1>
+<p>PyExtal is composed of two main components:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#bloch-wave-simulation-engine"><span class="std std-ref">Bloch wave simulation engine</span></a></p></li>
+<li><p><a class="reference internal" href="#interface-for-optimization-and-analysis"><span class="std std-ref">Interface for optimization and analysis</span></a></p></li>
+</ol>
+<section id="bloch-wave-simulation-engine">
+<h2>Bloch Wave Simulation Engine<a class="headerlink" href="#bloch-wave-simulation-engine" title="Link to this heading">¶</a></h2>
+<p>Bloch Wave Simulation Engine is responsible for simulating diffraction intensity of a crystal structure. It is implemented in Fortran and it is adapted from the code described in <em>Electron Microdiffraction</em> by <a class="reference external" href="https://doi.org/10.1007/978-1-4899-2353-0">Zuo and Spence</a>. Diagonalization calculation is performed using <a class="reference external" href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html#gs.lup97p">Intel MKL</a> implementation of the LAPACK library. Calculation of the diffraction intensity with different incident angle is parallelized using <a class="reference external" href="https://www.mpi-forum.org/">Message Passing Interface (MPI)</a>, enabling efficient computation. The Fortran code is compiled into a shared library using <a class="reference external" href="https://numpy.org/doc/stable/f2py/">f2py</a> and is called from Python. The Fortran code is located in the <code class="docutils literal notranslate"><span class="pre">src/bloch</span></code> directory.</p>
+<p>The engine has three main subroutines:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bloch_parse</span></code>:<br />
+Reads the input file and parses the parameters for crystal structure, experiment and simulation conditions. This must be called first before any other subroutines as it initializes the parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bloch_run</span></code>/<code class="docutils literal notranslate"><span class="pre">tilt_run</span></code>:
+Performs the Bloch wave simulation. Based on the input parameters, <code class="docutils literal notranslate"><span class="pre">bloch_run</span></code> will determine a set of incident directions and solve for eigenvalue and eigenvector for each direction. The <code class="docutils literal notranslate"><span class="pre">tilt_run</span></code> subroutine accepts a set of predefined incident directions and solve for eigenvalue and eigenvector for each direction, which is useful for refinement where we need to specficy the incident directions.</p></li>
+</ul>
+<p><strong>Parallelization Structure</strong>:<br />
+In order to have a seamless integration with Jupyter Notebook, we adopted a host-client structure for parallelization. All operations in python and the three subroutines mentioned here run on the main process (parent group with only one process). When <code class="docutils literal notranslate"><span class="pre">bloch_run</span></code>/<code class="docutils literal notranslate"><span class="pre">tilt_run</span></code> is called the first time, it will spawn new processes (children group) using <code class="docutils literal notranslate"><span class="pre">MPI_Comm_Spawn</span></code> running another subroutine <code class="docutils literal notranslate"><span class="pre">parabloch</span></code>. The <code class="docutils literal notranslate"><span class="pre">parabloch</span></code> subroutine will perform the actual calculation and return the results (eigenvector and eigenvalues of the A matrix) to the main process. After that, the children group will be parked and wait for input from the main process. This structure allows us to isolate the parallelization in the children processes, and users don’t need to handle the paralleization. This allows users to work on Jupyter Notebook without the dealing with the complexity of working with parallelization.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LARBED</span></code>:
+Performs the intensity calculation for a given set of eigenvectors and eigenvalues. This allows us to calculate the diffraction intensity of different thickness without redoing the expensive calculation of eigenvectors and eigenvalues. The calculation is described by equ 5.17 in <em>Advanced electron microscopy</em> by Zuo and Spence.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cbedp</span></code>:
+This is a legacy subroutine that has the same function as <code class="docutils literal notranslate"><span class="pre">LARBED</span></code>. It is still used for some part of the code, but it is subject to be removed in the future.</p></li>
+</ul>
+</section>
+<section id="interface-for-optimization-and-analysis">
+<h2>Interface for Optimization and Analysis<a class="headerlink" href="#interface-for-optimization-and-analysis" title="Link to this heading">¶</a></h2>
+<p>The interface for optimization and analysis is implemented in Python in a object-oriented fashion. It is designed to be user-friendly and easy to use. The interface is composed of several modules, each responsible for a specific task. The main modules are:</p>
+<section id="dinfo">
+<h3><code class="docutils literal notranslate"><span class="pre">dinfo</span></code>:<a class="headerlink" href="#dinfo" title="Link to this heading">¶</a></h3>
+<p>This is a set of classes that contains the information of the diffraction pattern, including the pattern itself, initial esitmates of sample thickness, sample orientation, calibration of the pattern pixel size and path to the input file containing crystal and simulation parameters. For LARBED pattern, it also accepts the pre-calculated pixel-wise variance of intensity. It also contains methods for managing structure factors, so users can access the refined structure factors.</p>
+</section>
+<section id="roi">
+<h3><code class="docutils literal notranslate"><span class="pre">ROI</span></code>:<a class="headerlink" href="#roi" title="Link to this heading">¶</a></h3>
+<p>This is a set of classes that contains the information of the region of interest (ROI) in the diffraction pattern. It is used to define the area of the diffraction pattern that will be used for optimization. This class also manages the connection between the simulation and the experimental data.</p>
+</section>
+<section id="optimize">
+<h3><code class="docutils literal notranslate"><span class="pre">optimize</span></code>:<a class="headerlink" href="#optimize" title="Link to this heading">¶</a></h3>
+<p>This module contains two classes: Coarse and Fine.</p>
+<ul class="simple">
+<li><p>Coarse Refinement: The Coarse refinement refines the parameters by comparing the experimental data with the simulated data with cross-correlation. The simulation is done with a grid sparser than the experimental data and upsampled to reduce the computation time. A set of predefine optimzation traget functions are defined.</p>
+<ul>
+<li><p>thickness: thickness of the sample</p></li>
+<li><p>gl: scaling factor for the diffraction pattern, equivalent to camera length for CBED and tilting step size for LARBED</p></li>
+<li><p>DWF: Debye-Waller factor, which is used to account for the thermal vibration of atoms in the crystal structure. The DWF is defined as <span class="math notranslate nohighlight">\(exp(-Bsin^2(\theta)/\lambda^2)\)</span>, where B is the Debye-Waller factor, theta is the scattering angle and lambda is the wavelength of the incident beam. The DWF is used to correct the intensity of the diffraction spots for thermal motion due to inelastic scattering.</p></li>
+<li><p>cell: unit cell parameters, including the lattice parameters and the angles between the axes. The unit cell parameters are used to define the crystal structure and are used to calculate the diffraction pattern.</p></li>
+<li><p>orientation: orientation of the crystal structure with respect to the incident beam. Refining this doesn’t require extra calculation, instead, a field of view larger than the roi is simulated and the orientation is refined by finding the position that gives best match with the experimental data. This is often in tandem with other parameters, such as thickness and gl.</p></li>
+</ul>
+</li>
+<li><p>Fine Refinement: fine refinement simulated the intensity pixel by pixel. Several different goodness-of-fit (GOF) metric are defined in the <a class="reference internal" href="#gof"><span class="std std-ref">gof</span></a> module. Optimization is performed using the <code class="docutils literal notranslate"><span class="pre">scipy.optimize</span></code> module and the default optimizer is the Nelder-Mead simplex algorithm. The fine refinement is solely for structure factor refinement. For each iteration, the structure factors are adjusted and the simulation is performed. Subsequently, the scaling factor(gl), thickness and orientation are also refined to give the best fit based on the defined GOF metric. The fine refinement will stop once the stopping criteria is met.</p></li>
+</ul>
+</section>
+<section id="gof">
+<h3><code class="docutils literal notranslate"><span class="pre">gof</span></code>:<a class="headerlink" href="#gof" title="Link to this heading">¶</a></h3>
+<p>This module contains several classes that define different goodness-of-fit (GOF) metrics. The GOF metrics are used to evaluate the quality of the fit between the experimental data and the simulated data. Users can define their own GOF metrics by inheriting from the base class <code class="docutils literal notranslate"><span class="pre">BaseGOF</span></code>. <code class="docutils literal notranslate"><span class="pre">BaseGOF</span></code> is an abstract base class that defines the interface for the GOF metrics.</p>
+</section>
+</section>
+<section id="basic-workflow">
+<h2>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Prepare dataset:</p>
+<ul class="simple">
+<li><p>CBED: Energy-filtered CBED patterns should be indexed and deconvolved to remove the MTF of detector. This package comes with a Lucy-Richardson deconvolution implementation that can be used to deconvolve the CBED patterns. The deconvolved patterns should be saved in a directory.</p></li>
+<li><p>LARBED: LARBED patterns should be extracted from the raw data and saved in a directory. The variance of the intensity for each pixel should also be calculated and saved. Detail description of the variance calculation is described elsewhere.</p></li>
+</ul>
+</li>
+<li><p>define input .dat file: .dat file is a configuration file that contains the crystal structure, simulation parameters and diffraction gemometry.</p></li>
+<li><p>User should first create a <code class="docutils literal notranslate"><span class="pre">dinfo</span></code> object with the input file. CBED/LARBED pattern also needs to be inputed.</p></li>
+<li><p>Then, a <code class="docutils literal notranslate"><span class="pre">ROI</span></code> object should be created to define the region of interest in the diffraction pattern.</p></li>
+<li><p>After that, a <code class="docutils literal notranslate"><span class="pre">CoarseOptimization</span></code> object can be created to perform the coarse  refinement.</p></li>
+<li><p>Subsequently, a <code class="docutils literal notranslate"><span class="pre">FineOptimization</span></code> object can be created to perform the fine refinement. The final results can be accessed from the <code class="docutils literal notranslate"><span class="pre">dinfo</span></code> object.</p></li>
+</ol>
+</section>
+<section id="detail-explaination-of-the-workflow">
+<h2>detail explaination of the workflow<a class="headerlink" href="#detail-explaination-of-the-workflow" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="LARBEDindex.html">Understand How to Define/Index LARBED Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ROI.html">Overview of ROI definition in pyextal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CoarseRefine.html">Coarse Refinement (Correlation based refinement)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FineRefine.html">Fine Refientment (Intensity based Refinement)</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Package Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bloch-wave-simulation-engine">Bloch Wave Simulation Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-for-optimization-and-analysis">Interface for Optimization and Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detail-explaination-of-the-workflow">detail explaination of the workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="usage.html" title="previous chapter">Getting started with PyExtal</a></li>
+      <li>Next: <a href="LARBEDindex.html" title="next chapter">Understand How to Define/Index LARBED Dataset</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/architecture.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

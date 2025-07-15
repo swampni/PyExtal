@@ -1,0 +1,1 @@
+constant = {'NCORES':8}

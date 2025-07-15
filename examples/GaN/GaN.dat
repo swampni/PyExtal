@@ -1,0 +1,27 @@
+#Cu2O 
+#crystal
+
+crystal Cu2O : dw = iso occ = 1
+
+cell 3.19 3.19 5.189 90.000000 90.000000 120.000000
+
+atom Ga  0.3333 0.6667 0.000 0.35
+atom N   0.3333 0.6667 0.377 0.8199
+spg 186 1
+
+hv 200
+zone 1 2 0
+norm 1 2 0
+kt 0 0 0
+xaxis 0 0 1
+conv 0.4278
+samp 16
+
+#refine
+sele 3.5 2.5 0.1 0
+sgmin 0.15
+omeg 25
+
+aper 1.5
+abs 0.0
+

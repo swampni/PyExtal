@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Fine Refientment (Intensity based Refinement) &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Coarse Refinement (Correlation based refinement)" href="CoarseRefine.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="fine-refientment-intensity-based-refinement">
+<h1>Fine Refientment (Intensity based Refinement)<a class="headerlink" href="#fine-refientment-intensity-based-refinement" title="Link to this heading">¶</a></h1>
+<p>To accurately determine the strucuture factors, the fine refinement method is used. This method uses the intensity of the diffraction pattern to refine the structure factors. The fine refinement is done in the <strong>display space</strong> as described in <a class="reference external" href="https://pyextal.readthedocs.io/en/latest/ROI.html">ROI</a>.<br />
+Similar to the coarse refinement, a target function is defined to be optimized. The target function calculates the goodness-of-fit metric between experiment and simulated intensity. specified by the user. The target function is then optimized using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.minimize</span></code> function with <code class="docutils literal notranslate"><span class="pre">method='Nelder-Mead'</span></code> option.<br />
+The input of the target function is the structure factors, which are adjusted in each iteration. Users need to set which reflections are refined and provide their initial value. If no initial value is provided, independent atom modle (IAM) value will be used as initial value. In addition, users also need to specify a range for each reflections that are used for normalization during refinement. During optimization, the structure factors are normalized to the range specified by the user. This is done to ensure that the structure factors are within a reasonable range and to avoid numerical instability.</p>
+<div class="math notranslate nohighlight">
+\[SF_{normalized} = \frac{(SF - SF_{min})}{SF_{max} - SF_{min}}  \]</div>
+<p>The target function is consisted of two parts: the first part is invoking the reevaluation of the eigenvectors and eigenvalues based on the structure factors, and the second part is an optimization loop for all the geometric parameters, including rotation, step size, thickness and orientation based on the goodness-of-fit metric. Orientation refinement is optional, and there is an option that allows individual disks to be move independently for CBED patterns. The optimization is done with <code class="docutils literal notranslate"><span class="pre">scipy.optimize.minimize</span></code> function with <code class="docutils literal notranslate"><span class="pre">method=Powell</span></code> option.<br />
+For LARBED patterns, there is an additional option that allows the user to specify a 2d voigt function with <span class="math notranslate nohighlight">\(\gamma\)</span> (for lorentizan) and <span class="math notranslate nohighlight">\(\sigma\)</span> (for gaussian) to model the point spread function in reciprocal space. The voigt function is convolved with the simulated intensity before the goodness-of-fit metric is calculated. This is critical for obtaining accurate structure factors for LARBED patterns, as the point spread function can significantly affect the intensity distribution in reciprocal space. <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> are refined together with the geometric parameters.</p>
+<section id="gof-metrics">
+<h2>GOF Metrics<a class="headerlink" href="#gof-metrics" title="Link to this heading">¶</a></h2>
+<p>The following GOF metrics are implemented:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">XCorrelation</span></code>: return correlation calculated using <code class="docutils literal notranslate"><span class="pre">scipy.spatial.distance.correlation</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Chi2</span></code>: the base class for <span class="math notranslate nohighlight">\(\chi^2\)</span> metric which simply assumes poisson noise, so the variance is equal to the intensity.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\chi^2 = \frac{1}{n-p-1} \sum_i \frac{(cI^t_i + b - I^{exp}_i)^2}{\sigma^2}  = \sum_i \frac{(cI^t_i + b - I^{exp}_i)^2}{I^{exp}_i} \]</div>
+<p>where <span class="math notranslate nohighlight">\(I^t_i\)</span> is the simulated intensity, <span class="math notranslate nohighlight">\(I^{exp}_i\)</span> is the experimental intensity, <span class="math notranslate nohighlight">\(c\)</span> is the scaling factor, <span class="math notranslate nohighlight">\(b\)</span> is the background and <span class="math notranslate nohighlight">\(\sigma^2\)</span> is the variance. b and c are obtained by minimizing the <span class="math notranslate nohighlight">\(\chi^2\)</span> metric with setting the derivative of <span class="math notranslate nohighlight">\(\chi^2\)</span> with respect to <span class="math notranslate nohighlight">\(c\)</span> and <span class="math notranslate nohighlight">\(b\)</span> to zero. The equations are:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \chi^2}{\partial c} = 2(c\sum_i \frac{{I_{i}^t}^2}{\sigma^2_{i}} + b \sum_i \frac{I_{i}^t}{\sigma^2_{i}} - \sum_i \frac{I^t_{i}I^{exp}_{i}}{\sigma^2_{i}})=0\]</div>
+<div class="math notranslate nohighlight">
+\[ \frac{\partial \chi^2}{\partial b} = 2(c \sum_i \frac{I_{i}^t}{\sigma^2_{i}} + b \sum_i \frac{1}{\sigma^2_{i}} - \sum_i \frac{I^{exp}_{i}}{\sigma^2_{i}})=0\]</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">chi2_const</span></code>: this is a subclass of <code class="docutils literal notranslate"><span class="pre">Chi2</span></code> that assumes the background is constant across the diffraction pattern. The variance is calculated based on the intensity and characteristics parameters of the detector input by user. The detector parameters are described in <a class="reference external" href="https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0029(20000501)49:3%3C245::AID-JEMT4%3E3.0.CO;2-O">Zuo (2000)</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chi2_multibackground</span></code>: this is a subclass of <code class="docutils literal notranslate"><span class="pre">Chi2_const</span></code> that allows multiple background values. This is useful for cases where the background is not uniform across different diffraction disks. An example is CBED patterns collected with Gatan Image filter, where the anisochromatcity is not perfectly removed during alignment. <span class="math notranslate nohighlight">\(\chi^2\)</span> is now defined as :</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\chi^2 = \frac{1}{n-p-1} \sum_d \sum_i \frac{(cI_{id}^t+ b_d - I_{id}^x)^2}{\sigma_{id}^2}\]</div>
+<p>the normalization factor c and a set of background values <span class="math notranslate nohighlight">\(b_d\)</span> are obtained by solving follwoing set of equations:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \chi^2}{\partial c} = 2(c\sum_d \sum_i \frac{{I_{id}^t}^2}{\sigma^2_{id}} + b_d\sum_d \sum_i \frac{I_{id}^t}{\sigma^2_{id}} - \sum_d\sum_i \frac{I^t_{id}I^x_{id}}{\sigma^2_{id}})=0  \]</div>
+<div class="math notranslate nohighlight">
+\[ \frac{\partial \chi^2}{\partial b_d} = 2(c\sum_d \sum_i \frac{I_{id}^t}{\sigma^2_{id}} + b_d\sum_d \sum_i \frac{1}{\sigma^2_{id}} - \sum_d\sum_i \frac{I^x_{id}}{\sigma^2_{id}})=0\]</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">chi2_LARBED</span></code>: the variance calculation is more involved for LARBED patterns, so instead of inputing a set of detector parameters, the user can precalculate the variance for each pixel and input it as a numpy array to the dinfo class. The variance will be passed to the roi class and accessed by the GOF metric. The normalization factor c and background b are obtained by solving the same set of equations described in <code class="docutils literal notranslate"><span class="pre">chi2_const</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chi2_LARBED_multibackground</span></code>: the variance calculation is more involved for LARBED patterns, so instead of inputing a set of detector parameters, the user can precalculate the variance for each pixel and input it as a numpy array to the dinfo class. The variance will be passed to the roi class and accessed by the GOF metric. The normalization factor c and background b are obtained by solving the same set of equations described in <code class="docutils literal notranslate"><span class="pre">chi2_multibackground</span></code>.</p></li>
+<li><p>custom GOF metric: user can define their own GOF metric by inheriting from the <code class="docutils literal notranslate"><span class="pre">BaseGOF</span></code> class. The user-defined GOF metric must implement the <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method, which takes the simulated intensity and experimental intensity as input and returns the GOF value.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="architecture.html">Package Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#bloch-wave-simulation-engine">Bloch Wave Simulation Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#interface-for-optimization-and-analysis">Interface for Optimization and Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="architecture.html#detail-explaination-of-the-workflow">detail explaination of the workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="architecture.html">Package Architecture</a><ul>
+      <li>Previous: <a href="CoarseRefine.html" title="previous chapter">Coarse Refinement (Correlation based refinement)</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/FineRefine.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

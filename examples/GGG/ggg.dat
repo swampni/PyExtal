@@ -1,0 +1,33 @@
+#Si 111 zone axis
+
+# define crystal here
+
+crystal silicon : dw = iso occ = 1
+
+cell 12.38 12.38 12.38 90.0 90.0 90.0
+
+atom O 0.029 0.054  0.650 0.4668
+atom Gd 0.125 0.0  0.25 0.4668
+atom Ga 0.0 0.0  0.0 0.4668
+atom Ga 0.375 0.0  0.25 0.4668
+
+spg 230 1
+
+# define diffraction condition
+
+hv 302.5
+zone 1 1 0
+norm 1 1 0
+kt 0 0 0
+xaxis 0 0 2
+conv 1.0
+samp 10
+
+# define beam selection and diagonalization rule here
+sele 2.0 2.5 0.3 0
+sgmin 0.15
+omeg 10.0
+
+# define output
+aper 1.0
+abs 0.0

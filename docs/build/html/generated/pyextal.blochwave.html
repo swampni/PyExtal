@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pyextal.blochwave &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="pyextal.symmetry" href="pyextal.symmetry.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-pyextal.blochwave">
+<span id="pyextal-blochwave"></span><h1>pyextal.blochwave<a class="headerlink" href="#module-pyextal.blochwave" title="Link to this heading">¶</a></h1>
+<p>This module ‘blochwave’ is auto-generated with f2py (version:2.3.1).
+Functions:</p>
+<blockquote>
+<div><p>nout,nx2,hklout,disks,alpha,tilt0,gvx,gvy = bloch_parse(fname,t_x,t_y)
+ntilt = bloch_run(nout,tilt0,gg,g_horizontal,pixsiz,subaper,subnx,subny,ncores,collector,collector_extra_args=())
+memuse = dryrun(nout,tilt0,gg,g_horizontal,pixsiz,subaper,subnx,subny,ncores)
+tilt_run(nout,indices,ncores)
+ss,xfre,xfim,afre,afim = defaultsf(id,gg)
+resetugh()
+yt = larbed(depth,ntilt,alpha,gg,nout)
+yt = larbed2(depth,alpha,gg,nout)
+ym = cbedp(depth,x0,y0,gl,s,theta,ntilt,nx0,hklout,gmxr,tilt0,gg,gh,snorm,disks,bigk,alpha,update,update_extra_args=())
+yt = cbedp_larbed(depth,ntilt,nx0,hklout,gmxr,tilt0,gg,gh,snorm,disks,bigk,alpha,update,update_extra_args=())
+yt = cbedp_larbed2(depth,nx0,hklout,gmxr,tilt0,gg,gh,snorm,disks,bigk,alpha,update,update_extra_args=())</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Fortran 90/95 modules:</dt><dd><p>constants — nrfmax,nj,nk,nl,pi,twopi,ratio,dkv,hv,vol,build_version,build_date,set_constants(),buildversion()  cryst — label,cell,abx,zt,v0,itype,iftype,atpar,smult,dw,natoms,ntype  difpar — nbeams,ncore,nidptr,nref,hkl,idptr,kv,bigk,ratio1,abm,sgmax,sgmin,omgmx,gamma,wavel,gx,gy,zone,snorm,hklf,vhkl,allocate_arrays_difpar(),deallocate_arrays_difpar(),updatekv(),memoryusage()  bloch_module — ughr,ughi,cinv,v,cc,ig,ipvt,ndiag,allocate_arrays_bloch(),deallocate_arrays_bloch()  sfpar — stab,ftab,ftab2,ntab,istab  xtal — atm,xyz,xyz0,jtype,jftype,nsite  spgr — aspg,alag,syst,ngp,centro,ncsub4,gp,csub4  eigen — ndiags,eigenvectors,cinvs,eigenvalues,tilt,check_allocated_eigen(),check_size_eigen(),allocate_arrays_eigen(),deallocate_arrays_eigen(),allocate_tilt(),deallocate_tilt()  mpiinfo — intercomm,first,mpiinfo_despawn()  sfmanager — e2xray()  smatrx — nm,ndiag,ccr,cci,vr,vi,cinv  interpolation — tintp(),tval(),jctst(),cnvtab()  gram — gmx,gmxr.</p>
+</dd>
+</dl>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Package Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyextal.callBloch.html">pyextal.callBloch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.gof.html">pyextal.gof</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.metric.html">pyextal.metric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.optimize.html">pyextal.optimize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.roi.html">pyextal.roi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyextal.symmetry.html">pyextal.symmetry</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pyextal.blochwave</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+      <li>Previous: <a href="pyextal.symmetry.html" title="previous chapter">pyextal.symmetry</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/pyextal.blochwave.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

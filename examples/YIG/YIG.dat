@@ -1,0 +1,26 @@
+#!Written by QED, (C) JM ZUO
+#!crystal
+#J. Appl. Phys.,1995,77,,1667-1670,Chae K.P., Lee Y.B., Paik S.W., Lee S.H.
+crystal YIG : dw = iso occ = 1
+cell 12.372 12.372 12.372 90.0 90.0 90.0
+atom Fe 0.000 0.000 0.000 0.5
+atom O -0.027 0.0568 0.1504 0.5
+atom Y 0.125 0 0.25 0.5
+atom Fe 0.375 0 0.25 0.5
+spg 230 1
+#!microscope
+hv   300.00
+zone 1 1 0
+norm 1 1 0
+kt 0 0 0
+xaxi     2    -2    0
+conv 4
+samp 20
+# beam slection rules
+sele 2 2 0.1 0
+sgmin 0.3
+omeg 10.0
+# define output
+aper 1.5
+abs 0.0
+########################################

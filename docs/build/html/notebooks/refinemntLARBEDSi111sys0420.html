@@ -1,0 +1,3689 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Structure Factor refinement of Si LARBED 111 systematic row &#8212; PyExtal 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="High voltage calibration example" href="refinemnt_HVcal.html" />
+    <link rel="prev" title="PyExtal example for CBED refinement" href="refinemnt_si04.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="Structure-Factor-refinement-of-Si-LARBED-111-systematic-row">
+<h1>Structure Factor refinement of Si LARBED 111 systematic row<a class="headerlink" href="#Structure-Factor-refinement-of-Si-LARBED-111-systematic-row" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pyextal.dinfo</span> <span class="kn">import</span> <span class="n">LARBEDDiffractionInfo</span>
+<span class="kn">from</span> <span class="nn">pyextal.roi</span> <span class="kn">import</span> <span class="n">LARBEDROI</span>
+<span class="kn">from</span> <span class="nn">pyextal.optimize</span> <span class="kn">import</span> <span class="n">CoarseOptimize</span><span class="p">,</span> <span class="n">FineOptimize</span>
+<span class="kn">from</span> <span class="nn">pyextal.gof</span> <span class="kn">import</span> <span class="n">Chi2_LARBED</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inferno&#39;</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pyextal package imported. Version: 0.0.1
+</pre></div></div>
+</div>
+<section id="load-Larbed-data">
+<h2>load Larbed data<a class="headerlink" href="#load-Larbed-data" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>load the image stack and flip the images</p></li>
+<li><p>load the variance image and flip it</p></li>
+<li><p>load the index for each image</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111sys area3/deconv3_ri4_Store_Larbed.npy&quot;</span><span class="p">)</span>
+<span class="n">dp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111sys area3/deconv3_ri4_Store_LarbedVariance.npy&quot;</span><span class="p">)</span>
+<span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">gindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111sys area3/deconv3_ri4_g_vectors.npy&quot;</span><span class="p">)</span>
+
+<span class="c1"># make sure no zero or negative values</span>
+<span class="n">dp</span><span class="p">[</span><span class="n">dp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="initialize-the-diffraction-info-class">
+<h2>initialize the diffraction info class<a class="headerlink" href="#initialize-the-diffraction-info-class" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>diffraction pattern</p></li>
+<li><p>estimate thickness</p></li>
+<li><p>additional tiltx and tilty</p></li>
+<li><p>estimate gl, g is deinfined in .dat file</p></li>
+<li><p>.dat file</p></li>
+<li><p>index of each image</p></li>
+<li><p>variance image</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dinfo</span> <span class="o">=</span> <span class="n">LARBEDDiffractionInfo</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span>  <span class="mi">600</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">38.85</span><span class="p">,</span> <span class="s1">&#39;si110_111sys.dat&#39;</span><span class="p">,</span> <span class="n">gindex</span><span class="p">,</span> <span class="n">varianceMaps</span><span class="o">=</span><span class="n">variance</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="define-parameter-for-region-of-interest:">
+<h2>define parameter for region of interest:<a class="headerlink" href="#define-parameter-for-region-of-interest:" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>gx: g vector in the x direction</p></li>
+<li><p>rotation: relative to the xaxis set in .dat</p></li>
+<li><p>gInclude: include the g vector in the ROI</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">rotation</span> <span class="o">=</span> <span class="o">-</span><span class="mf">112.07</span> <span class="o">-</span> <span class="mf">33.7</span>
+<span class="n">gInclude</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span> <span class="o">=</span> <span class="n">LARBEDROI</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">,</span> <span class="n">gx</span><span class="o">=</span><span class="n">gx</span><span class="p">,</span> <span class="n">gInclude</span><span class="o">=</span><span class="n">gInclude</span><span class="p">)</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+include beam initialized
+group symmetry initialized
+</pre></div></div>
+</div>
+</section>
+<section id="select-the-region-of-interest">
+<h2>select the region of interest<a class="headerlink" href="#select-the-region-of-interest" title="Link to this heading">¶</a></h2>
+<p>refer to ROI section in the documentation for details</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">140</span><span class="p">,</span><span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">140</span><span class="p">,</span> <span class="mi">270</span><span class="p">],</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span><span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">230</span><span class="p">,</span><span class="mi">60</span><span class="p">]]]))</span>
+<span class="n">roi</span><span class="o">.</span><span class="n">displayROI</span><span class="p">()</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_10_0.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_10_0.png" />
+</div>
+</div>
+</section>
+<section id="initialize-coarse-refinement">
+<h2>initialize coarse refinement<a class="headerlink" href="#initialize-coarse-refinement" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span> <span class="o">=</span> <span class="n">CoarseOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_12_0.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_12_0.png" />
+</div>
+</div>
+</section>
+<section id="refine-orientation-and-thickness-of-the-sample-and-display-the-results">
+<h2>refine orientation and thickness of the sample and display the results<a class="headerlink" href="#refine-orientation-and-thickness-of-the-sample-and-display-the-results" title="Link to this heading">¶</a></h2>
+<p>IF THE COARSE SEARCH IS WAY OFF YOU NEED TO FIX TILT, ROTATION, OR ADJUST GL</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">optimizeOrientationThickness</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 0.001 )
+thickness: 772.3219706436356, gl: 38.85, tiltY: -0.11031229284113353, tiltX: 0.19304651247198312
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">displayCoarseSearch</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_15_0.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_15_0.png" />
+</div>
+</div>
+</section>
+<section id="reselect-the-region-of-interest-for-fine-refinement">
+<h2>reselect the region of interest for fine refinement<a class="headerlink" href="#reselect-the-region-of-interest-for-fine-refinement" title="Link to this heading">¶</a></h2>
+<p>padding is needed when we refine LARBED and convolve the simulated pattern with a kernel. Padding is needed to avoid edge effects.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><br/><span></span><span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">120</span><span class="p">,</span><span class="mi">135</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span><span class="mi">260</span><span class="p">],</span> <span class="p">[</span><span class="mi">125</span><span class="p">,</span> <span class="mi">135</span><span class="p">],</span> <span class="p">[</span><span class="mi">125</span><span class="p">,</span><span class="mi">5</span><span class="p">]],</span>
+                        <span class="p">]),</span><span class="n">padding</span><span class="o">=</span><span class="mi">10</span>
+                        <span class="p">)</span>
+
+
+<span class="n">roi</span><span class="o">.</span><span class="n">displayROI</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_17_0.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_17_0.png" />
+</div>
+</div>
+</section>
+<section id="set-parameters-for-fine-refinement">
+<h2>set parameters for fine refinement<a class="headerlink" href="#set-parameters-for-fine-refinement" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>reflections: list of reflections to refine</p></li>
+<li><p>sfMask: mask for the structure factor refinement, sometimes absorption is omitted</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reflection_list</span> <span class="o">=</span> <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">),]</span>
+<span class="n">sfMask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fine</span> <span class="o">=</span> <span class="n">FineOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span>
+                    <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">,</span>
+                    <span class="n">reflections</span><span class="o">=</span><span class="n">reflection_list</span><span class="p">,</span>
+                    <span class="n">sfMask</span><span class="o">=</span><span class="n">sfMask</span><span class="p">,</span>
+                    <span class="n">errorFunc</span><span class="o">=</span><span class="n">Chi2_LARBED</span><span class="p">(</span><span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">),</span>
+                    <span class="n">perturbROI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">symUpdate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">probe</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                   <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="set-initial-structure-factor-parameters">
+<h2>set initial structure factor parameters<a class="headerlink" href="#set-initial-structure-factor-parameters" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">because 222 is fobidden in IAM model but allowed when bonding is considered, we need to manually set the initial structure factor parameters for 222 reflection</div>
+<div class="line">if not given, IAM value will be used</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyextal.callBloch</span> <span class="kn">import</span> <span class="n">lookupSF</span>
+<span class="n">init_val</span> <span class="o">=</span> <span class="n">lookupSF</span><span class="p">(</span><span class="n">reflection_list</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial values from lookupSF:&quot;</span><span class="p">,</span> <span class="n">init_val</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Initial values from lookupSF: [[5.7493374e-02 0.0000000e+00 4.3672347e-04 1.8000000e+02]
+ [0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00]]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">init_val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">8e-4</span>
+<span class="n">init_val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">180</span>
+<span class="n">init_val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">init_val</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[ 5.7493374e-02,  0.0000000e+00,  4.3672347e-04,  1.8000000e+02],
+       [-7.9999998e-04,  1.8000000e+02,  0.0000000e+00,  0.0000000e+00]],
+      dtype=float32)
+</pre></div></div>
+</div>
+<p>the range for normalization also need to be set</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">init_valRange</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">init_val</span><span class="p">[:,::</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">init_val</span><span class="p">[:,::</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">1.05</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fine</span><span class="o">.</span><span class="n">getx0</span><span class="p">(</span><span class="n">init_val</span><span class="p">[:,::</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">fine</span><span class="o">.</span><span class="n">getRange</span><span class="p">(</span><span class="n">init_valRange</span><span class="p">)</span>
+<span class="n">fine</span><span class="o">.</span><span class="n">display</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+setting the initial value and normalization range to:
+beam: (-1, 1, 1)
+      lower       value       upper
+U : 5.4618705e-02   5.7493374e-02   6.0368039e-02
+UA: 4.1488730e-04   4.3672347e-04   4.5855960e-04
+------------------------------
+beam: (2, -2, -2)
+      lower       value       upper
+U : -7.5999997e-04   -7.9999998e-04   -8.3999994e-04
+UA: 0.0000000e+00   0.0000000e+00   0.0000000e+00
+------------------------------
+(-1, 1, 1): U 0.0574934 UA 0.0004367
+(2, -2, -2): U -0.0008000 UA 0.0000000
+Chi Square single bacckground LARBED: 50.24594
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_26_1.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_26_1.png" />
+</div>
+</div>
+</section>
+<section id="perform-fine-refinement">
+<h2>perform fine refinement<a class="headerlink" href="#perform-fine-refinement" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> qt
+
+
+<span class="n">fine</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+setting the initial value and normalization range to:
+beam: (-1, 1, 1)
+      lower       value       upper
+U : 5.4618705e-02   5.7493374e-02   6.0368039e-02
+UA: 4.1488730e-04   4.3672347e-04   4.5855960e-04
+------------------------------
+beam: (2, -2, -2)
+      lower       value       upper
+U : -7.5999997e-04   -7.9999998e-04   -8.3999994e-04
+UA: 0.0000000e+00   0.0000000e+00   0.0000000e+00
+------------------------------
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+MESA: error: ZINK: failed to choose pdev
+glx: failed to create drisw screen
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+start optimization
+normal:[[ 0.05749337  0.00043672]
+ [-0.0008      0.        ]]
+SF:
+(-1, 1, 1): 5.7493374e-02 4.3672347e-04
+(2, -2, -2): -7.9999998e-04 0.0000000e+00
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/hcni/project/bloch-python/src/pyextal/optimize.py:656: RuntimeWarning: invalid value encountered in divide
+  return ((self.x0-self.x0Range[0])/(self.x0Range[1]-self.x0Range[0]))[self.sfMask]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+thickness: 777.18 gl: 38.59843 rotation: -143.26058
+corner: 1.62339 -3.28728
+GOF: 4.37877  func eval: 1318
+Error: 4.3675576158685505  func eval: 1318
+********************
+sigma: 1.708991700108378 gamma: 0.20379172514270874
+SF:
+(-1, 1, 1): 5.7637107e-02 4.3672347e-04
+(2, -2, -2): -7.9999998e-04 0.0000000e+00
+thickness: 775.93 gl: 38.58152 rotation: -143.20447
+corner: 1.55701 -3.30729
+GOF: 4.67713  func eval: 358
+Error: 4.665159187407784  func eval: 358
+********************
+sigma: 1.1625928502561234 gamma: 0.28868738838986996
+SF:
+(-1, 1, 1): 5.7493374e-02 4.3781527e-04
+(2, -2, -2): -7.9999998e-04 0.0000000e+00
+thickness: 777.03 gl: 38.58171 rotation: -143.21680
+corner: 1.54356 -3.30511
+GOF: 4.34995  func eval: 117
+Error: 4.338813927050003  func eval: 117
+********************
+sigma: 1.206411474361987 gamma: 0.2855450839645682
+SF:
+(-1, 1, 1): 5.7493374e-02 4.3672347e-04
+(2, -2, -2): -8.0200000e-04 0.0000000e+00
+thickness: 777.03 gl: 38.58162 rotation: -143.22254
+corner: 1.53734 -3.30349
+GOF: 4.34736  func eval: 56
+Error: 4.336228621277909  func eval: 56
+********************
+sigma: 1.2071208890873184 gamma: 0.28543264410830527
+SF:
+(-1, 1, 1): 5.7349641e-02 4.3745135e-04
+(2, -2, -2): -8.0133334e-04 0.0000000e+00
+thickness: 778.26 gl: 38.58419 rotation: -143.26277
+corner: 1.50630 -3.29557
+GOF: 4.03446  func eval: 220
+Error: 4.024136335665557  func eval: 220
+********************
+sigma: 1.2882967730382895 gamma: 0.2788724525949992
+SF:
+(-1, 1, 1): 5.7253819e-02 4.3769396e-04
+(2, -2, -2): -8.0177776e-04 0.0000000e+00
+thickness: 778.88 gl: 38.58534 rotation: -143.30001
+corner: 1.47936 -3.29221
+GOF: 3.83203  func eval: 281
+Error: 3.822220270522826  func eval: 281
+********************
+sigma: 1.2925984180121404 gamma: 0.2770409761772843
+SF:
+(-1, 1, 1): 5.7333671e-02 4.3809833e-04
+(2, -2, -2): -8.0251851e-04 0.0000000e+00
+thickness: 778.28 gl: 38.58541 rotation: -143.30909
+corner: 1.47017 -3.29123
+GOF: 3.99690  func eval: 109
+Error: 3.986665385091362  func eval: 109
+********************
+sigma: 1.2830972509562417 gamma: 0.2787653668971772
+SF:
+(-1, 1, 1): 5.7227202e-02 4.3719524e-04
+(2, -2, -2): -8.0419751e-04 0.0000000e+00
+thickness: 779.10 gl: 38.58621 rotation: -143.32970
+corner: 1.45638 -3.29068
+GOF: 3.77406  func eval: 172
+Error: 3.764399540113332  func eval: 172
+********************
+sigma: 1.2941916379132454 gamma: 0.27677670284578504
+SF:
+(-1, 1, 1): 5.7138477e-02 4.3698857e-04
+(2, -2, -2): -8.0559670e-04 0.0000000e+00
+thickness: 779.80 gl: 38.58723 rotation: -143.35328
+corner: 1.44310 -3.29088
+GOF: 3.59416  func eval: 187
+Error: 3.5849581529476984  func eval: 187
+********************
+sigma: 1.307024219178153 gamma: 0.274768452983291
+SF:
+(-1, 1, 1): 5.6990605e-02 4.3846379e-04
+(2, -2, -2): -8.0459536e-04 0.0000000e+00
+thickness: 781.09 gl: 38.60014 rotation: -143.49185
+corner: 1.44068 -3.29934
+GOF: 3.30520  func eval: 462
+Error: 3.2967428788242477  func eval: 462
+********************
+sigma: 1.4609856141649222 gamma: 0.25542593619441956
+SF:
+(-1, 1, 1): 5.6823015e-02 4.3904391e-04
+(2, -2, -2): -8.0546050e-04 0.0000000e+00
+thickness: 782.35 gl: 38.60092 rotation: -143.50775
+corner: 1.43142 -3.29955
+GOF: 2.99842  func eval: 170
+Error: 2.9907407187825306  func eval: 170
+********************
+sigma: 1.4554505194480774 gamma: 0.25437078903673094
+SF:
+(-1, 1, 1): 5.6809869e-02 4.3771928e-04
+(2, -2, -2): -8.0603815e-04 0.0000000e+00
+thickness: 782.48 gl: 38.60127 rotation: -143.51867
+corner: 1.42515 -3.30004
+GOF: 2.97554  func eval: 122
+Error: 2.967926998910118  func eval: 122
+********************
+sigma: 1.4576570910993254 gamma: 0.2539632767434497
+SF:
+(-1, 1, 1): 5.6635272e-02 4.3759294e-04
+(2, -2, -2): -8.0721133e-04 0.0000000e+00
+thickness: 783.96 gl: 38.61756 rotation: -143.82903
+corner: 1.28934 -3.30125
+GOF: 2.67490  func eval: 345
+Error: 2.668053360648531  func eval: 345
+********************
+sigma: 1.5797285760562032 gamma: 0.23236675486318897
+SF:
+(-1, 1, 1): 5.6477357e-02 4.3805630e-04
+(2, -2, -2): -8.1040128e-04 0.0000000e+00
+thickness: 785.22 gl: 38.61777 rotation: -143.84318
+corner: 1.27540 -3.29958
+GOF: 2.42121  func eval: 172
+Error: 2.4150098224549703  func eval: 172
+********************
+sigma: 1.5749107184945976 gamma: 0.23226690686333748
+SF:
+(-1, 1, 1): 5.6218535e-02 4.3817709e-04
+(2, -2, -2): -8.1327575e-04 0.0000000e+00
+thickness: 787.14 gl: 38.61997 rotation: -144.92073
+corner: 0.35794 -3.26217
+GOF: 2.01304  func eval: 984
+Error: 2.007889418262515  func eval: 984
+********************
+sigma: 1.6514734799912758 gamma: 0.21676208864350277
+SF:
+(-1, 1, 1): 5.5979405e-02 4.3955405e-04
+(2, -2, -2): -8.1170170e-04 0.0000000e+00
+thickness: 789.00 gl: 38.62791 rotation: -145.02324
+corner: 0.34834 -3.26004
+GOF: 1.71568  func eval: 232
+Error: 1.711283583555222  func eval: 232
+********************
+sigma: 1.760986324113538 gamma: 0.18719417500303281
+SF:
+(-1, 1, 1): 5.5593044e-02 4.4040923e-04
+(2, -2, -2): -8.1373664e-04 0.0000000e+00
+thickness: 792.17 gl: 38.64709 rotation: -145.24996
+corner: 0.34656 -3.25544
+GOF: 1.33092  func eval: 295
+Error: 1.3275168219445768  func eval: 295
+********************
+sigma: 1.9117202243342082 gamma: 0.1395397580972375
+SF:
+(-1, 1, 1): 5.5474889e-02 4.3840893e-04
+(2, -2, -2): -8.1735535e-04 0.0000000e+00
+thickness: 793.11 gl: 38.64827 rotation: -145.26187
+corner: 0.34854 -3.25485
+GOF: 1.24066  func eval: 176
+Error: 1.237486767462107  func eval: 176
+********************
+sigma: 1.9127404301769713 gamma: 0.13759203095144718
+SF:
+(-1, 1, 1): 5.5025510e-02 4.3819728e-04
+(2, -2, -2): -8.2132034e-04 0.0000000e+00
+thickness: 796.95 gl: 38.67760 rotation: -145.55542
+corner: 0.39147 -3.24429
+GOF: 1.00118  func eval: 425
+Error: 0.9986203517658038  func eval: 425
+********************
+sigma: 2.07887217615523 gamma: 0.07424389332045517
+SF:
+(-1, 1, 1): 5.4589458e-02 4.4026278e-04
+(2, -2, -2): -8.2501047e-04 0.0000000e+00
+thickness: 800.73 gl: 38.70578 rotation: -145.64121
+corner: 0.52720 -3.20259
+GOF: 0.93608  func eval: 523
+Error: 0.9336825080000241  func eval: 523
+********************
+sigma: 2.242283357559375 gamma: 0.0005653008895084396
+SF:
+(-1, 1, 1): 5.3907521e-02 4.4115272e-04
+(2, -2, -2): -8.3094352e-04 0.0000000e+00
+thickness: 806.92 gl: 38.71422 rotation: -145.73040
+corner: 0.53829 -3.19775
+GOF: 1.22866  func eval: 530
+Error: 1.2255128782113862  func eval: 530
+********************
+sigma: 2.2386609168879 gamma: 1.0495486741360204e-06
+SF:
+(-1, 1, 1): 5.3920142e-02 4.4106910e-04
+(2, -2, -2): -8.2676928e-04 0.0000000e+00
+thickness: 806.82 gl: 38.71845 rotation: -145.76945
+corner: 0.54220 -3.19192
+GOF: 1.21679  func eval: 460
+Error: 1.2136738598251087  func eval: 460
+********************
+sigma: 2.2387411198163836 gamma: 1.0000060519136913e-06
+SF:
+(-1, 1, 1): 5.3430364e-02 4.3927689e-04
+(2, -2, -2): -8.3499675e-04 0.0000000e+00
+thickness: 811.75 gl: 38.78553 rotation: -146.15410
+corner: 0.44559 -2.87375
+GOF: 1.68438  func eval: 1290
+Error: 1.680064304787377  func eval: 1290
+********************
+sigma: 2.2378223263725845 gamma: 1.0000060519136913e-06
+SF:
+(-1, 1, 1): 5.5142485e-02 4.4017332e-04
+(2, -2, -2): -8.1816583e-04 0.0000000e+00
+thickness: 795.84 gl: 38.68178 rotation: -146.11430
+corner: -0.43325 -2.89825
+GOF: 1.04712  func eval: 866
+Error: 1.0444438347750837  func eval: 866
+********************
+sigma: 2.130241156721945 gamma: 0.05442060734546181
+SF:
+(-1, 1, 1): 5.5918165e-02 4.3801981e-04
+(2, -2, -2): -8.1622857e-04 0.0000000e+00
+thickness: 789.37 gl: 38.64047 rotation: -146.15343
+corner: -0.37983 -3.20901
+GOF: 1.66003  func eval: 770
+Error: 1.6557846946892938  func eval: 770
+********************
+sigma: 1.8006925488395462 gamma: 0.17686197620522517
+SF:
+(-1, 1, 1): 5.4336395e-02 4.4043383e-04
+(2, -2, -2): -8.2457328e-04 0.0000000e+00
+thickness: 802.91 gl: 38.70668 rotation: -146.11609
+corner: -0.03689 -3.01512
+GOF: 0.98159  func eval: 1103
+Error: 0.9790791792186424  func eval: 1103
+********************
+sigma: 2.2524924597514593 gamma: 1.0705569232595195e-06
+SF:
+(-1, 1, 1): 5.4158423e-02 4.3908929e-04
+(2, -2, -2): -8.2910358e-04 0.0000000e+00
+thickness: 804.60 gl: 38.72844 rotation: -146.38554
+corner: -0.01029 -3.00779
+GOF: 1.05496  func eval: 927
+Error: 1.0522631682887986  func eval: 927
+********************
+sigma: 2.2421008015134505 gamma: 1.0000001237630472e-06
+SF:
+(-1, 1, 1): 5.4937474e-02 4.3994747e-04
+(2, -2, -2): -8.2044455e-04 0.0000000e+00
+thickness: 797.69 gl: 38.69703 rotation: -145.94283
+corner: -0.07513 -2.97653
+GOF: 0.97119  func eval: 496
+Error: 0.9687033734196404  func eval: 496
+********************
+sigma: 2.2105073140263136 gamma: 0.01818867581318541
+SF:
+(-1, 1, 1): 5.4216705e-02 4.4223212e-04
+(2, -2, -2): -8.2536519e-04 0.0000000e+00
+thickness: 803.96 gl: 38.72954 rotation: -146.08636
+corner: -0.04106 -2.85800
+GOF: 1.01713  func eval: 1218
+Error: 1.014523596283409  func eval: 1218
+********************
+sigma: 2.241240197496451 gamma: 1.1654352686776468e-06
+SF:
+(-1, 1, 1): 5.4857012e-02 4.3903786e-04
+(2, -2, -2): -8.2216301e-04 0.0000000e+00
+thickness: 798.31 gl: 38.69599 rotation: -146.03698
+corner: -0.33602 -2.84254
+GOF: 0.95337  func eval: 573
+Error: 0.9509263601449623  func eval: 573
+********************
+sigma: 2.2104471789981077 gamma: 0.01666685606412994
+SF:
+(-1, 1, 1): 5.5252898e-02 4.3906493e-04
+(2, -2, -2): -8.2050543e-04 0.0000000e+00
+thickness: 794.90 gl: 38.67616 rotation: -145.89724
+corner: -0.39300 -2.86699
+GOF: 1.10550  func eval: 279
+Error: 1.1026651008860358  func eval: 279
+********************
+sigma: 2.0631640765270345 gamma: 0.08205208222918212
+SF:
+(-1, 1, 1): 5.4527335e-02 4.4014864e-04
+(2, -2, -2): -8.2372583e-04 0.0000000e+00
+thickness: 801.29 gl: 38.71841 rotation: -146.06885
+corner: -0.08100 -2.89272
+GOF: 0.93722  func eval: 581
+Error: 0.9348163121036336  func eval: 581
+********************
+sigma: 2.221644220453782 gamma: 0.009682959752404368
+SF:
+(-1, 1, 1): 5.4378394e-02 4.3968539e-04
+(2, -2, -2): -8.2682166e-04 0.0000000e+00
+thickness: 802.58 gl: 38.71868 rotation: -146.07873
+corner: -0.08468 -2.89190
+GOF: 0.96649  func eval: 169
+Error: 0.9640173374550047  func eval: 169
+********************
+sigma: 2.2278601296326834 gamma: 0.004588696213337476
+SF:
+(-1, 1, 1): 5.4494869e-02 4.3973999e-04
+(2, -2, -2): -8.2549313e-04 0.0000000e+00
+thickness: 801.57 gl: 38.71856 rotation: -146.07834
+corner: -0.08667 -2.89160
+GOF: 0.94139  func eval: 133
+Error: 0.9389809004036027  func eval: 133
+********************
+sigma: 2.2348020291495723 gamma: 0.0033361667544791725
+SF:
+(-1, 1, 1): 5.4217432e-02 4.4106308e-04
+(2, -2, -2): -8.2732324e-04 0.0000000e+00
+thickness: 804.03 gl: 38.72242 rotation: -146.11933
+corner: -0.08661 -2.88403
+GOF: 1.02009  func eval: 651
+Error: 1.0174746348589618  func eval: 651
+********************
+sigma: 2.2418630131465194 gamma: 1.004541266857039e-06
+SF:
+(-1, 1, 1): 5.4723766e-02 4.3945978e-04
+(2, -2, -2): -8.2323805e-04 0.0000000e+00
+thickness: 799.62 gl: 38.71968 rotation: -146.09525
+corner: -0.09872 -2.88398
+GOF: 0.93711  func eval: 350
+Error: 0.9347082239376969  func eval: 350
+********************
+sigma: 2.2469292138887966 gamma: 3.1348231929815514e-06
+SF:
+(-1, 1, 1): 5.4732170e-02 4.4017416e-04
+(2, -2, -2): -8.2248979e-04 0.0000000e+00
+thickness: 799.54 gl: 38.71758 rotation: -146.08115
+corner: -0.10907 -2.88399
+GOF: 0.93573  func eval: 347
+Error: 0.9333309475948262  func eval: 347
+********************
+sigma: 2.246940556249423 gamma: 1.0001782646137913e-06
+SF:
+(-1, 1, 1): 5.4811269e-02 4.4031887e-04
+(2, -2, -2): -8.2148873e-04 0.0000000e+00
+thickness: 798.75 gl: 38.69822 rotation: -146.00513
+corner: -0.23035 -2.88835
+GOF: 0.94202  func eval: 403
+Error: 0.939604411552788  func eval: 403
+********************
+sigma: 2.2399913270144336 gamma: 0.0031420102812529595
+SF:
+(-1, 1, 1): 5.4836258e-02 4.3978251e-04
+(2, -2, -2): -8.2343310e-04 0.0000000e+00
+thickness: 798.51 gl: 38.69812 rotation: -146.01016
+corner: -0.23420 -2.88854
+GOF: 0.94652  func eval: 135
+Error: 0.9440919217319201  func eval: 135
+********************
+sigma: 2.240355610277149 gamma: 0.0031291955510376166
+SF:
+(-1, 1, 1): 5.4591693e-02 4.4007236e-04
+(2, -2, -2): -8.2366483e-04 0.0000000e+00
+thickness: 800.60 gl: 38.70171 rotation: -146.05193
+corner: -0.22600 -2.88930
+GOF: 0.93130  func eval: 419
+Error: 0.9289143455181087  func eval: 419
+********************
+sigma: 2.2450373716728067 gamma: 1.0404281936270093e-06
+SF:
+(-1, 1, 1): 5.4551780e-02 4.4087972e-04
+(2, -2, -2): -8.2420534e-04 0.0000000e+00
+thickness: 800.95 gl: 38.70281 rotation: -146.07062
+corner: -0.22603 -2.89010
+GOF: 0.93256  func eval: 278
+Error: 0.9301690310516885  func eval: 278
+********************
+sigma: 2.2441868100126356 gamma: 1.0014732021417449e-06
+SF:
+(-1, 1, 1): 5.4660972e-02 4.4048805e-04
+(2, -2, -2): -8.2189613e-04 0.0000000e+00
+thickness: 800.01 gl: 38.70296 rotation: -146.07468
+corner: -0.22669 -2.89077
+GOF: 0.92858  func eval: 184
+Error: 0.9261988322097161  func eval: 184
+********************
+sigma: 2.2452212867228805 gamma: 1.0002555746124562e-06
+SF:
+(-1, 1, 1): 5.4684807e-02 4.4056313e-04
+(2, -2, -2): -8.2085805e-04 0.0000000e+00
+thickness: 799.81 gl: 38.70297 rotation: -146.07586
+corner: -0.22643 -2.89111
+GOF: 0.92931  func eval: 229
+Error: 0.9269278587946838  func eval: 229
+********************
+sigma: 2.245435947368405 gamma: 1.0000371305514603e-06
+SF:
+(-1, 1, 1): 5.4470796e-02 4.4078595e-04
+(2, -2, -2): -8.2402106e-04 0.0000000e+00
+thickness: 801.70 gl: 38.71344 rotation: -146.20829
+corner: -0.21701 -2.88757
+GOF: 0.94380  func eval: 504
+Error: 0.9413850027897788  func eval: 504
+********************
+sigma: 2.2430432251815136 gamma: 1.0000004125206823e-06
+SF:
+(-1, 1, 1): 5.4677717e-02 4.4030161e-04
+(2, -2, -2): -8.2280883e-04 0.0000000e+00
+thickness: 799.94 gl: 38.71314 rotation: -146.20331
+corner: -0.21677 -2.88808
+GOF: 0.93006  func eval: 127
+Error: 0.9276744728372228  func eval: 127
+********************
+sigma: 2.245601005460522 gamma: 5.631285711074361e-06
+SF:
+(-1, 1, 1): 5.4735139e-02 4.3969494e-04
+(2, -2, -2): -8.2137453e-04 0.0000000e+00
+thickness: 799.44 gl: 38.71201 rotation: -146.18954
+corner: -0.21622 -2.89000
+GOF: 0.93563  func eval: 315
+Error: 0.933232017164292  func eval: 315
+********************
+sigma: 2.2463575988718683 gamma: 1.192251935048747e-06
+SF:
+(-1, 1, 1): 5.4589979e-02 4.4063290e-04
+(2, -2, -2): -8.2361558e-04 0.0000000e+00
+thickness: 800.68 gl: 38.71172 rotation: -146.18590
+corner: -0.21486 -2.89086
+GOF: 0.92957  func eval: 346
+Error: 0.9271898088569498  func eval: 346
+********************
+sigma: 2.244974474212724 gamma: 1.0016322101858355e-06
+SF:
+(-1, 1, 1): 5.4694086e-02 4.4087600e-04
+(2, -2, -2): -8.2188222e-04 0.0000000e+00
+thickness: 799.79 gl: 38.71142 rotation: -146.18218
+corner: -0.21431 -2.89179
+GOF: 0.92937  func eval: 191
+Error: 0.926987915744698  func eval: 191
+********************
+sigma: 2.246054255596626 gamma: 1.0003310244152006e-06
+SF:
+(-1, 1, 1): 5.4618977e-02 4.4102970e-04
+(2, -2, -2): -8.2212046e-04 0.0000000e+00
+thickness: 800.43 gl: 38.71095 rotation: -146.17571
+corner: -0.21156 -2.89372
+GOF: 0.92787  func eval: 459
+Error: 0.9254993117015222  func eval: 459
+********************
+sigma: 2.24524604621381 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4599397e-02 4.4127242e-04
+(2, -2, -2): -8.2189107e-04 0.0000000e+00
+thickness: 800.59 gl: 38.71082 rotation: -146.17409
+corner: -0.21059 -2.89449
+GOF: 0.92811  func eval: 188
+Error: 0.9257362969018516  func eval: 188
+********************
+sigma: 2.24504005760824 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4726038e-02 4.4096293e-04
+(2, -2, -2): -8.2031696e-04 0.0000000e+00
+thickness: 799.51 gl: 38.71046 rotation: -146.16991
+corner: -0.21060 -2.89530
+GOF: 0.93183  func eval: 211
+Error: 0.9294492384513529  func eval: 211
+********************
+sigma: 2.246316578281184 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4618325e-02 4.4070167e-04
+(2, -2, -2): -8.2292838e-04 0.0000000e+00
+thickness: 800.43 gl: 38.71019 rotation: -146.16696
+corner: -0.20882 -2.89663
+GOF: 0.92819  func eval: 294
+Error: 0.92581544981834  func eval: 294
+********************
+sigma: 2.245207720599977 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4571431e-02 4.4060359e-04
+(2, -2, -2): -8.2274782e-04 0.0000000e+00
+thickness: 800.83 gl: 38.71019 rotation: -146.16696
+corner: -0.20757 -2.89699
+GOF: 0.93112  func eval: 237
+Error: 0.9287328721614843  func eval: 237
+********************
+sigma: 2.244695298407006 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4668531e-02 4.4081925e-04
+(2, -2, -2): -8.2206255e-04 0.0000000e+00
+thickness: 800.00 gl: 38.71006 rotation: -146.16456
+corner: -0.20715 -2.89781
+GOF: 0.92808  func eval: 185
+Error: 0.9257032093063751  func eval: 185
+********************
+sigma: 2.245766349306085 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4609586e-02 4.4121238e-04
+(2, -2, -2): -8.2284480e-04 0.0000000e+00
+thickness: 800.50 gl: 38.70994 rotation: -146.16296
+corner: -0.20502 -2.89922
+GOF: 0.92725  func eval: 384
+Error: 0.9248756781494489  func eval: 384
+********************
+sigma: 2.2452036383593263 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4592457e-02 4.4145380e-04
+(2, -2, -2): -8.2316098e-04 0.0000000e+00
+thickness: 800.65 gl: 38.70989 rotation: -146.16051
+corner: -0.20376 -2.89931
+GOF: 0.92738  func eval: 210
+Error: 0.9250061758114487  func eval: 210
+********************
+sigma: 2.245072665941303 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4646403e-02 4.4133922e-04
+(2, -2, -2): -8.2175684e-04 0.0000000e+00
+thickness: 800.19 gl: 38.70974 rotation: -146.15835
+corner: -0.20299 -2.89991
+GOF: 0.92663  func eval: 320
+Error: 0.9242614160269901  func eval: 320
+********************
+sigma: 2.2455745200821116 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4655761e-02 4.4155176e-04
+(2, -2, -2): -8.2136632e-04 0.0000000e+00
+thickness: 800.10 gl: 38.70963 rotation: -146.15812
+corner: -0.20251 -2.90058
+GOF: 0.92635  func eval: 223
+Error: 0.9239754931459138  func eval: 223
+********************
+sigma: 2.2456662004610775 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4587681e-02 4.4170997e-04
+(2, -2, -2): -8.2215853e-04 0.0000000e+00
+thickness: 800.69 gl: 38.70981 rotation: -146.15929
+corner: -0.20012 -2.90142
+GOF: 0.92743  func eval: 541
+Error: 0.9250553145869245  func eval: 541
+********************
+sigma: 2.2449984499538997 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4616377e-02 4.4195302e-04
+(2, -2, -2): -8.2212593e-04 0.0000000e+00
+thickness: 800.44 gl: 38.70975 rotation: -146.15810
+corner: -0.19960 -2.90211
+GOF: 0.92546  func eval: 230
+Error: 0.9230917080778082  func eval: 230
+********************
+sigma: 2.245354540589842 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4615509e-02 4.4226079e-04
+(2, -2, -2): -8.2212774e-04 0.0000000e+00
+thickness: 800.45 gl: 38.70969 rotation: -146.15767
+corner: -0.19938 -2.90242
+GOF: 0.92477  func eval: 106
+Error: 0.9224065884264067  func eval: 106
+********************
+sigma: 2.2453855308303536 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4666221e-02 4.4163998e-04
+(2, -2, -2): -8.2206738e-04 0.0000000e+00
+thickness: 800.02 gl: 38.70943 rotation: -146.15435
+corner: -0.19877 -2.90316
+GOF: 0.92593  func eval: 319
+Error: 0.9235564688650114  func eval: 319
+********************
+sigma: 2.2458803761636004 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4682076e-02 4.4242264e-04
+(2, -2, -2): -8.2086289e-04 0.0000000e+00
+thickness: 799.88 gl: 38.70924 rotation: -146.15365
+corner: -0.19863 -2.90389
+GOF: 0.92507  func eval: 200
+Error: 0.922698838207663  func eval: 200
+********************
+sigma: 2.2460478590177484 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4653443e-02 4.4266385e-04
+(2, -2, -2): -8.2200568e-04 0.0000000e+00
+thickness: 800.12 gl: 38.70898 rotation: -146.15105
+corner: -0.19807 -2.90472
+GOF: 0.92332  func eval: 331
+Error: 0.9209546983479243  func eval: 331
+********************
+sigma: 2.245811604098583 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4652672e-02 4.4303457e-04
+(2, -2, -2): -8.2221883e-04 0.0000000e+00
+thickness: 800.13 gl: 38.70894 rotation: -146.15026
+corner: -0.19791 -2.90510
+GOF: 0.92233  func eval: 106
+Error: 0.919966570654157  func eval: 106
+********************
+sigma: 2.2458874062112186 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4633949e-02 4.4350533e-04
+(2, -2, -2): -8.2140556e-04 0.0000000e+00
+thickness: 800.29 gl: 38.70881 rotation: -146.14949
+corner: -0.19752 -2.90582
+GOF: 0.92163  func eval: 221
+Error: 0.9192720567415369  func eval: 221
+********************
+sigma: 2.2456815451304064 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4623194e-02 4.4412713e-04
+(2, -2, -2): -8.2118495e-04 0.0000000e+00
+thickness: 800.38 gl: 38.70870 rotation: -146.14611
+corner: -0.19603 -2.90645
+GOF: 0.92045  func eval: 217
+Error: 0.9180894289644045  func eval: 217
+********************
+sigma: 2.2456328393364773 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4578841e-02 4.4385900e-04
+(2, -2, -2): -8.2282478e-04 0.0000000e+00
+thickness: 800.76 gl: 38.70869 rotation: -146.14609
+corner: -0.19521 -2.90660
+GOF: 0.92253  func eval: 226
+Error: 0.9201706366439958  func eval: 226
+********************
+sigma: 2.2452076269799703 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4620959e-02 4.4508633e-04
+(2, -2, -2): -8.2202465e-04 0.0000000e+00
+thickness: 800.40 gl: 38.70857 rotation: -146.14308
+corner: -0.19408 -2.90694
+GOF: 0.91788  func eval: 438
+Error: 0.9155272328783496  func eval: 438
+********************
+sigma: 2.2457765498994724 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4622777e-02 4.4602819e-04
+(2, -2, -2): -8.2199025e-04 0.0000000e+00
+thickness: 800.39 gl: 38.70855 rotation: -146.14224
+corner: -0.19375 -2.90717
+GOF: 0.91563  func eval: 108
+Error: 0.9132817615219293  func eval: 108
+********************
+sigma: 2.2459186094362775 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4686919e-02 4.4493427e-04
+(2, -2, -2): -8.2077121e-04 0.0000000e+00
+thickness: 799.84 gl: 38.70837 rotation: -146.13917
+corner: -0.19235 -2.90790
+GOF: 0.91937  func eval: 314
+Error: 0.9170117673455979  func eval: 314
+********************
+sigma: 2.246417472158754 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4635920e-02 4.4702517e-04
+(2, -2, -2): -8.2041218e-04 0.0000000e+00
+thickness: 800.27 gl: 38.70822 rotation: -146.13648
+corner: -0.19163 -2.90807
+GOF: 0.91377  func eval: 197
+Error: 0.9114277166439652  func eval: 197
+********************
+sigma: 2.246078539372269 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4630339e-02 4.4835536e-04
+(2, -2, -2): -8.1980997e-04 0.0000000e+00
+thickness: 800.32 gl: 38.70820 rotation: -146.13582
+corner: -0.19141 -2.90844
+GOF: 0.91101  func eval: 110
+Error: 0.9086801119874873  func eval: 110
+********************
+sigma: 2.24614323918458 gamma: 1.0000058350971416e-06
+SF:
+(-1, 1, 1): 5.4670166e-02 4.4875141e-04
+(2, -2, -2): -8.2052936e-04 0.0000000e+00
+thickness: 799.98 gl: 38.70789 rotation: -146.13480
+corner: -0.19106 -2.90986
+GOF: 0.91012  func eval: 286
+Error: 0.9077929499721524  func eval: 286
+********************
+sigma: 2.246605839799244 gamma: 6.2423381569864235e-06
+SF:
+(-1, 1, 1): 5.4685824e-02 4.5029284e-04
+(2, -2, -2): -8.2031084e-04 0.0000000e+00
+thickness: 799.85 gl: 38.70780 rotation: -146.13445
+corner: -0.19105 -2.91031
+GOF: 0.90736  func eval: 213
+Error: 0.9050396487329356  func eval: 213
+********************
+sigma: 2.247038836734296 gamma: 1.1831715858758652e-06
+SF:
+(-1, 1, 1): 5.4605704e-02 4.5151668e-04
+(2, -2, -2): -8.2063617e-04 0.0000000e+00
+thickness: 800.54 gl: 38.70805 rotation: -146.13901
+corner: -0.18979 -2.91155
+GOF: 0.90406  func eval: 440
+Error: 0.9017440114627435  func eval: 440
+********************
+sigma: 2.2463372332251943 gamma: 1.0007465444862647e-06
+SF:
+(-1, 1, 1): 5.4578632e-02 4.5371085e-04
+(2, -2, -2): -8.2059117e-04 0.0000000e+00
+thickness: 800.77 gl: 38.70854 rotation: -146.14614
+corner: -0.18882 -2.91203
+GOF: 0.90044  func eval: 288
+Error: 0.8981397245386291  func eval: 288
+********************
+sigma: 2.246323172170029 gamma: 1.000023564268812e-06
+SF:
+(-1, 1, 1): 5.4640420e-02 4.5554450e-04
+(2, -2, -2): -8.1848435e-04 0.0000000e+00
+thickness: 800.24 gl: 38.70840 rotation: -146.14318
+corner: -0.18762 -2.91243
+GOF: 0.89536  func eval: 300
+Error: 0.8930638565972063  func eval: 300
+********************
+sigma: 2.247100208697539 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4646298e-02 4.5871662e-04
+(2, -2, -2): -8.1731577e-04 0.0000000e+00
+thickness: 800.19 gl: 38.70838 rotation: -146.14245
+corner: -0.18726 -2.91249
+GOF: 0.88897  func eval: 106
+Error: 0.8866940275145092  func eval: 106
+********************
+sigma: 2.2474958357244192 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4643497e-02 4.6012484e-04
+(2, -2, -2): -8.1900181e-04 0.0000000e+00
+thickness: 800.23 gl: 38.70838 rotation: -146.14195
+corner: -0.18687 -2.91255
+GOF: 0.88517  func eval: 82
+Error: 0.8829074916787112  func eval: 82
+********************
+sigma: 2.247747942773497 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4647885e-02 4.6404797e-04
+(2, -2, -2): -8.1873243e-04 0.0000000e+00
+thickness: 800.19 gl: 38.70838 rotation: -146.14153
+corner: -0.18643 -2.91263
+GOF: 0.87700  func eval: 86
+Error: 0.8747576324582617  func eval: 86
+********************
+sigma: 2.2482709483064043 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4562721e-02 4.6735743e-04
+(2, -2, -2): -8.1744872e-04 0.0000000e+00
+thickness: 800.92 gl: 38.70906 rotation: -146.15217
+corner: -0.18548 -2.91331
+GOF: 0.87254  func eval: 300
+Error: 0.8703054171876714  func eval: 300
+********************
+sigma: 2.247660454094403 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4521687e-02 4.7304563e-04
+(2, -2, -2): -8.1649469e-04 0.0000000e+00
+thickness: 801.29 gl: 38.70972 rotation: -146.16112
+corner: -0.18450 -2.91343
+GOF: 0.86430  func eval: 200
+Error: 0.86208731655719  func eval: 200
+********************
+sigma: 2.2478831718926724 gamma: 1.000006390221954e-06
+SF:
+(-1, 1, 1): 5.4631948e-02 4.7682933e-04
+(2, -2, -2): -8.1443746e-04 0.0000000e+00
+thickness: 800.34 gl: 38.70984 rotation: -146.16036
+corner: -0.18291 -2.91375
+GOF: 0.85236  func eval: 145
+Error: 0.8501765127670996  func eval: 145
+********************
+sigma: 2.249348506033418 gamma: 2.025786026912274e-05
+SF:
+(-1, 1, 1): 5.4649722e-02 4.8453550e-04
+(2, -2, -2): -8.1238622e-04 0.0000000e+00
+thickness: 800.20 gl: 38.70990 rotation: -146.15955
+corner: -0.18125 -2.91416
+GOF: 0.83881  func eval: 152
+Error: 0.836658349119053  func eval: 152
+********************
+sigma: 2.2504730461334663 gamma: 4.568173464719303e-06
+SF:
+(-1, 1, 1): 5.4566562e-02 4.8903615e-04
+(2, -2, -2): -8.1442652e-04 0.0000000e+00
+thickness: 800.93 gl: 38.71083 rotation: -146.17191
+corner: -0.17899 -2.91482
+GOF: 0.82941  func eval: 209
+Error: 0.8272902381328537  func eval: 209
+********************
+sigma: 2.250282699807183 gamma: 1.1664010638640883e-06
+SF:
+(-1, 1, 1): 5.4539986e-02 4.9914262e-04
+(2, -2, -2): -8.1346347e-04 0.0000000e+00
+thickness: 801.17 gl: 38.71191 rotation: -146.18527
+corner: -0.17596 -2.91555
+GOF: 0.81218  func eval: 252
+Error: 0.8100978557694958  func eval: 252
+********************
+sigma: 2.2512113781273135 gamma: 1.0166332196437307e-06
+SF:
+(-1, 1, 1): 5.4493044e-02 5.0710118e-04
+(2, -2, -2): -8.0949714e-04 0.0000000e+00
+thickness: 801.59 gl: 38.71319 rotation: -146.19966
+corner: -0.17084 -2.91667
+GOF: 0.80284  func eval: 259
+Error: 0.8007828024741738  func eval: 259
+********************
+sigma: 2.2515228772410323 gamma: 1.0000816986593227e-06
+SF:
+(-1, 1, 1): 5.4441433e-02 5.2145228e-04
+(2, -2, -2): -8.0641871e-04 0.0000000e+00
+thickness: 802.13 gl: 38.72937 rotation: -146.19981
+corner: 0.05892 -2.97400
+GOF: 0.78083  func eval: 1167
+Error: 0.7788291132907159  func eval: 1167
+********************
+sigma: 2.2534021614413713 gamma: 1.0000082609105124e-06
+SF:
+(-1, 1, 1): 5.4565735e-02 5.3037464e-04
+(2, -2, -2): -8.0501754e-04 0.0000000e+00
+thickness: 801.14 gl: 38.72915 rotation: -146.19553
+corner: 0.05956 -2.97424
+GOF: 0.76079  func eval: 130
+Error: 0.7588448166823978  func eval: 130
+********************
+sigma: 2.2559770047133534 gamma: 3.093058599842355e-05
+SF:
+(-1, 1, 1): 5.4580420e-02 5.4948428e-04
+(2, -2, -2): -8.0119184e-04 0.0000000e+00
+thickness: 801.03 gl: 38.72898 rotation: -146.19244
+corner: 0.06067 -2.97468
+GOF: 0.73554  func eval: 124
+Error: 0.7336529343078504  func eval: 124
+********************
+sigma: 2.257788754966421 gamma: 9.856531820625334e-05
+SF:
+(-1, 1, 1): 5.4391503e-02 5.6218397e-04
+(2, -2, -2): -8.0166309e-04 0.0000000e+00
+thickness: 802.70 gl: 38.73032 rotation: -146.20801
+corner: 0.06453 -2.97519
+GOF: 0.72582  func eval: 448
+Error: 0.723958852826869  func eval: 448
+********************
+sigma: 2.2579165933487917 gamma: 1.0233279936425018e-06
+SF:
+(-1, 1, 1): 5.4305431e-02 5.8806676e-04
+(2, -2, -2): -7.9808873e-04 0.0000000e+00
+thickness: 803.51 gl: 38.73369 rotation: -146.24442
+corner: 0.07519 -2.97603
+GOF: 0.70856  func eval: 635
+Error: 0.7067418635392965  func eval: 635
+********************
+sigma: 2.2599528979844727 gamma: 1.000001594376412e-06
+SF:
+(-1, 1, 1): 5.4344870e-02 6.0685963e-04
+(2, -2, -2): -7.9033605e-04 0.0000000e+00
+thickness: 803.17 gl: 38.73512 rotation: -146.25806
+corner: 0.08107 -2.97684
+GOF: 0.68466  func eval: 439
+Error: 0.6829029664537253  func eval: 439
+********************
+sigma: 2.262186563391745 gamma: 1.000001594376412e-06
+SF:
+(-1, 1, 1): 5.4279830e-02 6.4276531e-04
+(2, -2, -2): -7.8262691e-04 0.0000000e+00
+thickness: 803.97 gl: 38.75189 rotation: -146.06174
+corner: 0.37400 -2.99229
+GOF: 0.66220  func eval: 1022
+Error: 0.6605036571645958  func eval: 1022
+********************
+sigma: 2.266229991992241 gamma: 1.000001594376412e-06
+SF:
+(-1, 1, 1): 5.4335687e-02 6.6542532e-04
+(2, -2, -2): -7.8151963e-04 0.0000000e+00
+thickness: 803.52 gl: 38.75173 rotation: -146.06030
+corner: 0.37448 -2.99262
+GOF: 0.64493  func eval: 206
+Error: 0.6432782625149374  func eval: 206
+********************
+sigma: 2.268577374643199 gamma: 9.57269208197355e-05
+SF:
+(-1, 1, 1): 5.4300439e-02 7.1341638e-04
+(2, -2, -2): -7.7321992e-04 0.0000000e+00
+thickness: 803.88 gl: 38.75231 rotation: -146.06926
+corner: 0.37642 -2.99390
+GOF: 0.64270  func eval: 123
+Error: 0.6410535196214615  func eval: 123
+********************
+sigma: 2.273100539355414 gamma: 0.00042901926528871915
+SF:
+(-1, 1, 1): 5.4010049e-02 7.4668135e-04
+(2, -2, -2): -7.6809857e-04 0.0000000e+00
+thickness: 806.87 gl: 38.77672 rotation: -145.53840
+corner: 1.04140 -3.06661
+GOF: 0.69065  func eval: 1311
+Error: 0.6888780314365623  func eval: 1311
+********************
+sigma: 2.2737019064534567 gamma: 1.0000057130401793e-06
+SF:
+(-1, 1, 1): 5.4088116e-02 8.1384182e-04
+(2, -2, -2): -7.5120822e-04 0.0000000e+00
+thickness: 806.22 gl: 38.77677 rotation: -145.54322
+corner: 1.04055 -3.06726
+GOF: 0.70680  func eval: 131
+Error: 0.7049862236435749  func eval: 131
+********************
+sigma: 2.2805386399590257 gamma: 0.00010713961063753539
+SF:
+(-1, 1, 1): 5.4133389e-02 7.6680537e-04
+(2, -2, -2): -7.6097500e-04 0.0000000e+00
+thickness: 805.77 gl: 38.77638 rotation: -145.53933
+corner: 1.03999 -3.06852
+GOF: 0.66948  func eval: 186
+Error: 0.6677647118440387  func eval: 186
+********************
+sigma: 2.2763184074906566 gamma: 2.4296470471653646e-05
+SF:
+(-1, 1, 1): 5.4465726e-02 6.6864328e-04
+(2, -2, -2): -7.7644933e-04 0.0000000e+00
+thickness: 802.47 gl: 38.74310 rotation: -145.11256
+corner: 1.02948 -3.06252
+GOF: 0.64298  func eval: 421
+Error: 0.6413374673616326  func eval: 421
+********************
+sigma: 2.228396117896236 gamma: 0.018887345639858933
+SF:
+(-1, 1, 1): 5.4563940e-02 5.8307790e-04
+(2, -2, -2): -7.9388916e-04 0.0000000e+00
+thickness: 801.46 gl: 38.72711 rotation: -144.97926
+corner: 0.95421 -3.04245
+GOF: 0.69837  func eval: 396
+Error: 0.6965791229382696  func eval: 396
+********************
+sigma: 2.2253040692500794 gamma: 0.015624568114058154
+SF:
+(-1, 1, 1): 5.4223087e-02 7.2852883e-04
+(2, -2, -2): -7.6783210e-04 0.0000000e+00
+thickness: 804.81 gl: 38.76212 rotation: -145.45485
+corner: 0.95835 -3.06099
+GOF: 0.64658  func eval: 409
+Error: 0.644923927600444  func eval: 409
+********************
+sigma: 2.248451173752751 gamma: 0.011537773047729594
+SF:
+(-1, 1, 1): 5.4379672e-02 7.6429371e-04
+(2, -2, -2): -7.6237402e-04 0.0000000e+00
+thickness: 803.44 gl: 38.75827 rotation: -145.42774
+corner: 0.97520 -3.08302
+GOF: 0.65810  func eval: 389
+Error: 0.6564196480899511  func eval: 389
+********************
+sigma: 2.1903032936679465 gamma: 0.04198161294296085
+SF:
+(-1, 1, 1): 5.4358870e-02 7.3897536e-04
+(2, -2, -2): -7.6659338e-04 0.0000000e+00
+thickness: 803.59 gl: 38.75822 rotation: -145.42721
+corner: 0.97453 -3.08368
+GOF: 0.64398  func eval: 124
+Error: 0.6423316487435994  func eval: 124
+********************
+sigma: 2.1855588339255503 gamma: 0.04217169296487983
+SF:
+(-1, 1, 1): 5.4526936e-02 6.8549451e-04
+(2, -2, -2): -7.7634299e-04 0.0000000e+00
+thickness: 801.94 gl: 38.73978 rotation: -145.22236
+corner: 0.94515 -3.07858
+GOF: 0.64515  func eval: 294
+Error: 0.6435000096192641  func eval: 294
+********************
+sigma: 2.1793049708638734 gamma: 0.04273220920767862
+SF:
+(-1, 1, 1): 5.4463636e-02 6.9446000e-04
+(2, -2, -2): -7.7456987e-04 0.0000000e+00
+thickness: 802.50 gl: 38.74022 rotation: -145.23451
+corner: 0.94346 -3.08045
+GOF: 0.63950  func eval: 234
+Error: 0.6378663911792918  func eval: 234
+********************
+sigma: 2.1779027079828155 gamma: 0.04325341822890418
+SF:
+(-1, 1, 1): 5.4460995e-02 6.4537110e-04
+(2, -2, -2): -7.8289944e-04 0.0000000e+00
+thickness: 802.46 gl: 38.74024 rotation: -145.23352
+corner: 0.94231 -3.08022
+GOF: 0.64926  func eval: 121
+Error: 0.6475982309139499  func eval: 121
+********************
+sigma: 2.1724396843880664 gamma: 0.04281646040207137
+SF:
+(-1, 1, 1): 5.4380149e-02 7.1947445e-04
+(2, -2, -2): -7.6999044e-04 0.0000000e+00
+thickness: 803.33 gl: 38.75127 rotation: -145.45090
+corner: 0.93499 -3.11052
+GOF: 0.63807  func eval: 290
+Error: 0.6364364058614336  func eval: 290
+********************
+sigma: 2.2138778540869657 gamma: 0.02835393560132937
+SF:
+(-1, 1, 1): 5.4297090e-02 7.4959057e-04
+(2, -2, -2): -7.6873752e-04 0.0000000e+00
+thickness: 804.16 gl: 38.75862 rotation: -145.58067
+corner: 0.92807 -3.12028
+GOF: 0.64680  func eval: 237
+Error: 0.6451413693438715  func eval: 237
+********************
+sigma: 2.223240100730059 gamma: 0.025720622938076962
+SF:
+(-1, 1, 1): 5.4430593e-02 6.8550732e-04
+(2, -2, -2): -7.7484269e-04 0.0000000e+00
+thickness: 802.79 gl: 38.74313 rotation: -145.37104
+corner: 0.91929 -3.11250
+GOF: 0.63738  func eval: 312
+Error: 0.6357521453376839  func eval: 312
+********************
+sigma: 2.218050348949338 gamma: 0.024566713700028803
+SF:
+(-1, 1, 1): 5.4549143e-02 6.8621151e-04
+(2, -2, -2): -7.7304879e-04 0.0000000e+00
+thickness: 801.76 gl: 38.74288 rotation: -145.36906
+corner: 0.91840 -3.11250
+GOF: 0.64955  func eval: 130
+Error: 0.6478873532767585  func eval: 130
+********************
+sigma: 2.217227814115724 gamma: 0.02637629709439014
+SF:
+(-1, 1, 1): 5.4352254e-02 7.0774870e-04
+(2, -2, -2): -7.7318429e-04 0.0000000e+00
+thickness: 803.57 gl: 38.75025 rotation: -145.42770
+corner: 0.95664 -3.12113
+GOF: 0.63607  func eval: 451
+Error: 0.63443821386131  func eval: 451
+********************
+sigma: 2.204214210487747 gamma: 0.03213917010257349
+SF:
+(-1, 1, 1): 5.4311693e-02 7.1402697e-04
+(2, -2, -2): -7.7077508e-04 0.0000000e+00
+thickness: 803.92 gl: 38.75052 rotation: -145.43344
+corner: 0.95561 -3.12112
+GOF: 0.63830  func eval: 138
+Error: 0.6366669890269662  func eval: 138
+********************
+sigma: 2.205232862360862 gamma: 0.03136756894447006
+SF:
+(-1, 1, 1): 5.4343350e-02 7.0995057e-04
+(2, -2, -2): -7.7156565e-04 0.0000000e+00
+thickness: 803.64 gl: 38.75058 rotation: -145.43431
+corner: 0.95542 -3.12113
+GOF: 0.63669  func eval: 152
+Error: 0.6350566870302755  func eval: 152
+********************
+sigma: 2.206602289928845 gamma: 0.030851820629563098
+SF:
+(-1, 1, 1): 5.4370649e-02 6.8266323e-04
+(2, -2, -2): -7.7640463e-04 0.0000000e+00
+thickness: 803.38 gl: 38.75038 rotation: -145.43196
+corner: 0.95410 -3.12071
+GOF: 0.63749  func eval: 133
+Error: 0.6358593811573263  func eval: 133
+********************
+sigma: 2.203568689885114 gamma: 0.030953477083052815
+SF:
+(-1, 1, 1): 5.4372627e-02 6.9033226e-04
+(2, -2, -2): -7.7506836e-04 0.0000000e+00
+thickness: 803.36 gl: 38.75036 rotation: -145.43180
+corner: 0.95402 -3.12053
+GOF: 0.63636  func eval: 65
+Error: 0.6347329038515749  func eval: 65
+********************
+sigma: 2.2051354888756713 gamma: 0.030695144943161477
+SF:
+(-1, 1, 1): 5.4281559e-02 7.1984698e-04
+(2, -2, -2): -7.7170285e-04 0.0000000e+00
+thickness: 804.21 gl: 38.75119 rotation: -145.44564
+corner: 0.95281 -3.12075
+GOF: 0.64032  func eval: 196
+Error: 0.6386838460008468  func eval: 196
+********************
+sigma: 2.208649587882623 gamma: 0.029943200777109547
+SF:
+(-1, 1, 1): 5.4399546e-02 6.9266139e-04
+(2, -2, -2): -7.7418855e-04 0.0000000e+00
+thickness: 803.14 gl: 38.75114 rotation: -145.44462
+corner: 0.95175 -3.12040
+GOF: 0.63657  func eval: 122
+Error: 0.6349421730313044  func eval: 122
+********************
+sigma: 2.2082214377832976 gamma: 0.029747279669317193
+SF:
+(-1, 1, 1): 5.4406270e-02 6.8387773e-04
+(2, -2, -2): -7.7672850e-04 0.0000000e+00
+thickness: 803.06 gl: 38.75091 rotation: -145.44252
+corner: 0.95047 -3.12003
+GOF: 0.63724  func eval: 123
+Error: 0.6356073444704687  func eval: 123
+********************
+sigma: 2.207984278134426 gamma: 0.02948571799416499
+SF:
+(-1, 1, 1): 5.4356456e-02 7.0451869e-04
+(2, -2, -2): -7.7264127e-04 0.0000000e+00
+thickness: 803.53 gl: 38.75078 rotation: -145.44267
+corner: 0.95021 -3.12039
+GOF: 0.63605  func eval: 212
+Error: 0.6344172825738198  func eval: 212
+********************
+sigma: 2.2110130349978014 gamma: 0.028751547064138655
+SF:
+(-1, 1, 1): 5.4321349e-02 7.0907170e-04
+(2, -2, -2): -7.7307405e-04 0.0000000e+00
+thickness: 803.84 gl: 38.75097 rotation: -145.44741
+corner: 0.94881 -3.12035
+GOF: 0.63694  func eval: 219
+Error: 0.6353087937812563  func eval: 219
+********************
+sigma: 2.2128622450322397 gamma: 0.02781113282141404
+SF:
+(-1, 1, 1): 5.4383252e-02 6.9608021e-04
+(2, -2, -2): -7.7395636e-04 0.0000000e+00
+thickness: 803.28 gl: 38.75075 rotation: -145.44524
+corner: 0.94761 -3.12006
+GOF: 0.63597  func eval: 190
+Error: 0.6343466117303944  func eval: 190
+********************
+sigma: 2.2132351954234686 gamma: 0.027506045320322903
+SF:
+(-1, 1, 1): 5.4355349e-02 7.1523280e-04
+(2, -2, -2): -7.7145291e-04 0.0000000e+00
+thickness: 803.55 gl: 38.75081 rotation: -145.44737
+corner: 0.94724 -3.12014
+GOF: 0.63682  func eval: 202
+Error: 0.6351936806518287  func eval: 202
+********************
+sigma: 2.2141067820880256 gamma: 0.02793648457579276
+SF:
+(-1, 1, 1): 5.4369029e-02 6.9551985e-04
+(2, -2, -2): -7.7431515e-04 0.0000000e+00
+thickness: 803.41 gl: 38.75072 rotation: -145.44650
+corner: 0.94610 -3.11985
+GOF: 0.63593  func eval: 130
+Error: 0.6342995422972989  func eval: 130
+********************
+sigma: 2.211132287568063 gamma: 0.028290946214469502
+SF:
+(-1, 1, 1): 5.4386906e-02 6.8966381e-04
+(2, -2, -2): -7.7409088e-04 0.0000000e+00
+thickness: 803.23 gl: 38.75064 rotation: -145.44512
+corner: 0.94590 -3.11967
+GOF: 0.63668  func eval: 136
+Error: 0.6350518373237145  func eval: 136
+********************
+sigma: 2.211326960184287 gamma: 0.02800319370527301
+SF:
+(-1, 1, 1): 5.4359473e-02 7.0398097e-04
+(2, -2, -2): -7.7337318e-04 0.0000000e+00
+thickness: 803.50 gl: 38.75055 rotation: -145.44441
+corner: 0.94592 -3.11964
+GOF: 0.63580  func eval: 215
+Error: 0.6341746944339012  func eval: 215
+********************
+sigma: 2.21210330868797 gamma: 0.028235692179155517
+SF:
+(-1, 1, 1): 5.4384712e-02 6.9253531e-04
+(2, -2, -2): -7.7512185e-04 0.0000000e+00
+thickness: 803.26 gl: 38.75040 rotation: -145.44325
+corner: 0.94482 -3.11946
+GOF: 0.63596  func eval: 143
+Error: 0.6343308888333061  func eval: 143
+********************
+sigma: 2.21180233474622 gamma: 0.027966688943866936
+SF:
+(-1, 1, 1): 5.4358888e-02 6.9861056e-04
+(2, -2, -2): -7.7458372e-04 0.0000000e+00
+thickness: 803.50 gl: 38.75031 rotation: -145.44218
+corner: 0.94478 -3.11934
+GOF: 0.63567  func eval: 220
+Error: 0.6340452824433425  func eval: 220
+********************
+sigma: 2.2133937632100884 gamma: 0.02733486811746833
+SF:
+(-1, 1, 1): 5.4350767e-02 6.9945405e-04
+(2, -2, -2): -7.7479286e-04 0.0000000e+00
+thickness: 803.57 gl: 38.75027 rotation: -145.44171
+corner: 0.94472 -3.11925
+GOF: 0.63573  func eval: 141
+Error: 0.6341052886197944  func eval: 141
+********************
+sigma: 2.214302539317436 gamma: 0.02690018490796845
+SF:
+(-1, 1, 1): 5.4340214e-02 7.0620561e-04
+(2, -2, -2): -7.7305950e-04 0.0000000e+00
+thickness: 803.67 gl: 38.75032 rotation: -145.44255
+corner: 0.94463 -3.11921
+GOF: 0.63620  func eval: 154
+Error: 0.6345693904985175  func eval: 154
+********************
+sigma: 2.215816269766798 gamma: 0.026471444759139186
+SF:
+(-1, 1, 1): 5.4375444e-02 6.9538329e-04
+(2, -2, -2): -7.7469222e-04 0.0000000e+00
+thickness: 803.34 gl: 38.75009 rotation: -145.44053
+corner: 0.94345 -3.11906
+GOF: 0.63574  func eval: 246
+Error: 0.6341085630724034  func eval: 246
+********************
+sigma: 2.2131328579538145 gamma: 0.02741404754308569
+SF:
+(-1, 1, 1): 5.4360174e-02 7.0313003e-04
+(2, -2, -2): -7.7411759e-04 0.0000000e+00
+thickness: 803.49 gl: 38.75005 rotation: -145.44040
+corner: 0.94331 -3.11898
+GOF: 0.63556  func eval: 170
+Error: 0.6339304546392417  func eval: 170
+********************
+sigma: 2.2145257432868877 gamma: 0.027096893096726183
+SF:
+(-1, 1, 1): 5.4357223e-02 7.0566684e-04
+(2, -2, -2): -7.7405170e-04 0.0000000e+00
+thickness: 803.52 gl: 38.75005 rotation: -145.44040
+corner: 0.94331 -3.11898
+GOF: 0.63559  func eval: 157
+Error: 0.6339605615902623  func eval: 157
+********************
+sigma: 2.215118733411236 gamma: 0.02694848337947181
+SF:
+(-1, 1, 1): 5.4370198e-02 6.9410156e-04
+(2, -2, -2): -7.7555585e-04 0.0000000e+00
+thickness: 803.39 gl: 38.74995 rotation: -145.43993
+corner: 0.94235 -3.11887
+GOF: 0.63559  func eval: 136
+Error: 0.6339647875629905  func eval: 136
+********************
+sigma: 2.214646390245062 gamma: 0.026617122863789224
+SF:
+(-1, 1, 1): 5.4350730e-02 7.0184493e-04
+(2, -2, -2): -7.7481259e-04 0.0000000e+00
+thickness: 803.57 gl: 38.74994 rotation: -145.44002
+corner: 0.94220 -3.11880
+GOF: 0.63557  func eval: 140
+Error: 0.633939073189852  func eval: 140
+********************
+sigma: 2.216064496446673 gamma: 0.026233489113044135
+SF:
+(-1, 1, 1): 5.4361846e-02 7.0077379e-04
+(2, -2, -2): -7.7507360e-04 0.0000000e+00
+thickness: 803.47 gl: 38.74991 rotation: -145.43963
+corner: 0.94208 -3.11870
+GOF: 0.63533  func eval: 190
+Error: 0.6337048289293954  func eval: 190
+********************
+sigma: 2.2168148474524 gamma: 0.02594716080315276
+SF:
+(-1, 1, 1): 5.4362833e-02 7.0149492e-04
+(2, -2, -2): -7.7523693e-04 0.0000000e+00
+thickness: 803.47 gl: 38.74989 rotation: -145.43943
+corner: 0.94200 -3.11862
+GOF: 0.63524  func eval: 67
+Error: 0.6336164992171794  func eval: 67
+********************
+sigma: 2.217232850578902 gamma: 0.025816621176210565
+SF:
+(-1, 1, 1): 5.4345626e-02 7.1021169e-04
+(2, -2, -2): -7.7388884e-04 0.0000000e+00
+thickness: 803.63 gl: 38.74997 rotation: -145.44215
+corner: 0.94097 -3.11861
+GOF: 0.63593  func eval: 134
+Error: 0.6343037919395997  func eval: 134
+********************
+sigma: 2.2185790940623793 gamma: 0.025528220247820407
+SF:
+(-1, 1, 1): 5.4365080e-02 6.9745781e-04
+(2, -2, -2): -7.7520858e-04 0.0000000e+00
+thickness: 803.44 gl: 38.74993 rotation: -145.44102
+corner: 0.94085 -3.11844
+GOF: 0.63544  func eval: 149
+Error: 0.6338172929811848  func eval: 149
+********************
+sigma: 2.2179671918009887 gamma: 0.02525378769471031
+SF:
+(-1, 1, 1): 5.4374658e-02 6.9954363e-04
+(2, -2, -2): -7.7489612e-04 0.0000000e+00
+thickness: 803.36 gl: 38.74983 rotation: -145.44059
+corner: 0.94004 -3.11831
+GOF: 0.63536  func eval: 165
+Error: 0.6337361280321853  func eval: 165
+********************
+sigma: 2.2187810231581175 gamma: 0.025092162667782192
+SF:
+(-1, 1, 1): 5.4374874e-02 6.9586758e-04
+(2, -2, -2): -7.7611016e-04 0.0000000e+00
+thickness: 803.36 gl: 38.74977 rotation: -145.43942
+corner: 0.94023 -3.11819
+GOF: 0.63524  func eval: 72
+Error: 0.6336121574116044  func eval: 72
+********************
+sigma: 2.218600479392495 gamma: 0.024993250677158164
+SF:
+(-1, 1, 1): 5.4379772e-02 6.9344678e-04
+(2, -2, -2): -7.7677431e-04 0.0000000e+00
+thickness: 803.31 gl: 38.74971 rotation: -145.43909
+corner: 0.93968 -3.11805
+GOF: 0.63524  func eval: 63
+Error: 0.6336104084332104  func eval: 63
+********************
+sigma: 2.2186188156185356 gamma: 0.024900023762701312
+SF:
+(-1, 1, 1): 5.4379761e-02 6.9886574e-04
+(2, -2, -2): -7.7606301e-04 0.0000000e+00
+thickness: 803.32 gl: 38.74966 rotation: -145.43859
+corner: 0.93949 -3.11794
+GOF: 0.63505  func eval: 67
+Error: 0.6334276977621975  func eval: 67
+********************
+sigma: 2.21942542812198 gamma: 0.024842171935580772
+SF:
+(-1, 1, 1): 5.4384656e-02 6.9933501e-04
+(2, -2, -2): -7.7634782e-04 0.0000000e+00
+thickness: 803.27 gl: 38.74961 rotation: -145.43775
+corner: 0.93950 -3.11785
+GOF: 0.63498  func eval: 66
+Error: 0.6333584404820121  func eval: 66
+********************
+sigma: 2.2196846071349707 gamma: 0.024490509823420787
+SF:
+(-1, 1, 1): 5.4376848e-02 6.9664087e-04
+(2, -2, -2): -7.7734323e-04 0.0000000e+00
+thickness: 803.34 gl: 38.74954 rotation: -145.43590
+corner: 0.93975 -3.11763
+GOF: 0.63481  func eval: 132
+Error: 0.633187609285681  func eval: 132
+********************
+sigma: 2.2202205015697323 gamma: 0.024340002890866554
+SF:
+(-1, 1, 1): 5.4377578e-02 6.9567328e-04
+(2, -2, -2): -7.7815895e-04 0.0000000e+00
+thickness: 803.34 gl: 38.74950 rotation: -145.43496
+corner: 0.93977 -3.11735
+GOF: 0.63465  func eval: 66
+Error: 0.6330208890098143  func eval: 66
+********************
+sigma: 2.2203374537396434 gamma: 0.024263831063014264
+SF:
+(-1, 1, 1): 5.4398507e-02 6.9080846e-04
+(2, -2, -2): -7.7895052e-04 0.0000000e+00
+thickness: 803.15 gl: 38.74937 rotation: -145.43400
+corner: 0.93864 -3.11724
+GOF: 0.63503  func eval: 135
+Error: 0.633402337059749  func eval: 135
+********************
+sigma: 2.220628610078262 gamma: 0.023902916761377853
+SF:
+(-1, 1, 1): 5.4394059e-02 6.9709774e-04
+(2, -2, -2): -7.7886385e-04 0.0000000e+00
+thickness: 803.20 gl: 38.74930 rotation: -145.43350
+corner: 0.93858 -3.11712
+GOF: 0.63449  func eval: 65
+Error: 0.6328616608610699  func eval: 65
+********************
+sigma: 2.221682927379794 gamma: 0.023721483101442987
+SF:
+(-1, 1, 1): 5.4398820e-02 6.9831475e-04
+(2, -2, -2): -7.7956036e-04 0.0000000e+00
+thickness: 803.16 gl: 38.74924 rotation: -145.43330
+corner: 0.93805 -3.11703
+GOF: 0.63434  func eval: 65
+Error: 0.632712884828497  func eval: 65
+********************
+sigma: 2.222334135379973 gamma: 0.02357111342321558
+SF:
+(-1, 1, 1): 5.4375529e-02 7.0474029e-04
+(2, -2, -2): -7.7709428e-04 0.0000000e+00
+thickness: 803.36 gl: 38.74929 rotation: -145.43472
+corner: 0.93769 -3.11705
+GOF: 0.63465  func eval: 228
+Error: 0.6330294700890348  func eval: 228
+********************
+sigma: 2.223584532451253 gamma: 0.023087406653470758
+SF:
+(-1, 1, 1): 5.4383297e-02 6.9981720e-04
+(2, -2, -2): -7.8019459e-04 0.0000000e+00
+thickness: 803.30 gl: 38.74927 rotation: -145.43437
+corner: 0.93738 -3.11695
+GOF: 0.63389  func eval: 187
+Error: 0.6322647519555663  func eval: 187
+********************
+sigma: 2.224133890976678 gamma: 0.02270226722220258
+SF:
+(-1, 1, 1): 5.4382842e-02 6.9997797e-04
+(2, -2, -2): -7.8147685e-04 0.0000000e+00
+thickness: 803.31 gl: 38.74924 rotation: -145.43416
+corner: 0.93726 -3.11688
+GOF: 0.63353  func eval: 68
+Error: 0.6319124073101237  func eval: 68
+********************
+sigma: 2.2246468451155645 gamma: 0.022515988975048407
+SF:
+(-1, 1, 1): 5.4397296e-02 6.9123704e-04
+(2, -2, -2): -7.8236987e-04 0.0000000e+00
+thickness: 803.17 gl: 38.74910 rotation: -145.43326
+corner: 0.93616 -3.11675
+GOF: 0.63396  func eval: 138
+Error: 0.6323376365794129  func eval: 138
+********************
+sigma: 2.224603656730688 gamma: 0.022157945272521684
+SF:
+(-1, 1, 1): 5.4408390e-02 6.9734664e-04
+(2, -2, -2): -7.8411243e-04 0.0000000e+00
+thickness: 803.09 gl: 38.74897 rotation: -145.43310
+corner: 0.93513 -3.11657
+GOF: 0.63332  func eval: 135
+Error: 0.6317019263399608  func eval: 135
+********************
+sigma: 2.2261812110412174 gamma: 0.02198231380710931
+SF:
+(-1, 1, 1): 5.4418664e-02 6.9790444e-04
+(2, -2, -2): -7.8609691e-04 0.0000000e+00
+thickness: 803.01 gl: 38.74884 rotation: -145.43252
+corner: 0.93405 -3.11648
+GOF: 0.63313  func eval: 133
+Error: 0.6315104209061436  func eval: 133
+********************
+sigma: 2.226773277150511 gamma: 0.021905001258437362
+SF:
+(-1, 1, 1): 5.4400381e-02 6.9443160e-04
+(2, -2, -2): -7.8706874e-04 0.0000000e+00
+thickness: 803.17 gl: 38.74873 rotation: -145.43161
+corner: 0.93366 -3.11634
+GOF: 0.63242  func eval: 137
+Error: 0.6308007034702082  func eval: 137
+********************
+sigma: 2.2265478443715203 gamma: 0.021638018933976308
+SF:
+(-1, 1, 1): 5.4400899e-02 6.9313729e-04
+(2, -2, -2): -7.8957150e-04 0.0000000e+00
+thickness: 803.17 gl: 38.74870 rotation: -145.43063
+corner: 0.93382 -3.11620
+GOF: 0.63184  func eval: 66
+Error: 0.6302182520853602  func eval: 66
+********************
+sigma: 2.2268435390267234 gamma: 0.02150136246348914
+SF:
+(-1, 1, 1): 5.4404307e-02 7.0277613e-04
+(2, -2, -2): -7.8906032e-04 0.0000000e+00
+thickness: 803.15 gl: 38.74868 rotation: -145.43052
+corner: 0.93376 -3.11620
+GOF: 0.63190  func eval: 73
+Error: 0.6302781950514533  func eval: 73
+********************
+sigma: 2.2283071277283355 gamma: 0.021440577023273465
+SF:
+(-1, 1, 1): 5.4433074e-02 6.9590053e-04
+(2, -2, -2): -7.9500896e-04 0.0000000e+00
+thickness: 802.92 gl: 38.74856 rotation: -145.42983
+corner: 0.93264 -3.11601
+GOF: 0.63135  func eval: 143
+Error: 0.629731604230594  func eval: 143
+********************
+sigma: 2.228339605924604 gamma: 0.021477971950918627
+SF:
+(-1, 1, 1): 5.4449815e-02 6.9454149e-04
+(2, -2, -2): -7.9951965e-04 0.0000000e+00
+thickness: 802.78 gl: 38.74834 rotation: -145.42829
+corner: 0.93148 -3.11584
+GOF: 0.63110  func eval: 134
+Error: 0.6294795817371518  func eval: 134
+********************
+sigma: 2.2284783728468627 gamma: 0.02163587605239634
+SF:
+(-1, 1, 1): 5.4418020e-02 6.9573213e-04
+(2, -2, -2): -7.9933740e-04 0.0000000e+00
+thickness: 803.06 gl: 38.74829 rotation: -145.42784
+corner: 0.93134 -3.11572
+GOF: 0.62955  func eval: 215
+Error: 0.6279412134261212  func eval: 215
+********************
+sigma: 2.2282837168819363 gamma: 0.02147002525077407
+SF:
+(-1, 1, 1): 5.4417804e-02 6.9500809e-04
+(2, -2, -2): -8.0375088e-04 0.0000000e+00
+thickness: 803.08 gl: 38.74827 rotation: -145.42768
+corner: 0.93124 -3.11558
+GOF: 0.62838  func eval: 68
+Error: 0.626772473168198  func eval: 68
+********************
+sigma: 2.228601811935287 gamma: 0.02141828862446276
+SF:
+(-1, 1, 1): 5.4441374e-02 6.8568182e-04
+(2, -2, -2): -8.0616772e-04 0.0000000e+00
+thickness: 802.87 gl: 38.74814 rotation: -145.42661
+corner: 0.93007 -3.11539
+GOF: 0.62927  func eval: 132
+Error: 0.6276571372931825  func eval: 132
+********************
+sigma: 2.2280437101314146 gamma: 0.021394133471227206
+SF:
+(-1, 1, 1): 5.4471761e-02 6.9035031e-04
+(2, -2, -2): -8.1672071e-04 0.0000000e+00
+thickness: 802.66 gl: 38.74805 rotation: -145.42600
+corner: 0.92953 -3.11515
+GOF: 0.62808  func eval: 136
+Error: 0.6264691545766967  func eval: 136
+********************
+sigma: 2.230124386991703 gamma: 0.02137477413286187
+SF:
+(-1, 1, 1): 5.4495383e-02 6.8942137e-04
+(2, -2, -2): -8.2577043e-04 0.0000000e+00
+thickness: 802.49 gl: 38.74783 rotation: -145.42399
+corner: 0.92889 -3.11503
+GOF: 0.62774  func eval: 124
+Error: 0.6261367810975828  func eval: 124
+********************
+sigma: 2.229685024422959 gamma: 0.0222350468735563
+SF:
+(-1, 1, 1): 5.4453224e-02 6.8553269e-04
+(2, -2, -2): -8.2427304e-04 0.0000000e+00
+thickness: 802.84 gl: 38.74780 rotation: -145.42300
+corner: 0.92880 -3.11461
+GOF: 0.62510  func eval: 135
+Error: 0.623502207758807  func eval: 135
+********************
+sigma: 2.2258184699329577 gamma: 0.02310079812112867
+SF:
+(-1, 1, 1): 5.4454360e-02 6.8252982e-04
+(2, -2, -2): -8.3252415e-04 0.0000000e+00
+thickness: 802.86 gl: 38.74778 rotation: -145.42257
+corner: 0.92860 -3.11427
+GOF: 0.62331  func eval: 68
+Error: 0.6217161320299049  func eval: 68
+********************
+sigma: 2.2260066464655144 gamma: 0.0230923111821844
+SF:
+(-1, 1, 1): 5.4470327e-02 6.9229101e-04
+(2, -2, -2): -8.3519594e-04 0.0000000e+00
+thickness: 802.75 gl: 38.74780 rotation: -145.42215
+corner: 0.92837 -3.11392
+GOF: 0.62326  func eval: 132
+Error: 0.6216644422841613  func eval: 132
+********************
+sigma: 2.2273568629089966 gamma: 0.023330619583299884
+SF:
+(-1, 1, 1): 5.4479979e-02 6.9449411e-04
+(2, -2, -2): -8.4487197e-04 0.0000000e+00
+thickness: 802.71 gl: 38.74780 rotation: -145.42215
+corner: 0.92837 -3.11384
+GOF: 0.62177  func eval: 101
+Error: 0.6201829366273167  func eval: 101
+********************
+sigma: 2.228145559128348 gamma: 0.023500747298853687
+SF:
+(-1, 1, 1): 5.4535344e-02 6.8262219e-04
+(2, -2, -2): -8.6502678e-04 0.0000000e+00
+thickness: 802.29 gl: 38.74763 rotation: -145.42037
+corner: 0.92714 -3.11347
+GOF: 0.62217  func eval: 244
+Error: 0.6205726377385258  func eval: 244
+********************
+sigma: 2.223499942531498 gamma: 0.026254309241069067
+SF:
+(-1, 1, 1): 5.4484405e-02 6.8367599e-04
+(2, -2, -2): -8.6917821e-04 0.0000000e+00
+thickness: 802.75 gl: 38.74779 rotation: -145.42152
+corner: 0.92669 -3.11264
+GOF: 0.61642  func eval: 188
+Error: 0.6148408007974898  func eval: 188
+********************
+sigma: 2.2196983047051724 gamma: 0.027533779542970895
+SF:
+(-1, 1, 1): 5.4480746e-02 6.8176095e-04
+(2, -2, -2): -8.8364747e-04 0.0000000e+00
+thickness: 802.84 gl: 38.74788 rotation: -145.42433
+corner: 0.92542 -3.11240
+GOF: 0.61318  func eval: 118
+Error: 0.6116115982771732  func eval: 118
+********************
+sigma: 2.2202286384902488 gamma: 0.0275738276210021
+SF:
+(-1, 1, 1): 5.4543018e-02 6.9005502e-04
+(2, -2, -2): -8.9650671e-04 0.0000000e+00
+thickness: 802.37 gl: 38.74789 rotation: -145.42456
+corner: 0.92492 -3.11214
+GOF: 0.61643  func eval: 195
+Error: 0.6148536599829364  func eval: 195
+********************
+sigma: 2.220234431628466 gamma: 0.029312305439592002
+SF:
+(-1, 1, 1): 5.4467149e-02 6.9491798e-04
+(2, -2, -2): -8.8499062e-04 0.0000000e+00
+thickness: 803.00 gl: 38.74919 rotation: -145.44368
+corner: 0.92345 -3.11194
+GOF: 0.61233  func eval: 305
+Error: 0.6107613656868411  func eval: 305
+********************
+sigma: 2.21532953885439 gamma: 0.030628873227376292
+SF:
+(-1, 1, 1): 5.4444417e-02 6.9901661e-04
+(2, -2, -2): -8.9164521e-04 0.0000000e+00
+thickness: 803.24 gl: 38.75010 rotation: -145.45680
+corner: 0.92229 -3.11160
+GOF: 0.61044  func eval: 191
+Error: 0.608878510947466  func eval: 191
+********************
+sigma: 2.2164507365256756 gamma: 0.030412584757743086
+SF:
+(-1, 1, 1): 5.4498810e-02 6.8606093e-04
+(2, -2, -2): -9.3632762e-04 0.0000000e+00
+thickness: 802.62 gl: 38.75015 rotation: -145.45711
+corner: 0.92191 -3.11123
+GOF: 0.60673  func eval: 58
+Error: 0.6051784639999036  func eval: 58
+********************
+sigma: 2.216828693356265 gamma: 0.030570249327896332
+SF:
+(-1, 1, 1): 5.4505087e-02 6.8324985e-04
+(2, -2, -2): -9.6681283e-04 0.0000000e+00
+thickness: 803.01 gl: 38.75073 rotation: -145.46551
+corner: 0.92104 -3.11083
+GOF: 0.60045  func eval: 115
+Error: 0.5989134459013816  func eval: 115
+********************
+sigma: 2.217952279555406 gamma: 0.03172938779396472
+SF:
+(-1, 1, 1): 5.4410484e-02 6.8596326e-04
+(2, -2, -2): -9.3156367e-04 0.0000000e+00
+thickness: 803.69 gl: 38.75253 rotation: -145.48994
+corner: 0.91981 -3.11033
+GOF: 0.60319  func eval: 308
+Error: 0.6016454186000167  func eval: 308
+********************
+sigma: 2.2125462050669302 gamma: 0.032633461282449504
+SF:
+(-1, 1, 1): 5.4425914e-02 6.9705886e-04
+(2, -2, -2): -9.7636704e-04 0.0000000e+00
+thickness: 803.87 gl: 38.76190 rotation: -145.61152
+corner: 0.91411 -3.10466
+GOF: 0.59712  func eval: 241
+Error: 0.5955939514584664  func eval: 241
+********************
+sigma: 2.2205133580114285 gamma: 0.030919972634278155
+SF:
+(-1, 1, 1): 5.4407638e-02 7.0215814e-04
+(2, -2, -2): -1.0072736e-03 0.0000000e+00
+thickness: 804.14 gl: 38.76285 rotation: -145.62296
+corner: 0.91584 -3.10458
+GOF: 0.59513  func eval: 191
+Error: 0.593603833124905  func eval: 191
+********************
+sigma: 2.223316113314574 gamma: 0.03149846557109171
+SF:
+(-1, 1, 1): 5.4437723e-02 6.8189763e-04
+(2, -2, -2): -1.0454548e-03 0.0000000e+00
+thickness: 804.01 gl: 38.76343 rotation: -145.62835
+corner: 0.91685 -3.10416
+GOF: 0.59048  func eval: 117
+Error: 0.5889659076162386  func eval: 117
+********************
+sigma: 2.2244239103394237 gamma: 0.031220082509063145
+SF:
+(-1, 1, 1): 5.4435488e-02 6.7619130e-04
+(2, -2, -2): -1.0967246e-03 0.0000000e+00
+thickness: 804.24 gl: 38.76465 rotation: -145.64068
+corner: 0.91869 -3.10331
+GOF: 0.58882  func eval: 179
+Error: 0.5873175723080019  func eval: 179
+********************
+sigma: 2.2263550267968917 gamma: 0.03160131010359893
+SF:
+(-1, 1, 1): 5.4488324e-02 6.8843621e-04
+(2, -2, -2): -1.1156437e-03 0.0000000e+00
+thickness: 803.90 gl: 38.76608 rotation: -145.65418
+corner: 0.92087 -3.10193
+GOF: 0.58858  func eval: 236
+Error: 0.5870690970252846  func eval: 236
+********************
+sigma: 2.227517565440657 gamma: 0.03297453201993344
+SF:
+(-1, 1, 1): 5.4514270e-02 6.8926060e-04
+(2, -2, -2): -1.1770038e-03 0.0000000e+00
+thickness: 804.00 gl: 38.77433 rotation: -145.72791
+corner: 0.93401 -3.09332
+GOF: 0.58971  func eval: 278
+Error: 0.5881970032738393  func eval: 278
+********************
+sigma: 2.219907546685754 gamma: 0.039083039483146016
+SF:
+(-1, 1, 1): 5.4382548e-02 6.9460727e-04
+(2, -2, -2): -1.1796153e-03 0.0000000e+00
+thickness: 805.24 gl: 38.78372 rotation: -145.81099
+corner: 0.94742 -3.08112
+GOF: 0.59400  func eval: 242
+Error: 0.5924810251062336  func eval: 242
+********************
+sigma: 2.2297535102492256 gamma: 0.034331478946209394
+SF:
+(-1, 1, 1): 5.4463267e-02 6.7066500e-04
+(2, -2, -2): -1.2540489e-03 0.0000000e+00
+thickness: 804.81 gl: 38.78412 rotation: -145.80830
+corner: 0.94922 -3.07881
+GOF: 0.59315  func eval: 191
+Error: 0.5916307045346406  func eval: 191
+********************
+sigma: 2.232966083351573 gamma: 0.03411508340943174
+SF:
+(-1, 1, 1): 5.4542176e-02 6.6225440e-04
+(2, -2, -2): -1.1313297e-03 0.0000000e+00
+thickness: 803.45 gl: 38.76716 rotation: -145.47824
+corner: 0.95235 -3.03687
+GOF: 0.58754  func eval: 348
+Error: 0.5860369278102  func eval: 348
+********************
+sigma: 2.1931409993060664 gamma: 0.047372839299161015
+SF:
+(-1, 1, 1): 5.4595385e-02 6.5147015e-04
+(2, -2, -2): -1.1152346e-03 0.0000000e+00
+thickness: 802.91 gl: 38.76689 rotation: -145.47546
+corner: 0.95196 -3.03666
+GOF: 0.59326  func eval: 168
+Error: 0.5917400947997141  func eval: 168
+********************
+sigma: 2.191452537509936 gamma: 0.04756137578060254
+SF:
+(-1, 1, 1): 5.4514058e-02 6.8058958e-04
+(2, -2, -2): -9.7508321e-04 0.0000000e+00
+thickness: 802.98 gl: 38.75713 rotation: -145.38017
+corner: 0.91554 -3.02673
+GOF: 0.59930  func eval: 347
+Error: 0.5977633834347852  func eval: 347
+********************
+sigma: 2.1878578712431196 gamma: 0.04551704131018324
+SF:
+(-1, 1, 1): 5.4473851e-02 6.7273260e-04
+(2, -2, -2): -1.1959310e-03 0.0000000e+00
+thickness: 804.40 gl: 38.77582 rotation: -145.63641
+corner: 0.91421 -3.02911
+GOF: 0.58714  func eval: 282
+Error: 0.5856368416364691  func eval: 282
+********************
+sigma: 2.2157949812789326 gamma: 0.04002705214332821
+SF:
+(-1, 1, 1): 5.4567412e-02 6.7275763e-04
+(2, -2, -2): -1.1985450e-03 0.0000000e+00
+thickness: 803.60 gl: 38.77572 rotation: -145.63265
+corner: 0.91493 -3.02855
+GOF: 0.58895  func eval: 172
+Error: 0.5874398622555739  func eval: 172
+********************
+sigma: 2.211965400501675 gamma: 0.042615103353747436
+SF:
+(-1, 1, 1): 5.4462973e-02 6.7547592e-04
+(2, -2, -2): -1.1179373e-03 0.0000000e+00
+thickness: 804.17 gl: 38.77552 rotation: -145.62646
+corner: 0.91617 -3.02797
+GOF: 0.58658  func eval: 259
+Error: 0.5850804591689339  func eval: 259
+********************
+sigma: 2.2031917533607417 gamma: 0.043378009187346814
+SF:
+(-1, 1, 1): 5.4497674e-02 6.5187237e-04
+(2, -2, -2): -1.1811549e-03 0.0000000e+00
+thickness: 804.09 gl: 38.77540 rotation: -145.62339
+corner: 0.91630 -3.02709
+GOF: 0.58846  func eval: 118
+Error: 0.5869533340144129  func eval: 118
+********************
+sigma: 2.2049329239222533 gamma: 0.043312823674381995
+SF:
+(-1, 1, 1): 5.4495726e-02 6.5948989e-04
+(2, -2, -2): -1.1675067e-03 0.0000000e+00
+thickness: 804.06 gl: 38.77537 rotation: -145.62198
+corner: 0.91638 -3.02672
+GOF: 0.58703  func eval: 60
+Error: 0.585528196289092  func eval: 60
+********************
+sigma: 2.2053784611647136 gamma: 0.04316303329630207
+SF:
+(-1, 1, 1): 5.4412857e-02 6.7621120e-04
+(2, -2, -2): -1.1895871e-03 0.0000000e+00
+thickness: 804.91 gl: 38.77638 rotation: -145.63333
+corner: 0.91714 -3.02581
+GOF: 0.59015  func eval: 169
+Error: 0.5886394800780783  func eval: 169
+********************
+sigma: 2.2084032802914866 gamma: 0.04287006515330424
+SF:
+(-1, 1, 1): 5.4515235e-02 6.6516199e-04
+(2, -2, -2): -1.1434666e-03 0.0000000e+00
+thickness: 803.80 gl: 38.77625 rotation: -145.62901
+corner: 0.91725 -3.02512
+GOF: 0.58711  func eval: 110
+Error: 0.5856026409395848  func eval: 110
+********************
+sigma: 2.20408271261136 gamma: 0.043588072699748605
+SF:
+(-1, 1, 1): 5.4508772e-02 6.6068594e-04
+(2, -2, -2): -1.0900095e-03 0.0000000e+00
+thickness: 803.55 gl: 38.76528 rotation: -145.45077
+corner: 0.91645 -3.01048
+GOF: 0.58847  func eval: 292
+Error: 0.5869638342097379  func eval: 292
+********************
+sigma: 2.2069548127025693 gamma: 0.03965838592404555
+SF:
+(-1, 1, 1): 5.4481126e-02 6.7022286e-04
+(2, -2, -2): -1.1738640e-03 0.0000000e+00
+thickness: 804.23 gl: 38.77405 rotation: -145.57640
+corner: 0.91349 -3.01210
+GOF: 0.58601  func eval: 342
+Error: 0.584508235850722  func eval: 342
+********************
+sigma: 2.2162850111772263 gamma: 0.03886817271407536
+SF:
+(-1, 1, 1): 5.4444648e-02 6.7163038e-04
+(2, -2, -2): -1.1627388e-03 0.0000000e+00
+thickness: 804.50 gl: 38.77468 rotation: -145.58414
+corner: 0.91371 -3.01173
+GOF: 0.58686  func eval: 165
+Error: 0.5853586491196002  func eval: 165
+********************
+sigma: 2.216397837524425 gamma: 0.03827998049143042
+SF:
+(-1, 1, 1): 5.4430105e-02 6.8539625e-04
+(2, -2, -2): -1.1355199e-03 0.0000000e+00
+thickness: 804.54 gl: 38.77478 rotation: -145.58458
+corner: 0.91421 -3.01177
+GOF: 0.58708  func eval: 66
+Error: 0.585581909288386  func eval: 66
+********************
+sigma: 2.216530939208425 gamma: 0.03813599612713852
+SF:
+(-1, 1, 1): 5.4482054e-02 6.6488702e-04
+(2, -2, -2): -1.1608428e-03 0.0000000e+00
+thickness: 804.16 gl: 38.77474 rotation: -145.58169
+corner: 0.91456 -3.01111
+GOF: 0.58618  func eval: 289
+Error: 0.584680464461727  func eval: 289
+********************
+sigma: 2.2154083620711846 gamma: 0.038564327089866304
+SF:
+(-1, 1, 1): 5.4506119e-02 6.6876016e-04
+(2, -2, -2): -1.1390240e-03 0.0000000e+00
+thickness: 803.86 gl: 38.77447 rotation: -145.57780
+corner: 0.91448 -3.01096
+GOF: 0.58620  func eval: 133
+Error: 0.5846970673523493  func eval: 133
+********************
+sigma: 2.2148174303081185 gamma: 0.03855620612292775
+SF:
+(-1, 1, 1): 5.4516561e-02 6.6043745e-04
+(2, -2, -2): -1.1978834e-03 0.0000000e+00
+thickness: 804.01 gl: 38.77449 rotation: -145.57683
+corner: 0.91509 -3.01051
+GOF: 0.58684  func eval: 122
+Error: 0.5853411679820862  func eval: 122
+********************
+sigma: 2.2160609237038535 gamma: 0.03934520651708291
+SF:
+(-1, 1, 1): 5.4474138e-02 6.7234290e-04
+(2, -2, -2): -1.1345926e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77444 rotation: -145.57570
+corner: 0.91502 -3.01039
+GOF: 0.58591  func eval: 126
+Error: 0.5844056086870683  func eval: 126
+********************
+sigma: 2.2115321532701766 gamma: 0.03991335069372828
+SF:
+(-1, 1, 1): 5.4452091e-02 6.6954165e-04
+(2, -2, -2): -1.1738423e-03 0.0000000e+00
+thickness: 804.48 gl: 38.77475 rotation: -145.57873
+corner: 0.91554 -3.01005
+GOF: 0.58694  func eval: 110
+Error: 0.5854378640376953  func eval: 110
+********************
+sigma: 2.212492483812236 gamma: 0.040321096043576386
+SF:
+(-1, 1, 1): 5.4494865e-02 6.6892296e-04
+(2, -2, -2): -1.1462778e-03 0.0000000e+00
+thickness: 803.99 gl: 38.77457 rotation: -145.57538
+corner: 0.91539 -3.00972
+GOF: 0.58589  func eval: 218
+Error: 0.5843925652613058  func eval: 218
+********************
+sigma: 2.2098723261715434 gamma: 0.04098873691084139
+SF:
+(-1, 1, 1): 5.4484695e-02 6.7610544e-04
+(2, -2, -2): -1.1423135e-03 0.0000000e+00
+thickness: 804.08 gl: 38.77453 rotation: -145.57468
+corner: 0.91542 -3.00972
+GOF: 0.58572  func eval: 160
+Error: 0.5842177435734106  func eval: 160
+********************
+sigma: 2.210562563631749 gamma: 0.0409162882781662
+SF:
+(-1, 1, 1): 5.4485574e-02 6.7984493e-04
+(2, -2, -2): -1.1361372e-03 0.0000000e+00
+thickness: 804.05 gl: 38.77449 rotation: -145.57432
+corner: 0.91542 -3.00972
+GOF: 0.58593  func eval: 73
+Error: 0.5844282783642222  func eval: 73
+********************
+sigma: 2.2107062521161915 gamma: 0.04084709558858029
+SF:
+(-1, 1, 1): 5.4488007e-02 6.7469128e-04
+(2, -2, -2): -1.1082586e-03 0.0000000e+00
+thickness: 803.90 gl: 38.77440 rotation: -145.57264
+corner: 0.91542 -3.00972
+GOF: 0.58668  func eval: 148
+Error: 0.5851825490017705  func eval: 148
+********************
+sigma: 2.20673686813387 gamma: 0.041538188583660846
+SF:
+(-1, 1, 1): 5.4482557e-02 6.7115377e-04
+(2, -2, -2): -1.1601963e-03 0.0000000e+00
+thickness: 804.16 gl: 38.77447 rotation: -145.57140
+corner: 0.91687 -3.00958
+GOF: 0.58575  func eval: 188
+Error: 0.5842523189915135  func eval: 188
+********************
+sigma: 2.208480193695971 gamma: 0.04206765053037705
+SF:
+(-1, 1, 1): 5.4500610e-02 6.7177857e-04
+(2, -2, -2): -1.1645990e-03 0.0000000e+00
+thickness: 804.02 gl: 38.77447 rotation: -145.56915
+corner: 0.91819 -3.00931
+GOF: 0.58575  func eval: 121
+Error: 0.5842475182116006  func eval: 121
+********************
+sigma: 2.2093048996065465 gamma: 0.04201936127816869
+SF:
+(-1, 1, 1): 5.4483712e-02 6.7710225e-04
+(2, -2, -2): -1.1651281e-03 0.0000000e+00
+thickness: 804.18 gl: 38.77457 rotation: -145.56909
+corner: 0.91904 -3.00931
+GOF: 0.58582  func eval: 178
+Error: 0.5843233127237606  func eval: 178
+********************
+sigma: 2.210011289502574 gamma: 0.04190712079900339
+SF:
+(-1, 1, 1): 5.4486036e-02 6.7539827e-04
+(2, -2, -2): -1.1612009e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77459 rotation: -145.56874
+corner: 0.91947 -3.00930
+GOF: 0.58570  func eval: 58
+Error: 0.5842005812747428  func eval: 58
+********************
+sigma: 2.2096903910145604 gamma: 0.0418535607723542
+SF:
+(-1, 1, 1): 5.4498333e-02 6.7770109e-04
+(2, -2, -2): -1.1518794e-03 0.0000000e+00
+thickness: 804.00 gl: 38.77458 rotation: -145.56755
+corner: 0.92004 -3.00925
+GOF: 0.58583  func eval: 138
+Error: 0.5843314623687168  func eval: 138
+********************
+sigma: 2.209657857577535 gamma: 0.04177337157615961
+SF:
+(-1, 1, 1): 5.4485846e-02 6.7251781e-04
+(2, -2, -2): -1.1584635e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77460 rotation: -145.56633
+corner: 0.92080 -3.00902
+GOF: 0.58567  func eval: 134
+Error: 0.5841706062407269  func eval: 134
+********************
+sigma: 2.209566790502938 gamma: 0.04163326376827592
+SF:
+(-1, 1, 1): 5.4470442e-02 6.7756907e-04
+(2, -2, -2): -1.1433862e-03 0.0000000e+00
+thickness: 804.21 gl: 38.77463 rotation: -145.56507
+corner: 0.92179 -3.00895
+GOF: 0.58576  func eval: 130
+Error: 0.5842566924323154  func eval: 130
+********************
+sigma: 2.2093645429251114 gamma: 0.04144735006939383
+SF:
+(-1, 1, 1): 5.4494325e-02 6.7298498e-04
+(2, -2, -2): -1.1601796e-03 0.0000000e+00
+thickness: 804.06 gl: 38.77463 rotation: -145.56338
+corner: 0.92273 -3.00885
+GOF: 0.58566  func eval: 131
+Error: 0.5841592292866596  func eval: 131
+********************
+sigma: 2.2104269280484212 gamma: 0.041390973296524414
+SF:
+(-1, 1, 1): 5.4492772e-02 6.7116192e-04
+(2, -2, -2): -1.1775825e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77472 rotation: -145.56289
+corner: 0.92363 -3.00864
+GOF: 0.58588  func eval: 118
+Error: 0.5843764253169033  func eval: 118
+********************
+sigma: 2.211536555173294 gamma: 0.04129373578391884
+SF:
+(-1, 1, 1): 5.4486379e-02 6.7507557e-04
+(2, -2, -2): -1.1496613e-03 0.0000000e+00
+thickness: 804.09 gl: 38.77472 rotation: -145.56145
+corner: 0.92432 -3.00852
+GOF: 0.58564  func eval: 147
+Error: 0.5841380912198679  func eval: 147
+********************
+sigma: 2.21025134501626 gamma: 0.041217196038903316
+SF:
+(-1, 1, 1): 5.4491665e-02 6.7165389e-04
+(2, -2, -2): -1.1510020e-03 0.0000000e+00
+thickness: 804.05 gl: 38.77469 rotation: -145.56102
+corner: 0.92426 -3.00847
+GOF: 0.58567  func eval: 57
+Error: 0.5841741042856066  func eval: 57
+********************
+sigma: 2.210043530651386 gamma: 0.04117723134130806
+SF:
+(-1, 1, 1): 5.4490492e-02 6.7243399e-04
+(2, -2, -2): -1.1531268e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77467 rotation: -145.56075
+corner: 0.92426 -3.00847
+GOF: 0.58565  func eval: 96
+Error: 0.5841532447762592  func eval: 96
+********************
+sigma: 2.210358840656783 gamma: 0.04113676719137123
+SF:
+(-1, 1, 1): 5.4494951e-02 6.7447848e-04
+(2, -2, -2): -1.1501816e-03 0.0000000e+00
+thickness: 804.02 gl: 38.77464 rotation: -145.56038
+corner: 0.92420 -3.00838
+GOF: 0.58566  func eval: 61
+Error: 0.5841645869472892  func eval: 61
+********************
+sigma: 2.2105439590299047 gamma: 0.04104745988342886
+SF:
+(-1, 1, 1): 5.4493055e-02 6.7407003e-04
+(2, -2, -2): -1.1519070e-03 0.0000000e+00
+thickness: 804.04 gl: 38.77463 rotation: -145.56012
+corner: 0.92415 -3.00835
+GOF: 0.58564  func eval: 59
+Error: 0.5841429976395636  func eval: 59
+********************
+sigma: 2.210783556284318 gamma: 0.041030272074021996
+SF:
+(-1, 1, 1): 5.4485623e-02 6.7473477e-04
+(2, -2, -2): -1.1429504e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77461 rotation: -145.55979
+corner: 0.92409 -3.00837
+GOF: 0.58568  func eval: 68
+Error: 0.5841799083440655  func eval: 68
+********************
+sigma: 2.210219759417553 gamma: 0.040991703115649585
+SF:
+(-1, 1, 1): 5.4492511e-02 6.7334948e-04
+(2, -2, -2): -1.1565902e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77459 rotation: -145.55854
+corner: 0.92479 -3.00837
+GOF: 0.58562  func eval: 82
+Error: 0.5841243890623905  func eval: 82
+********************
+sigma: 2.211124670402351 gamma: 0.04096696150614685
+SF:
+(-1, 1, 1): 5.4490805e-02 6.7589607e-04
+(2, -2, -2): -1.1523122e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77458 rotation: -145.55732
+corner: 0.92558 -3.00829
+GOF: 0.58566  func eval: 60
+Error: 0.5841599476682462  func eval: 60
+********************
+sigma: 2.2111866392357493 gamma: 0.040954931425507074
+SF:
+(-1, 1, 1): 5.4490555e-02 6.7315524e-04
+(2, -2, -2): -1.1529571e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77458 rotation: -145.55576
+corner: 0.92646 -3.00828
+GOF: 0.58563  func eval: 73
+Error: 0.5841309041738343  func eval: 73
+********************
+sigma: 2.2109004429391983 gamma: 0.04092547003081867
+SF:
+(-1, 1, 1): 5.4486576e-02 6.7365012e-04
+(2, -2, -2): -1.1542320e-03 0.0000000e+00
+thickness: 804.11 gl: 38.77458 rotation: -145.55495
+corner: 0.92701 -3.00819
+GOF: 0.58561  func eval: 73
+Error: 0.5841092462265014  func eval: 73
+********************
+sigma: 2.2110591683046166 gamma: 0.04088206183671703
+SF:
+(-1, 1, 1): 5.4484420e-02 6.7351019e-04
+(2, -2, -2): -1.1550069e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77458 rotation: -145.55495
+corner: 0.92693 -3.00819
+GOF: 0.58561  func eval: 67
+Error: 0.5841104897785772  func eval: 67
+********************
+sigma: 2.211163601250162 gamma: 0.04082920008531078
+SF:
+(-1, 1, 1): 5.4493386e-02 6.7169440e-04
+(2, -2, -2): -1.1595249e-03 0.0000000e+00
+thickness: 804.07 gl: 38.77457 rotation: -145.55367
+corner: 0.92763 -3.00816
+GOF: 0.58565  func eval: 154
+Error: 0.5841483614872286  func eval: 154
+********************
+sigma: 2.211508913969093 gamma: 0.040773897145384826
+SF:
+(-1, 1, 1): 5.4487839e-02 6.7437114e-04
+(2, -2, -2): -1.1517161e-03 0.0000000e+00
+thickness: 804.09 gl: 38.77456 rotation: -145.55321
+corner: 0.92784 -3.00815
+GOF: 0.58561  func eval: 59
+Error: 0.5841108504518935  func eval: 59
+********************
+sigma: 2.2113140909132105 gamma: 0.040744012118603096
+SF:
+(-1, 1, 1): 5.4487396e-02 6.7442528e-04
+(2, -2, -2): -1.1554018e-03 0.0000000e+00
+thickness: 804.11 gl: 38.77456 rotation: -145.55251
+corner: 0.92831 -3.00807
+GOF: 0.58559  func eval: 68
+Error: 0.5840943375338314  func eval: 68
+********************
+sigma: 2.2116263964666545 gamma: 0.04071174021698465
+SF:
+(-1, 1, 1): 5.4486342e-02 6.7484862e-04
+(2, -2, -2): -1.1562168e-03 0.0000000e+00
+thickness: 804.12 gl: 38.77458 rotation: -145.55191
+corner: 0.92877 -3.00800
+GOF: 0.58560  func eval: 60
+Error: 0.5840993092012244  func eval: 60
+********************
+sigma: 2.2117921222429167 gamma: 0.04067868983158789
+SF:
+(-1, 1, 1): 5.4482028e-02 6.7494821e-04
+(2, -2, -2): -1.1509764e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77459 rotation: -145.55139
+corner: 0.92912 -3.00797
+GOF: 0.58560  func eval: 58
+Error: 0.5841026569267722  func eval: 58
+********************
+sigma: 2.2114745936450775 gamma: 0.040632055322759715
+SF:
+(-1, 1, 1): 5.4482829e-02 6.7431130e-04
+(2, -2, -2): -1.1553573e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77460 rotation: -145.55083
+corner: 0.92955 -3.00797
+GOF: 0.58559  func eval: 67
+Error: 0.5840956244314014  func eval: 67
+********************
+sigma: 2.211797513521058 gamma: 0.0405830076371897
+SF:
+(-1, 1, 1): 5.4481592e-02 6.7547307e-04
+(2, -2, -2): -1.1535918e-03 0.0000000e+00
+thickness: 804.16 gl: 38.77460 rotation: -145.55001
+corner: 0.93012 -3.00797
+GOF: 0.58559  func eval: 68
+Error: 0.5840940814388458  func eval: 68
+********************
+sigma: 2.2119173867597426 gamma: 0.040538492083549454
+SF:
+(-1, 1, 1): 5.4479931e-02 6.7608070e-04
+(2, -2, -2): -1.1533784e-03 0.0000000e+00
+thickness: 804.17 gl: 38.77462 rotation: -145.54965
+corner: 0.93049 -3.00790
+GOF: 0.58562  func eval: 59
+Error: 0.5841239949177385  func eval: 59
+********************
+sigma: 2.212048634117405 gamma: 0.04049186726062022
+SF:
+(-1, 1, 1): 5.4485850e-02 6.7452487e-04
+(2, -2, -2): -1.1585909e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77464 rotation: -145.54917
+corner: 0.93092 -3.00795
+GOF: 0.58561  func eval: 69
+Error: 0.5841143745630151  func eval: 69
+********************
+sigma: 2.2123737704088318 gamma: 0.04045849414274888
+SF:
+(-1, 1, 1): 5.4482825e-02 6.7486003e-04
+(2, -2, -2): -1.1525628e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77464 rotation: -145.54862
+corner: 0.93133 -3.00794
+GOF: 0.58561  func eval: 69
+Error: 0.5841072407354438  func eval: 69
+********************
+sigma: 2.212049059100061 gamma: 0.04041844189836879
+SF:
+(-1, 1, 1): 5.4485459e-02 6.7477452e-04
+(2, -2, -2): -1.1547984e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77464 rotation: -145.54795
+corner: 0.93177 -3.00787
+GOF: 0.58558  func eval: 76
+Error: 0.5840825989757228  func eval: 76
+********************
+sigma: 2.2122967705489516 gamma: 0.040387327201158306
+SF:
+(-1, 1, 1): 5.4482415e-02 6.7469856e-04
+(2, -2, -2): -1.1547689e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77466 rotation: -145.54751
+corner: 0.93214 -3.00787
+GOF: 0.58558  func eval: 71
+Error: 0.5840845695759717  func eval: 71
+********************
+sigma: 2.2123026185611616 gamma: 0.04034924862752627
+SF:
+(-1, 1, 1): 5.4481883e-02 6.7512318e-04
+(2, -2, -2): -1.1518481e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77466 rotation: -145.54672
+corner: 0.93266 -3.00785
+GOF: 0.58560  func eval: 76
+Error: 0.584103878085184  func eval: 76
+********************
+sigma: 2.212248685712276 gamma: 0.04030874437120236
+SF:
+(-1, 1, 1): 5.4484431e-02 6.7484094e-04
+(2, -2, -2): -1.1569245e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77467 rotation: -145.54627
+corner: 0.93305 -3.00785
+GOF: 0.58559  func eval: 64
+Error: 0.5840909167773524  func eval: 64
+********************
+sigma: 2.2126709032350167 gamma: 0.040275141495532706
+SF:
+(-1, 1, 1): 5.4486614e-02 6.7406963e-04
+(2, -2, -2): -1.1574028e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77467 rotation: -145.54552
+corner: 0.93354 -3.00778
+GOF: 0.58559  func eval: 72
+Error: 0.5840920375566899  func eval: 72
+********************
+sigma: 2.2126998442517416 gamma: 0.040247324260534775
+SF:
+(-1, 1, 1): 5.4485567e-02 6.7436206e-04
+(2, -2, -2): -1.1566088e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77468 rotation: -145.54490
+corner: 0.93400 -3.00772
+GOF: 0.58558  func eval: 59
+Error: 0.5840856104712152  func eval: 59
+********************
+sigma: 2.212728700472978 gamma: 0.04021758003537184
+SF:
+(-1, 1, 1): 5.4484535e-02 6.7438249e-04
+(2, -2, -2): -1.1538595e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77470 rotation: -145.54432
+corner: 0.93438 -3.00769
+GOF: 0.58559  func eval: 58
+Error: 0.584092083512606  func eval: 58
+********************
+sigma: 2.2125929309993744 gamma: 0.040185450331047624
+SF:
+(-1, 1, 1): 5.4484449e-02 6.7474542e-04
+(2, -2, -2): -1.1562860e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77471 rotation: -145.54385
+corner: 0.93476 -3.00768
+GOF: 0.58558  func eval: 62
+Error: 0.5840764587384579  func eval: 62
+********************
+sigma: 2.2128675374614826 gamma: 0.040154687883390695
+SF:
+(-1, 1, 1): 5.4482654e-02 6.7511701e-04
+(2, -2, -2): -1.1539601e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77471 rotation: -145.54336
+corner: 0.93514 -3.00763
+GOF: 0.58559  func eval: 59
+Error: 0.5840899379632661  func eval: 59
+********************
+sigma: 2.212801559987778 gamma: 0.04012093415565968
+SF:
+(-1, 1, 1): 5.4484960e-02 6.7451934e-04
+(2, -2, -2): -1.1560570e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77473 rotation: -145.54279
+corner: 0.93556 -3.00761
+GOF: 0.58555  func eval: 60
+Error: 0.5840556485734079  func eval: 60
+********************
+sigma: 2.2129689313652388 gamma: 0.04009265594348099
+SF:
+(-1, 1, 1): 5.4487497e-02 6.7466096e-04
+(2, -2, -2): -1.1566589e-03 0.0000000e+00
+thickness: 804.12 gl: 38.77473 rotation: -145.54215
+corner: 0.93601 -3.00761
+GOF: 0.58558  func eval: 63
+Error: 0.5840852189275678  func eval: 63
+********************
+sigma: 2.213111603895186 gamma: 0.040075900346193676
+SF:
+(-1, 1, 1): 5.4483477e-02 6.7469070e-04
+(2, -2, -2): -1.1551627e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77473 rotation: -145.54152
+corner: 0.93643 -3.00761
+GOF: 0.58556  func eval: 85
+Error: 0.584061826199953  func eval: 85
+********************
+sigma: 2.213006120740133 gamma: 0.04004419776326275
+SF:
+(-1, 1, 1): 5.4483131e-02 6.7452912e-04
+(2, -2, -2): -1.1568720e-03 0.0000000e+00
+thickness: 804.16 gl: 38.77474 rotation: -145.54105
+corner: 0.93684 -3.00755
+GOF: 0.58559  func eval: 59
+Error: 0.5840879776583753  func eval: 59
+********************
+sigma: 2.2131614283441934 gamma: 0.04000976716904696
+SF:
+(-1, 1, 1): 5.4484975e-02 6.7472341e-04
+(2, -2, -2): -1.1552304e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77475 rotation: -145.54050
+corner: 0.93723 -3.00749
+GOF: 0.58556  func eval: 61
+Error: 0.5840618450170616  func eval: 61
+********************
+sigma: 2.213158585203516 gamma: 0.03998966747820581
+SF:
+(-1, 1, 1): 5.4484490e-02 6.7454355e-04
+(2, -2, -2): -1.1546807e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77476 rotation: -145.53995
+corner: 0.93759 -3.00749
+GOF: 0.58558  func eval: 84
+Error: 0.5840776392562853  func eval: 84
+********************
+sigma: 2.2131343661748146 gamma: 0.03996358018365813
+SF:
+(-1, 1, 1): 5.4484461e-02 6.7470339e-04
+(2, -2, -2): -1.1559515e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77477 rotation: -145.53941
+corner: 0.93800 -3.00748
+GOF: 0.58557  func eval: 61
+Error: 0.5840709887561851  func eval: 61
+********************
+sigma: 2.2133081104097077 gamma: 0.03993767503757315
+SF:
+(-1, 1, 1): 5.4484479e-02 6.7458558e-04
+(2, -2, -2): -1.1550151e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77477 rotation: -145.53892
+corner: 0.93835 -3.00748
+GOF: 0.58555  func eval: 68
+Error: 0.584051614869232  func eval: 68
+********************
+sigma: 2.2132771210582427 gamma: 0.039912316775726105
+SF:
+(-1, 1, 1): 5.4484487e-02 6.7454646e-04
+(2, -2, -2): -1.1547031e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77477 rotation: -145.53819
+corner: 0.93884 -3.00748
+GOF: 0.58556  func eval: 86
+Error: 0.5840569113046679  func eval: 86
+********************
+sigma: 2.2133065604905053 gamma: 0.039887045279962646
+SF:
+(-1, 1, 1): 5.4483637e-02 6.7447370e-04
+(2, -2, -2): -1.1555927e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77477 rotation: -145.53774
+corner: 0.93915 -3.00748
+GOF: 0.58556  func eval: 82
+Error: 0.5840626411947284  func eval: 82
+********************
+sigma: 2.213400387515934 gamma: 0.03985800435742006
+SF:
+(-1, 1, 1): 5.4484695e-02 6.7467138e-04
+(2, -2, -2): -1.1553059e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77477 rotation: -145.53715
+corner: 0.93955 -3.00743
+GOF: 0.58558  func eval: 81
+Error: 0.5840805777495571  func eval: 81
+********************
+sigma: 2.2134804982650507 gamma: 0.03983516199733404
+SF:
+(-1, 1, 1): 5.4484800e-02 6.7454140e-04
+(2, -2, -2): -1.1557097e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.53660
+corner: 0.93993 -3.00741
+GOF: 0.58556  func eval: 61
+Error: 0.584065492885925  func eval: 61
+********************
+sigma: 2.2135212438610297 gamma: 0.03981275159611899
+SF:
+(-1, 1, 1): 5.4483812e-02 6.7465566e-04
+(2, -2, -2): -1.1551135e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77478 rotation: -145.53601
+corner: 0.94030 -3.00741
+GOF: 0.58556  func eval: 75
+Error: 0.5840592264970547  func eval: 75
+********************
+sigma: 2.2135450928682423 gamma: 0.03978753334234992
+SF:
+(-1, 1, 1): 5.4484811e-02 6.7467743e-04
+(2, -2, -2): -1.1551587e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.53536
+corner: 0.94076 -3.00743
+GOF: 0.58556  func eval: 68
+Error: 0.5840575439577042  func eval: 68
+********************
+sigma: 2.2136069130789147 gamma: 0.03976640984400722
+SF:
+(-1, 1, 1): 5.4483935e-02 6.7473779e-04
+(2, -2, -2): -1.1544819e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.53479
+corner: 0.94117 -3.00743
+GOF: 0.58555  func eval: 90
+Error: 0.5840548595515154  func eval: 90
+********************
+sigma: 2.2135975122056095 gamma: 0.03974768948871816
+SF:
+(-1, 1, 1): 5.4485008e-02 6.7467825e-04
+(2, -2, -2): -1.1546570e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77479 rotation: -145.53415
+corner: 0.94160 -3.00738
+GOF: 0.58556  func eval: 73
+Error: 0.5840640549055158  func eval: 73
+********************
+sigma: 2.2136595716775576 gamma: 0.039728648399771686
+SF:
+(-1, 1, 1): 5.4484058e-02 6.7466038e-04
+(2, -2, -2): -1.1550183e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53361
+corner: 0.94198 -3.00738
+GOF: 0.58556  func eval: 64
+Error: 0.58406334860649  func eval: 64
+********************
+sigma: 2.2137086583356664 gamma: 0.039705738956371854
+SF:
+(-1, 1, 1): 5.4484118e-02 6.7468709e-04
+(2, -2, -2): -1.1546595e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53303
+corner: 0.94236 -3.00741
+GOF: 0.58556  func eval: 72
+Error: 0.584060866071972  func eval: 72
+********************
+sigma: 2.2137361891350436 gamma: 0.03968402618942059
+SF:
+(-1, 1, 1): 5.4484699e-02 6.7464687e-04
+(2, -2, -2): -1.1551109e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53252
+corner: 0.94273 -3.00741
+GOF: 0.58555  func eval: 71
+Error: 0.5840548570563548  func eval: 71
+********************
+sigma: 2.21380660124306 gamma: 0.03966425914342568
+SF:
+(-1, 1, 1): 5.4484036e-02 6.7463232e-04
+(2, -2, -2): -1.1550807e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53195
+corner: 0.94312 -3.00737
+GOF: 0.58556  func eval: 74
+Error: 0.5840572409559338  func eval: 74
+********************
+sigma: 2.213842730924779 gamma: 0.039642518648001786
+SF:
+(-1, 1, 1): 5.4484695e-02 6.7455613e-04
+(2, -2, -2): -1.1554782e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53131
+corner: 0.94349 -3.00739
+GOF: 0.58555  func eval: 82
+Error: 0.5840515379364539  func eval: 82
+********************
+sigma: 2.2139064724184117 gamma: 0.039623346263151865
+SF:
+(-1, 1, 1): 5.4484885e-02 6.7451253e-04
+(2, -2, -2): -1.1557511e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53075
+corner: 0.94389 -3.00740
+GOF: 0.58556  func eval: 83
+Error: 0.5840649646248619  func eval: 83
+********************
+sigma: 2.213961989248369 gamma: 0.039604941713533647
+SF:
+(-1, 1, 1): 5.4485217e-02 6.7456008e-04
+(2, -2, -2): -1.1553221e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.53026
+corner: 0.94405 -3.00723
+GOF: 0.58555  func eval: 64
+Error: 0.5840499931497372  func eval: 64
+********************
+sigma: 2.213969241009574 gamma: 0.03959281781977937
+SF:
+(-1, 1, 1): 5.4485612e-02 6.7453599e-04
+(2, -2, -2): -1.1554025e-03 0.0000000e+00
+thickness: 804.13 gl: 38.77479 rotation: -145.52968
+corner: 0.94439 -3.00722
+GOF: 0.58556  func eval: 72
+Error: 0.5840561527033608  func eval: 72
+********************
+sigma: 2.2140081620854617 gamma: 0.03957807146557898
+SF:
+(-1, 1, 1): 5.4484893e-02 6.7448773e-04
+(2, -2, -2): -1.1554328e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.52904
+corner: 0.94480 -3.00721
+GOF: 0.58555  func eval: 68
+Error: 0.5840523972159425  func eval: 68
+********************
+sigma: 2.214030834750186 gamma: 0.03956065190823781
+SF:
+(-1, 1, 1): 5.4484852e-02 6.7452085e-04
+(2, -2, -2): -1.1553657e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77479 rotation: -145.52838
+corner: 0.94523 -3.00717
+GOF: 0.58554  func eval: 72
+Error: 0.5840404632654843  func eval: 72
+********************
+sigma: 2.214056571214025 gamma: 0.03954403753960183
+SF:
+(-1, 1, 1): 5.4485362e-02 6.7450578e-04
+(2, -2, -2): -1.1557621e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77480 rotation: -145.52790
+corner: 0.94540 -3.00701
+GOF: 0.58555  func eval: 59
+Error: 0.5840532859300969  func eval: 59
+********************
+sigma: 2.2141276497764624 gamma: 0.039528997890841334
+SF:
+(-1, 1, 1): 5.4484665e-02 6.7456899e-04
+(2, -2, -2): -1.1551708e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77481 rotation: -145.52742
+corner: 0.94555 -3.00684
+GOF: 0.58554  func eval: 59
+Error: 0.5840424122703411  func eval: 59
+********************
+sigma: 2.2141127530219693 gamma: 0.03951198000445543
+SF:
+(-1, 1, 1): 5.4485127e-02 6.7454379e-04
+(2, -2, -2): -1.1550942e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77482 rotation: -145.52694
+corner: 0.94589 -3.00681
+GOF: 0.58554  func eval: 59
+Error: 0.58404599301623  func eval: 59
+********************
+sigma: 2.2141504037790507 gamma: 0.039497446701909585
+SF:
+(-1, 1, 1): 5.4484546e-02 6.7452900e-04
+(2, -2, -2): -1.1550984e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77483 rotation: -145.52646
+corner: 0.94605 -3.00666
+GOF: 0.58554  func eval: 59
+Error: 0.5840420500589467  func eval: 59
+********************
+sigma: 2.2141578667965005 gamma: 0.03948501458565985
+SF:
+(-1, 1, 1): 5.4484248e-02 6.7453552e-04
+(2, -2, -2): -1.1553292e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77483 rotation: -145.52587
+corner: 0.94643 -3.00665
+GOF: 0.58554  func eval: 62
+Error: 0.5840366643767585  func eval: 62
+********************
+sigma: 2.2142042473375327 gamma: 0.03946728725630632
+SF:
+(-1, 1, 1): 5.4483954e-02 6.7453273e-04
+(2, -2, -2): -1.1554074e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77483 rotation: -145.52534
+corner: 0.94678 -3.00665
+GOF: 0.58554  func eval: 66
+Error: 0.5840450441167369  func eval: 66
+********************
+sigma: 2.21424413697476 gamma: 0.03944864300886229
+SF:
+(-1, 1, 1): 5.4484434e-02 6.7448796e-04
+(2, -2, -2): -1.1553580e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77483 rotation: -145.52489
+corner: 0.94689 -3.00647
+GOF: 0.58555  func eval: 60
+Error: 0.5840538613587579  func eval: 60
+********************
+sigma: 2.214279656482017 gamma: 0.03943248492700726
+SF:
+(-1, 1, 1): 5.4484617e-02 6.7455205e-04
+(2, -2, -2): -1.1552097e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77484 rotation: -145.52448
+corner: 0.94701 -3.00632
+GOF: 0.58554  func eval: 59
+Error: 0.5840403640222487  func eval: 59
+********************
+sigma: 2.214303591053745 gamma: 0.03941761731032022
+SF:
+(-1, 1, 1): 5.4484598e-02 6.7454332e-04
+(2, -2, -2): -1.1555046e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77484 rotation: -145.52402
+corner: 0.94717 -3.00617
+GOF: 0.58555  func eval: 59
+Error: 0.5840551994250901  func eval: 59
+********************
+sigma: 2.2143488509488165 gamma: 0.03940328538560981
+SF:
+(-1, 1, 1): 5.4484557e-02 6.7453203e-04
+(2, -2, -2): -1.1551830e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.52357
+corner: 0.94724 -3.00601
+GOF: 0.58555  func eval: 67
+Error: 0.5840478359892972  func eval: 67
+********************
+sigma: 2.2143475741156915 gamma: 0.039290217105841
+SF:
+(-1, 1, 1): 5.4484494e-02 6.7454658e-04
+(2, -2, -2): -1.1552495e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.52320
+corner: 0.94733 -3.00594
+GOF: 0.58553  func eval: 60
+Error: 0.5840315257117725  func eval: 60
+********************
+sigma: 2.2146062104545425 gamma: 0.039277031710589175
+SF:
+(-1, 1, 1): 5.4484650e-02 6.7452574e-04
+(2, -2, -2): -1.1553535e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.52279
+corner: 0.94746 -3.00580
+GOF: 0.58554  func eval: 63
+Error: 0.584043353791979  func eval: 63
+********************
+sigma: 2.214646500326881 gamma: 0.039265272392410164
+SF:
+(-1, 1, 1): 5.4484449e-02 6.7453121e-04
+(2, -2, -2): -1.1551753e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.52240
+corner: 0.94757 -3.00565
+GOF: 0.58553  func eval: 61
+Error: 0.5840292619198341  func eval: 61
+********************
+sigma: 2.214647818981652 gamma: 0.03917588173649026
+SF:
+(-1, 1, 1): 5.4484140e-02 6.7454972e-04
+(2, -2, -2): -1.1551492e-03 0.0000000e+00
+thickness: 804.15 gl: 38.77486 rotation: -145.52192
+corner: 0.94763 -3.00544
+GOF: 0.58554  func eval: 61
+Error: 0.5840435609728221  func eval: 61
+********************
+sigma: 2.2148496959817696 gamma: 0.039163835673278476
+SF:
+(-1, 1, 1): 5.4484546e-02 6.7453075e-04
+(2, -2, -2): -1.1553110e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.52146
+corner: 0.94779 -3.00530
+GOF: 0.58553  func eval: 61
+Error: 0.5840350327581157  func eval: 61
+********************
+sigma: 2.21488327200713 gamma: 0.039051766571964505
+SF:
+(-1, 1, 1): 5.4484744e-02 6.7453680e-04
+(2, -2, -2): -1.1551615e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.52101
+corner: 0.94779 -3.00509
+GOF: 0.58554  func eval: 79
+Error: 0.5840379511748218  func eval: 79
+********************
+sigma: 2.215108888130522 gamma: 0.03896797274876769
+SF:
+(-1, 1, 1): 5.4484352e-02 6.7453575e-04
+(2, -2, -2): -1.1552941e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.52063
+corner: 0.94782 -3.00490
+GOF: 0.58553  func eval: 74
+Error: 0.5840269886868468  func eval: 74
+********************
+sigma: 2.2152932681565134 gamma: 0.0388855178690306
+SF:
+(-1, 1, 1): 5.4484315e-02 6.7454489e-04
+(2, -2, -2): -1.1551684e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.52023
+corner: 0.94793 -3.00476
+GOF: 0.58554  func eval: 62
+Error: 0.5840394610803227  func eval: 62
+********************
+sigma: 2.2154692689301942 gamma: 0.03881930682346386
+SF:
+(-1, 1, 1): 5.4484498e-02 6.7453366e-04
+(2, -2, -2): -1.1552812e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51980
+corner: 0.94805 -3.00462
+GOF: 0.58553  func eval: 71
+Error: 0.5840335342578076  func eval: 71
+********************
+sigma: 2.2156231866807685 gamma: 0.03877560078199772
+SF:
+(-1, 1, 1): 5.4484364e-02 6.7454192e-04
+(2, -2, -2): -1.1551981e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51936
+corner: 0.94816 -3.00446
+GOF: 0.58553  func eval: 65
+Error: 0.5840314393894553  func eval: 65
+********************
+sigma: 2.21569947745124 gamma: 0.038737689152683503
+SF:
+(-1, 1, 1): 5.4484282e-02 6.7452609e-04
+(2, -2, -2): -1.1551955e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51885
+corner: 0.94829 -3.00432
+GOF: 0.58553  func eval: 79
+Error: 0.5840319019271638  func eval: 79
+********************
+sigma: 2.215777502301873 gamma: 0.03868234511153545
+SF:
+(-1, 1, 1): 5.4484449e-02 6.7454227e-04
+(2, -2, -2): -1.1552384e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51831
+corner: 0.94845 -3.00417
+GOF: 0.58553  func eval: 68
+Error: 0.5840272169167611  func eval: 68
+********************
+sigma: 2.215907037647783 gamma: 0.03862847777831992
+SF:
+(-1, 1, 1): 5.4484468e-02 6.7453086e-04
+(2, -2, -2): -1.1552736e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51792
+corner: 0.94845 -3.00396
+GOF: 0.58554  func eval: 86
+Error: 0.5840412803326568  func eval: 86
+********************
+sigma: 2.2160219900749345 gamma: 0.0385758063325339
+SF:
+(-1, 1, 1): 5.4484386e-02 6.7453959e-04
+(2, -2, -2): -1.1552139e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51756
+corner: 0.94855 -3.00385
+GOF: 0.58553  func eval: 66
+Error: 0.5840296952396264  func eval: 66
+********************
+sigma: 2.2161225513178167 gamma: 0.038524146200870364
+SF:
+(-1, 1, 1): 5.4484446e-02 6.7453319e-04
+(2, -2, -2): -1.1552579e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51706
+corner: 0.94867 -3.00372
+GOF: 0.58554  func eval: 64
+Error: 0.584039644994728  func eval: 64
+********************
+sigma: 2.216236950970295 gamma: 0.03847333187862982
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453831e-04
+(2, -2, -2): -1.1552230e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51669
+corner: 0.94867 -3.00353
+GOF: 0.58551  func eval: 76
+Error: 0.5840135820569414  func eval: 76
+********************
+sigma: 2.2163439417162096 gamma: 0.038423294511199614
+SF:
+(-1, 1, 1): 5.4484352e-02 6.7454635e-04
+(2, -2, -2): -1.1553285e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51621
+corner: 0.94879 -3.00339
+GOF: 0.58553  func eval: 73
+Error: 0.5840285649606841  func eval: 73
+********************
+sigma: 2.2164526682824257 gamma: 0.03837463423312336
+SF:
+(-1, 1, 1): 5.4484371e-02 6.7454320e-04
+(2, -2, -2): -1.1552966e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51579
+corner: 0.94884 -3.00323
+GOF: 0.58552  func eval: 78
+Error: 0.5840220277283307  func eval: 78
+********************
+sigma: 2.216549166084125 gamma: 0.03832693091519966
+SF:
+(-1, 1, 1): 5.4484297e-02 6.7453587e-04
+(2, -2, -2): -1.1553041e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51538
+corner: 0.94894 -3.00310
+GOF: 0.58553  func eval: 62
+Error: 0.5840263380938365  func eval: 62
+********************
+sigma: 2.216650510215186 gamma: 0.03827976389839611
+SF:
+(-1, 1, 1): 5.4484360e-02 6.7454251e-04
+(2, -2, -2): -1.1552550e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51497
+corner: 0.94900 -3.00295
+GOF: 0.58553  func eval: 65
+Error: 0.5840300006305672  func eval: 65
+********************
+sigma: 2.2167587592950753 gamma: 0.03823344547354165
+SF:
+(-1, 1, 1): 5.4484352e-02 6.7453715e-04
+(2, -2, -2): -1.1552860e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51452
+corner: 0.94909 -3.00281
+GOF: 0.58553  func eval: 70
+Error: 0.584032071838128  func eval: 70
+********************
+sigma: 2.2168568023220026 gamma: 0.038188057477367414
+SF:
+(-1, 1, 1): 5.4484382e-02 6.7454157e-04
+(2, -2, -2): -1.1552720e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51406
+corner: 0.94923 -3.00268
+GOF: 0.58552  func eval: 64
+Error: 0.5840196758801122  func eval: 64
+********************
+sigma: 2.21694360914814 gamma: 0.03814425620913038
+SF:
+(-1, 1, 1): 5.4484330e-02 6.7453668e-04
+(2, -2, -2): -1.1552771e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77489 rotation: -145.51369
+corner: 0.94930 -3.00268
+GOF: 0.58553  func eval: 90
+Error: 0.5840268943968032  func eval: 90
+********************
+sigma: 2.2170326437193584 gamma: 0.03810094150742784
+SF:
+(-1, 1, 1): 5.4484367e-02 6.7453663e-04
+(2, -2, -2): -1.1552705e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.51337
+corner: 0.94934 -3.00255
+GOF: 0.58551  func eval: 63
+Error: 0.584015524098293  func eval: 63
+********************
+sigma: 2.21712982668538 gamma: 0.0380583842514103
+SF:
+(-1, 1, 1): 5.4484434e-02 6.7454099e-04
+(2, -2, -2): -1.1552332e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51300
+corner: 0.94936 -3.00238
+GOF: 0.58553  func eval: 64
+Error: 0.584028929450113  func eval: 64
+********************
+sigma: 2.2172328043662444 gamma: 0.03801709014022499
+SF:
+(-1, 1, 1): 5.4484352e-02 6.7453762e-04
+(2, -2, -2): -1.1552679e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51254
+corner: 0.94949 -3.00225
+GOF: 0.58552  func eval: 82
+Error: 0.5840183368913809  func eval: 82
+********************
+sigma: 2.217309456145793 gamma: 0.03797597587340993
+SF:
+(-1, 1, 1): 5.4484364e-02 6.7453348e-04
+(2, -2, -2): -1.1552356e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51221
+corner: 0.94947 -3.00209
+GOF: 0.58552  func eval: 86
+Error: 0.5840199871833744  func eval: 86
+********************
+sigma: 2.21739802870828 gamma: 0.03793551889082789
+SF:
+(-1, 1, 1): 5.4484379e-02 6.7453989e-04
+(2, -2, -2): -1.1552644e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51180
+corner: 0.94955 -3.00195
+GOF: 0.58552  func eval: 75
+Error: 0.5840243603918062  func eval: 75
+********************
+sigma: 2.2174862415076233 gamma: 0.03789606273318694
+SF:
+(-1, 1, 1): 5.4484379e-02 6.7453715e-04
+(2, -2, -2): -1.1552547e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77488 rotation: -145.51137
+corner: 0.94963 -3.00188
+GOF: 0.58551  func eval: 73
+Error: 0.5840127091471324  func eval: 73
+********************
+sigma: 2.2175692157709985 gamma: 0.037857601514020026
+SF:
+(-1, 1, 1): 5.4484367e-02 6.7453785e-04
+(2, -2, -2): -1.1552530e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.51106
+corner: 0.94970 -3.00176
+GOF: 0.58554  func eval: 63
+Error: 0.5840413826916167  func eval: 63
+********************
+sigma: 2.2176522498526037 gamma: 0.0378196161332505
+SF:
+(-1, 1, 1): 5.4484386e-02 6.7454053e-04
+(2, -2, -2): -1.1552557e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.51073
+corner: 0.94971 -3.00160
+GOF: 0.58552  func eval: 68
+Error: 0.5840226154618247  func eval: 68
+********************
+sigma: 2.217727462169698 gamma: 0.03778239976885884
+SF:
+(-1, 1, 1): 5.4484408e-02 6.7453948e-04
+(2, -2, -2): -1.1552359e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77487 rotation: -145.51042
+corner: 0.94973 -3.00157
+GOF: 0.58553  func eval: 75
+Error: 0.584031218906241  func eval: 75
+********************
+sigma: 2.2178134598982164 gamma: 0.037745829458579246
+SF:
+(-1, 1, 1): 5.4484401e-02 6.7453913e-04
+(2, -2, -2): -1.1552395e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.51008
+corner: 0.94977 -3.00143
+GOF: 0.58552  func eval: 68
+Error: 0.5840164069746652  func eval: 68
+********************
+sigma: 2.21789046603433 gamma: 0.03771010008570369
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453599e-04
+(2, -2, -2): -1.1552224e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.50969
+corner: 0.94985 -3.00130
+GOF: 0.58552  func eval: 63
+Error: 0.5840168159698041  func eval: 63
+********************
+sigma: 2.2179615856175707 gamma: 0.03767506936241777
+SF:
+(-1, 1, 1): 5.4484393e-02 6.7453692e-04
+(2, -2, -2): -1.1552294e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.50937
+corner: 0.94985 -3.00114
+GOF: 0.58551  func eval: 79
+Error: 0.5840126721599821  func eval: 79
+********************
+sigma: 2.218033080762998 gamma: 0.03764070216844615
+SF:
+(-1, 1, 1): 5.4484382e-02 6.7453575e-04
+(2, -2, -2): -1.1552320e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77486 rotation: -145.50902
+corner: 0.94991 -3.00109
+GOF: 0.58552  func eval: 69
+Error: 0.5840175932813273  func eval: 69
+********************
+sigma: 2.2181043960411113 gamma: 0.03760727656563438
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453843e-04
+(2, -2, -2): -1.1552379e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.50868
+corner: 0.94994 -3.00093
+GOF: 0.58553  func eval: 67
+Error: 0.584030839144731  func eval: 67
+********************
+sigma: 2.218176639733817 gamma: 0.0375746412394858
+SF:
+(-1, 1, 1): 5.4484382e-02 6.7453703e-04
+(2, -2, -2): -1.1552463e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77485 rotation: -145.50834
+corner: 0.94994 -3.00093
+GOF: 0.58554  func eval: 95
+Error: 0.5840361404577941  func eval: 95
+********************
+sigma: 2.218244272919902 gamma: 0.03754190956122754
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453785e-04
+(2, -2, -2): -1.1552251e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77483 rotation: -145.50804
+corner: 0.94996 -3.00088
+GOF: 0.58552  func eval: 63
+Error: 0.5840247089068428  func eval: 63
+********************
+sigma: 2.218315352415389 gamma: 0.03750978660893869
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453843e-04
+(2, -2, -2): -1.1552362e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77482 rotation: -145.50773
+corner: 0.95002 -3.00075
+GOF: 0.58552  func eval: 65
+Error: 0.5840166859929987  func eval: 65
+********************
+sigma: 2.2183816445922706 gamma: 0.03747852394139335
+SF:
+(-1, 1, 1): 5.4484408e-02 6.7453831e-04
+(2, -2, -2): -1.1552142e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77482 rotation: -145.50738
+corner: 0.95009 -3.00064
+GOF: 0.58551  func eval: 73
+Error: 0.584013333541142  func eval: 73
+********************
+sigma: 2.2184525260783623 gamma: 0.03744757578835404
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453791e-04
+(2, -2, -2): -1.1552280e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77482 rotation: -145.50703
+corner: 0.95008 -3.00047
+GOF: 0.58552  func eval: 86
+Error: 0.5840185491335078  func eval: 86
+********************
+sigma: 2.218512154526922 gamma: 0.037417781100776516
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453791e-04
+(2, -2, -2): -1.1552274e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77482 rotation: -145.50671
+corner: 0.95009 -3.00041
+GOF: 0.58551  func eval: 70
+Error: 0.5840073067316873  func eval: 70
+********************
+sigma: 2.218559052886711 gamma: 0.037388730532136816
+SF:
+(-1, 1, 1): 5.4484408e-02 6.7453698e-04
+(2, -2, -2): -1.1552111e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77481 rotation: -145.50646
+corner: 0.95010 -3.00028
+GOF: 0.58552  func eval: 64
+Error: 0.584016320559731  func eval: 64
+********************
+sigma: 2.218633508081084 gamma: 0.03735944357463711
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453727e-04
+(2, -2, -2): -1.1552165e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77481 rotation: -145.50615
+corner: 0.95019 -3.00018
+GOF: 0.58551  func eval: 66
+Error: 0.5840119264426407  func eval: 66
+********************
+sigma: 2.218696857358723 gamma: 0.03733110491294086
+SF:
+(-1, 1, 1): 5.4484393e-02 6.7453639e-04
+(2, -2, -2): -1.1552346e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77481 rotation: -145.50587
+corner: 0.95019 -3.00016
+GOF: 0.58551  func eval: 74
+Error: 0.5840140316986064  func eval: 74
+********************
+sigma: 2.2187535378079732 gamma: 0.037303339902011574
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453797e-04
+(2, -2, -2): -1.1552185e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77480 rotation: -145.50558
+corner: 0.95020 -3.00016
+GOF: 0.58551  func eval: 92
+Error: 0.5840133701232748  func eval: 92
+********************
+sigma: 2.2188183100914376 gamma: 0.037276000181624094
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453750e-04
+(2, -2, -2): -1.1552201e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50528
+corner: 0.95020 -3.00000
+GOF: 0.58552  func eval: 77
+Error: 0.5840170858526396  func eval: 77
+********************
+sigma: 2.2188690336321417 gamma: 0.03724911789981089
+SF:
+(-1, 1, 1): 5.4484397e-02 6.7453721e-04
+(2, -2, -2): -1.1552287e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50506
+corner: 0.95022 -2.99989
+GOF: 0.58552  func eval: 63
+Error: 0.5840223331740154  func eval: 63
+********************
+sigma: 2.2189253211477924 gamma: 0.03722242067316526
+SF:
+(-1, 1, 1): 5.4484408e-02 6.7453820e-04
+(2, -2, -2): -1.1552186e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58550  func eval: 75
+Error: 0.5840051834119241  func eval: 75
+********************
+sigma: 2.218981374974967 gamma: 0.03719694430786194
+SF:
+(-1, 1, 1): 5.4484412e-02 6.7453855e-04
+(2, -2, -2): -1.1552153e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58550  func eval: 114
+Error: 0.5840014115490156  func eval: 114
+********************
+sigma: 2.2190383763710306 gamma: 0.037171677484461416
+SF:
+(-1, 1, 1): 5.4484416e-02 6.7453895e-04
+(2, -2, -2): -1.1552109e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58551  func eval: 149
+Error: 0.5840116291695353  func eval: 149
+********************
+sigma: 2.2190897041214166 gamma: 0.03714671690500547
+SF:
+(-1, 1, 1): 5.4484412e-02 6.7453890e-04
+(2, -2, -2): -1.1552208e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58552  func eval: 163
+Error: 0.5840183344328028  func eval: 163
+********************
+sigma: 2.2191420785683005 gamma: 0.037122617229061294
+SF:
+(-1, 1, 1): 5.4484405e-02 6.7453779e-04
+(2, -2, -2): -1.1552202e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58551  func eval: 147
+Error: 0.5840103570995474  func eval: 147
+********************
+sigma: 2.2191906811590894 gamma: 0.037099020163854725
+SF:
+(-1, 1, 1): 5.4484408e-02 6.7453861e-04
+(2, -2, -2): -1.1552207e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58550  func eval: 153
+Error: 0.5840013421335999  func eval: 153
+********************
+sigma: 2.219253665622182 gamma: 0.037075777482032196
+SF:
+(-1, 1, 1): 5.4484412e-02 6.7453890e-04
+(2, -2, -2): -1.1552209e-03 0.0000000e+00
+thickness: 804.14 gl: 38.77478 rotation: -145.50476
+corner: 0.95029 -2.99988
+GOF: 0.58551  func eval: 154
+Error: 0.5840134257111212  func eval: 154
+********************
+sigma: 2.219291275989855 gamma: 0.03705289646969541
+Optimization terminated successfully.
+         Current function value: 0.585500
+         Iterations: 176
+         Function evaluations: 341
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">exp</span><span class="p">,</span> <span class="n">sim</span> <span class="o">=</span> <span class="n">fine</span><span class="o">.</span><span class="n">display</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-1, 1, 1): U 0.0544844 UA 0.0006745
+(2, -2, -2): U -0.0011552 UA 0.0000000
+Chi Square single bacckground LARBED: 0.58550
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_29_1.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_29_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_29_2.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_29_2.png" />
+</div>
+</div>
+</section>
+<section id="display-the-kernel-(probe-shape-in-reciprocal-space)">
+<h2>display the kernel (probe shape in reciprocal space)<a class="headerlink" href="#display-the-kernel-(probe-shape-in-reciprocal-space)" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyextal.optimize</span> <span class="kn">import</span> <span class="n">voigt_2d</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">voigt_2d</span><span class="p">(</span><span class="o">*</span><span class="n">fine</span><span class="o">.</span><span class="n">probe</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.colorbar.Colorbar at 0x726ddc55d250&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemntLARBEDSi111sys0420_31_1.png" src="../_images/notebooks_refinemntLARBEDSi111sys0420_31_1.png" />
+</div>
+</div>
+</section>
+<section id="display-the-results">
+<h2>display the results<a class="headerlink" href="#display-the-results" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;gl: </span><span class="si">{</span><span class="n">roi</span><span class="o">.</span><span class="n">gl</span><span class="si">}</span><span class="s1"> rotation: </span><span class="si">{</span><span class="n">roi</span><span class="o">.</span><span class="n">rotation</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;thickness: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">thickness</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;norm: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">errorFunc</span><span class="o">.</span><span class="n">scale</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;background: </span><span class="si">{</span><span class="n">fine</span><span class="o">.</span><span class="n">errorFunc</span><span class="o">.</span><span class="n">background</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+gl: 38.774782739075356 rotation: -145.50475891016094
+
+thickness: 804.1431225760529
+
+norm: 6154273.679528984
+
+background: 3652.435141430087
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyextal.callBloch</span> <span class="kn">import</span> <span class="n">terminate</span>
+<span class="n">terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyExtal</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Package Architecture</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="refinemnt_si04.html">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinemnt_HVcal.html">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples.html">Examples</a><ul>
+      <li>Previous: <a href="refinemnt_si04.html" title="previous chapter">PyExtal example for CBED refinement</a></li>
+      <li>Next: <a href="refinemnt_HVcal.html" title="next chapter">High voltage calibration example</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, HCN, RB, and JMZ.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/notebooks/refinemntLARBEDSi111sys0420.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
