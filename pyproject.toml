@@ -1,0 +1,25 @@
+[build-system]
+requires = [
+    "scikit-build-core",
+    "numpy>=1.26.2",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pyextal"
+description = "python based quantitative electron crystallography"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26.2",
+    "scikit-image>=0.20.0",
+    "matplotlib>=3.7.2",
+    "mpi4py>=3.1.5",
+    ]
+
+[tool.scikit-build]
+ninja.version = ">=1.10"
+cmake.version = ">=3.17.2"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]

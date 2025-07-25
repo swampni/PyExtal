@@ -1,0 +1,126 @@
+pyextal.LucyRichardson
+======================
+
+.. py:module:: pyextal.LucyRichardson
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.LucyRichardson.sgnoise
+   pyextal.LucyRichardson.DQE
+   pyextal.LucyRichardson.chisq2d
+   pyextal.LucyRichardson.convolved2d
+   pyextal.LucyRichardson.lucy_Richardson
+
+
+Module Contents
+---------------
+
+.. py:function:: sgnoise(img, m, g, A, delta, varB)
+
+   Calculates the signal-dependent noise.
+
+   :param img: The input image.
+   :type img: np.ndarray
+   :param m: Mixing factor.
+   :type m: float
+   :param g: Gain.
+   :type g: float
+   :param A: A parameter related to Fano noise and conversion gain.
+   :type A: float
+   :param delta: Squared percentage error in the gain image.
+   :type delta: float
+   :param varB: Variance of the background.
+   :type varB: float
+
+   :returns: The calculated signal-dependent noise.
+   :rtype: np.ndarray
+
+
+.. py:function:: DQE(img, varB, delta, A)
+
+   Calculates the Detective Quantum Efficiency (DQE).
+
+   :param img: The input image.
+   :type img: np.ndarray
+   :param varB: Variance of the background.
+   :type varB: float
+   :param delta: Squared percentage error in the gain image.
+   :type delta: float
+   :param A: A parameter related to Fano noise and conversion gain.
+   :type A: float
+
+   :returns: The calculated DQE.
+   :rtype: np.ndarray
+
+
+.. py:function:: chisq2d(exp, convolved, bval, m, g, A, delta, varB)
+
+   Calculates the 2D chi-squared value.
+
+   :param exp: The experimental data.
+   :type exp: np.ndarray
+   :param convolved: The convolved model.
+   :type convolved: np.ndarray
+   :param bval: The background values.
+   :type bval: np.ndarray
+   :param m: Mixing factor.
+   :type m: float
+   :param g: Gain.
+   :type g: float
+   :param A: A parameter related to Fano noise and conversion gain.
+   :type A: float
+   :param delta: Squared percentage error in the gain image.
+   :type delta: float
+   :param varB: Variance of the background.
+   :type varB: float
+
+   :returns: The calculated chi-squared value.
+   :rtype: float
+
+
+.. py:function:: convolved2d(img, mtf)
+
+   Performs a 2D convolution using FFT.
+
+   :param img: The input image.
+   :type img: np.ndarray
+   :param mtf: The modulation transfer function.
+   :type mtf: np.ndarray
+
+   :returns: The convolved image.
+   :rtype: np.ndarray
+
+
+.. py:function:: lucy_Richardson(dp, mtf, background, niter, varB=0, delta=0, A=1, g=1, m=1)
+
+   Performs Lucy-Richardson deconvolution.
+
+   :param dp: The diffraction pattern.
+   :type dp: np.ndarray
+   :param mtf: The modulation transfer function.
+   :type mtf: np.ndarray
+   :param background: The background of the diffraction pattern.
+   :type background: np.ndarray
+   :param niter: The number of iterations.
+   :type niter: int
+   :param varB: Variance of the background. Defaults to 0.
+   :type varB: float, optional
+   :param delta: The squared percentage error in the gain image.
+                 Defaults to 0.
+   :type delta: float, optional
+   :param A: A parameter related to Fano noise and conversion
+             gain, given by :math:`1 + F + \frac{1}{mG}`. Defaults to 1.
+   :type A: float, optional
+   :param g: The gain. Defaults to 1.
+   :type g: float, optional
+   :param m: The mixing factor. Defaults to 1.
+   :type m: float, optional
+
+   :returns: The deconvolved image.
+   :rtype: np.ndarray
+
+

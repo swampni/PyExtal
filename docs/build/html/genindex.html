@@ -1,0 +1,1235 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 --><title>Index - PyExtal 0.0.1 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">PyExtal 0.0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">PyExtal 0.0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="architecture.html">Package Architecture</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Package Architecture</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="LARBEDindex.html">Understand How to Define/Index LARBED Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ROI.html">Overview of ROI definition in pyextal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CoarseRefine.html">Coarse Refinement (Correlation based refinement)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FineRefine.html">Fine Refientment (Intensity based Refinement)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/refinemnt_si04.html">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/refinemntLARBEDSi111sys0420.html">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/refinemnt_HVcal.html">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">Bloch Engine API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bloch Engine API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/pyextal.blochwave.html">pyextal.blochwave</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/pyextal.cbedpy.html">pyextal.cbedpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/pyextal/index.html">pyextal</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of pyextal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/Constants/index.html">pyextal.Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/LucyRichardson/index.html">pyextal.LucyRichardson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/callBloch/index.html">pyextal.callBloch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/densityMap/index.html">pyextal.densityMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/dinfo/index.html">pyextal.dinfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/gof/index.html">pyextal.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/metric/index.html">pyextal.metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/optimize/index.html">pyextal.optimize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/roi/index.html">pyextal.roi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/pyextal/symmetry/index.html">pyextal.symmetry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a></div>
+</section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.__add__">__add__() (pyextal.roi.BaseROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.DataCollector.__call__">__call__() (pyextal.callBloch.DataCollector method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.__call__">(pyextal.callBloch.SimParams method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.BaseGOF.__call__">(pyextal.gof.BaseGOF method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.__call__">(pyextal.gof.Chi2 method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.XCorrelation.__call__">(pyextal.gof.XCorrelation method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.__post_init__">__post_init__() (pyextal.callBloch.SimParams method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.__post_init__">(pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+          <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.LARBEDDiffractionInfo.__post_init__">(pyextal.dinfo.LARBEDDiffractionInfo method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.__str__">__str__() (pyextal.roi.BaseROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI._gl">_gl (pyextal.roi.BaseROI attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize._nfit">_nfit (pyextal.optimize.FineOptimize attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize._perturbROI">_perturbROI (pyextal.optimize.FineOptimize attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize._probe">_probe (pyextal.optimize.FineOptimize attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI._rotation">_rotation (pyextal.roi.BaseROI attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize._shiftDisk">_shiftDisk (pyextal.optimize.FineOptimize attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#id4">allshift (pyextal.roi.BaseROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.allshift">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id12">alpha (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.alpha">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/metric/index.html#pyextal.metric.angle">angle() (in module pyextal.metric)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.appliedSymmetry">appliedSymmetry() (in module pyextal.symmetry)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id8">background (pyextal.dinfo.CBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.CBEDDiffractionInfo.background">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.ROITYPE.BASE">BASE (pyextal.roi.ROITYPE attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo">BaseDiffractionInfo (class in pyextal.dinfo)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.BaseGOF">BaseGOF (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI">BaseROI (class in pyextal.roi)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id2">beam2Group (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.beam2Group">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.beamDict">beamDict (pyextal.symmetry.GroupSymmetry attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id1">beamGroup (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.beamGroup">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id19">bigK (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.bigK">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.bloch">bloch() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.bloch_parse">bloch_parse() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.bloch_run">bloch_run() (in module pyextal.callBloch)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.calculatePixelSize">calculatePixelSize() (pyextal.roi.BaseROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.calDOF">calDOF() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.calibrateCBED">calibrateCBED() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.calibrateLARBED">calibrateLARBED() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.callback">callback() (pyextal.optimize.FineOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.callbackCell">callbackCell() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.callbackDWF">callbackDWF() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.callbackXYZ">callbackXYZ() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.calScaling">calScaling() (pyextal.gof.Chi2 method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED_multibackground.calScaling">(pyextal.gof.Chi2_LARBED_multibackground method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_multibackground.calScaling">(pyextal.gof.Chi2_multibackground method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.calVariance">calVariance() (pyextal.gof.Chi2 method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_const.calVariance">(pyextal.gof.Chi2_const method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED.calVariance">(pyextal.gof.Chi2_LARBED method)</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_multibackground.calVariance">(pyextal.gof.Chi2_multibackground method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.ROITYPE.CBED">CBED (pyextal.roi.ROITYPE attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.CBEDDiffractionInfo">CBEDDiffractionInfo (class in pyextal.dinfo)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI">CBEDROI (class in pyextal.roi)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.cci">cci (pyextal.callBloch.Data property)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.ccr">ccr (pyextal.callBloch.Data property)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id0">centro (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.centro">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2">Chi2 (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_const">Chi2_const (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED">Chi2_LARBED (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED_multibackground">Chi2_LARBED_multibackground (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_multibackground">Chi2_multibackground (class in pyextal.gof)</a>
+</li>
+        <li><a href="autoapi/pyextal/LucyRichardson/index.html#pyextal.LucyRichardson.chisq2d">chisq2d() (in module pyextal.LucyRichardson)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id6">cinv (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.cinv">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize">CoarseOptimize (class in pyextal.optimize)</a>
+</li>
+        <li><a href="autoapi/pyextal/Constants/index.html#pyextal.Constants.constant">constant (in module pyextal.Constants)</a>
+</li>
+        <li><a href="autoapi/pyextal/LucyRichardson/index.html#pyextal.LucyRichardson.convolved2d">convolved2d() (in module pyextal.LucyRichardson)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.correlationTargetCell">correlationTargetCell() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.correlationTargetDWF">correlationTargetDWF() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.correlationTargetXYZ">correlationTargetXYZ() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.createInterp">createInterp() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.createInterp">(pyextal.roi.CBEDROI method)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.createInterp">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data">Data (class in pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.DataCollector">DataCollector (class in pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id5">datpath (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.datpath">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.denormalizeX0">denormalizeX0() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#id5">dinfo (pyextal.gof.Chi2_const attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_const.dinfo">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/gof/index.html#id3">(pyextal.gof.Chi2_multibackground attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_multibackground.dinfo">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/optimize/index.html#id0">(pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.dinfo">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/optimize/index.html#id8">(pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.dinfo">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#id0">(pyextal.roi.BaseROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.dinfo">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id11">disks (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.disks">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#id9">diskshift (pyextal.roi.CBEDROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.diskshift">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.diskshift">(pyextal.roi.LARBEDROI attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.display">display() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.displayCoarseSearch">displayCoarseSearch() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.displayROI">displayROI() (pyextal.roi.CBEDROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.displayROI">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id0">dp (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.dp">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#id1">(pyextal.roi.BaseROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.dp">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/roi/index.html#id7">dpCenter (pyextal.roi.CBEDROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.dpCenter">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#id8">dpSize (pyextal.roi.CBEDROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.dpSize">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/LucyRichardson/index.html#pyextal.LucyRichardson.DQE">DQE() (in module pyextal.LucyRichardson)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id6">dtpar (pyextal.dinfo.CBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.CBEDDiffractionInfo.dtpar">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.e2Xray">e2Xray() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id5">eigenvector (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.eigenvector">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id16">errorFunc (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.errorFunc">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.evaluateParam">evaluateParam() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.evaluateSF">evaluateSF() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id6">exitwave (pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.exitwave">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize">FineOptimize (class in pyextal.optimize)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/densityMap/index.html#pyextal.densityMap.fourierSynthesis">fourierSynthesis() (in module pyextal.densityMap)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id4">gamma (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.gamma">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#id10">gCoff (pyextal.roi.CBEDROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.gCoff">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.generateGrid">generateGrid() (pyextal.roi.BaseROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.getAllSF">getAllSF() (pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.getGroup">getGroup() (pyextal.symmetry.GroupSymmetry method)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.getPos">getPos() (pyextal.symmetry.GroupSymmetry method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.getRange">getRange() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.getSampling">getSampling() (pyextal.roi.CBEDROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.getSampling">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.getSF">getSF() (pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.getSymmetry">getSymmetry() (in module pyextal.symmetry)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.getx0">getx0() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id14">gg (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.gg">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id15">gh (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.gh">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#id2">gInclude (pyextal.roi.BaseROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.gInclude">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id10">gindex (pyextal.dinfo.LARBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.LARBEDDiffractionInfo.gindex">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id4">gl (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.gl">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/optimize/index.html#id4">(pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.gl">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.gl">(pyextal.roi.BaseROI attribute)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#id5">(pyextal.roi.BaseROI property)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.glTarget">glTarget() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id16">gmx (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.gmx">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id17">gmxr (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.gmxr">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id4">gp (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.gp">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry">GroupSymmetry (class in pyextal.symmetry)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#id3">gx (pyextal.roi.BaseROI attribute)</a>, <a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.gx">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#id18">history (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.history">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id10">hklout (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.hklout">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.HVTarget">HVTarget() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.includeBeam">includeBeam (pyextal.dinfo.BaseDiffractionInfo property)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id5">indices (pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.indices">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.indices">(pyextal.roi.BaseROI attribute)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.indices">(pyextal.roi.LARBEDROI attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.initialize">initialize() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.initialize">(pyextal.roi.CBEDROI method)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.initialize">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.initPixsiz">initPixsiz (pyextal.roi.BaseROI attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id1">itilt (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.itilt">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id2">ix (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.ix">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id3">iy (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.iy">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.kt2pixel">kt2pixel() (pyextal.roi.CBEDROI method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.ROITYPE.LARBED">LARBED (pyextal.roi.ROITYPE attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.LARBED">LARBED() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.LARBED_tilt">LARBED_tilt() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.larbedCall">larbedCall() (pyextal.callBloch.SimParams method)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.LARBEDDiffractionInfo">LARBEDDiffractionInfo (class in pyextal.dinfo)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI">LARBEDROI (class in pyextal.roi)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id10">lastParam (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.lastParam">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.lookupReflections">lookupReflections() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.lookupSF">lookupSF() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/LucyRichardson/index.html#pyextal.LucyRichardson.lucy_Richardson">lucy_Richardson() (in module pyextal.LucyRichardson)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.matchIndex">matchIndex() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.matchIndex">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="autoapi/pyextal/index.html#module-pyextal">pyextal</a>
+</li>
+          <li><a href="generated/pyextal.blochwave.html#module-pyextal.blochwave">pyextal.blochwave</a>
+</li>
+          <li><a href="autoapi/pyextal/callBloch/index.html#module-pyextal.callBloch">pyextal.callBloch</a>, <a href="generated/pyextal.callBloch.html#module-pyextal.callBloch">[1]</a>
+</li>
+          <li><a href="generated/pyextal.cbedpy.html#module-pyextal.cbedpy">pyextal.cbedpy</a>
+</li>
+          <li><a href="autoapi/pyextal/Constants/index.html#module-pyextal.Constants">pyextal.Constants</a>
+</li>
+          <li><a href="autoapi/pyextal/densityMap/index.html#module-pyextal.densityMap">pyextal.densityMap</a>
+</li>
+          <li><a href="autoapi/pyextal/dinfo/index.html#module-pyextal.dinfo">pyextal.dinfo</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#module-pyextal.gof">pyextal.gof</a>, <a href="generated/pyextal.gof.html#module-pyextal.gof">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/LucyRichardson/index.html#module-pyextal.LucyRichardson">pyextal.LucyRichardson</a>
+</li>
+          <li><a href="autoapi/pyextal/metric/index.html#module-pyextal.metric">pyextal.metric</a>, <a href="generated/pyextal.metric.html#module-pyextal.metric">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/optimize/index.html#module-pyextal.optimize">pyextal.optimize</a>, <a href="generated/pyextal.optimize.html#module-pyextal.optimize">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#module-pyextal.roi">pyextal.roi</a>, <a href="generated/pyextal.roi.html#module-pyextal.roi">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/symmetry/index.html#module-pyextal.symmetry">pyextal.symmetry</a>, <a href="generated/pyextal.symmetry.html#module-pyextal.symmetry">[1]</a>
+</li>
+          <li><a href="generated/src.html#module-src">src</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id7">mtf (pyextal.dinfo.CBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.CBEDDiffractionInfo.mtf">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/gof/index.html#id0">name (pyextal.gof.BaseGOF attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.BaseGOF.name">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/gof/index.html#id1">(pyextal.gof.Chi2 attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.name">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#id4">(pyextal.gof.Chi2_const attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_const.name">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#id6">(pyextal.gof.Chi2_LARBED attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED.name">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#id8">(pyextal.gof.Chi2_LARBED_multibackground attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED_multibackground.name">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#id2">(pyextal.gof.Chi2_multibackground attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_multibackground.name">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.XCorrelation.name">(pyextal.gof.XCorrelation attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id0">ndiag (pyextal.callBloch.Data attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.ndiag">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id15">noncentro (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.noncentro">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.normalizeX0">normalizeX0() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id8">nout (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.nout">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id7">ntilt (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.ntilt">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id9">numIter (pyextal.dinfo.CBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.CBEDDiffractionInfo.numIter">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id9">nx (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.nx">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.optimize">optimize() (pyextal.optimize.FineOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeCell">optimizeCell() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeDWF">optimizeDWF() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeHV">optimizeHV() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeOrientationGeometry">optimizeOrientationGeometry() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeOrientationGL">optimizeOrientationGL() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeOrientationThickness">optimizeOrientationThickness() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.optimizeXYZ">optimizeXYZ() (pyextal.optimize.CoarseOptimize method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#id1">param (pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.param">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.perturbROI">perturbROI (pyextal.optimize.FineOptimize property)</a>
+</li>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id5">phaseDict (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.phaseDict">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.pix2Tilt">pix2Tilt() (in module pyextal.roi)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.pixel2exp">pixel2exp() (pyextal.roi.CBEDROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.pixsiz">pixsiz (pyextal.roi.BaseROI attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/densityMap/index.html#pyextal.densityMap.plotDensityMap_2D">plotDensityMap_2D() (in module pyextal.densityMap)</a>
+</li>
+        <li><a href="autoapi/pyextal/densityMap/index.html#pyextal.densityMap.plotDensityMapIsosurface">plotDensityMapIsosurface() (in module pyextal.densityMap)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.probe">probe (pyextal.optimize.FineOptimize property)</a>
+</li>
+        <li>
+    pyextal
+
+        <ul>
+          <li><a href="autoapi/pyextal/index.html#module-pyextal">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.blochwave
+
+        <ul>
+          <li><a href="generated/pyextal.blochwave.html#module-pyextal.blochwave">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.callBloch
+
+        <ul>
+          <li><a href="autoapi/pyextal/callBloch/index.html#module-pyextal.callBloch">module</a>, <a href="generated/pyextal.callBloch.html#module-pyextal.callBloch">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.cbedpy
+
+        <ul>
+          <li><a href="generated/pyextal.cbedpy.html#module-pyextal.cbedpy">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    pyextal.Constants
+
+        <ul>
+          <li><a href="autoapi/pyextal/Constants/index.html#module-pyextal.Constants">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.densityMap
+
+        <ul>
+          <li><a href="autoapi/pyextal/densityMap/index.html#module-pyextal.densityMap">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.dinfo
+
+        <ul>
+          <li><a href="autoapi/pyextal/dinfo/index.html#module-pyextal.dinfo">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.gof
+
+        <ul>
+          <li><a href="autoapi/pyextal/gof/index.html#module-pyextal.gof">module</a>, <a href="generated/pyextal.gof.html#module-pyextal.gof">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.LucyRichardson
+
+        <ul>
+          <li><a href="autoapi/pyextal/LucyRichardson/index.html#module-pyextal.LucyRichardson">module</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.metric
+
+        <ul>
+          <li><a href="autoapi/pyextal/metric/index.html#module-pyextal.metric">module</a>, <a href="generated/pyextal.metric.html#module-pyextal.metric">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.optimize
+
+        <ul>
+          <li><a href="autoapi/pyextal/optimize/index.html#module-pyextal.optimize">module</a>, <a href="generated/pyextal.optimize.html#module-pyextal.optimize">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.roi
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#module-pyextal.roi">module</a>, <a href="generated/pyextal.roi.html#module-pyextal.roi">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    pyextal.symmetry
+
+        <ul>
+          <li><a href="autoapi/pyextal/symmetry/index.html#module-pyextal.symmetry">module</a>, <a href="generated/pyextal.symmetry.html#module-pyextal.symmetry">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#id12">refineProbe (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.refineProbe">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id13">reflections (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.reflections">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#id7">roi (pyextal.gof.Chi2_LARBED attribute)</a>, <a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2_LARBED.roi">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/optimize/index.html#id2">(pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.roi">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/optimize/index.html#id11">(pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.roi">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.ROItarget">ROItarget() (pyextal.optimize.FineOptimize static method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.ROITYPE">ROITYPE (class in pyextal.roi)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.roitype">roitype (pyextal.roi.BaseROI attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.roitype">(pyextal.roi.CBEDROI attribute)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.roitype">(pyextal.roi.LARBEDROI attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.rotation">rotation (pyextal.roi.BaseROI attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#id6">(pyextal.roi.BaseROI property)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.rotation">rotation() (in module pyextal.roi)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.save">save() (pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.save_hkl">save_hkl() (pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+        <li><a href="autoapi/pyextal/metric/index.html#pyextal.metric.scale">scale() (in module pyextal.metric)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.scale_factor">scale_factor (pyextal.optimize.CoarseOptimize attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.scaling">scaling() (pyextal.gof.Chi2 method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.selectROI">selectROI() (pyextal.roi.BaseROI method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.setTilt0">setTilt0() (pyextal.roi.CBEDROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.setTilt0">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id14">sfMask (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.sfMask">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.SFtarget">SFtarget() (pyextal.optimize.FineOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/LucyRichardson/index.html#pyextal.LucyRichardson.sgnoise">sgnoise() (in module pyextal.LucyRichardson)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.shiftDisk">shiftDisk (pyextal.optimize.FineOptimize property)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.ShiftTarget">ShiftTarget() (pyextal.optimize.FineOptimize static method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.side">side (pyextal.optimize.CoarseOptimize attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.Chi2.sigma2">sigma2 (pyextal.gof.Chi2 attribute)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.simParam">simParam() (pyextal.callBloch.SimParams method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams">SimParams (class in pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.simulate">simulate() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id18">snorm (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.snorm">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.split_array_by_lengths">split_array_by_lengths() (in module pyextal.roi)</a>
+</li>
+        <li>
+    src
+
+        <ul>
+          <li><a href="generated/src.html#module-src">module</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.store">store() (pyextal.callBloch.SimParams method)</a>
+</li>
+        <li><a href="autoapi/pyextal/metric/index.html#pyextal.metric.sumx">sumx() (in module pyextal.metric)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.symmetrizeVHKL">symmetrizeVHKL() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/optimize/index.html#id17">symUpdate (pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.symUpdate">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#id7">templates (pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.templates">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.templates">(pyextal.roi.BaseROI property)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.terminate">terminate() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id1">thickness (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.thickness">[1]</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/optimize/index.html#id3">(pyextal.optimize.CoarseOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.thickness">[1]</a>
+</li>
+          <li><a href="autoapi/pyextal/optimize/index.html#id9">(pyextal.optimize.FineOptimize attribute)</a>, <a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.FineOptimize.thickness">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.CoarseOptimize.thicknessTarget">thicknessTarget() (pyextal.optimize.CoarseOptimize static method)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.tilt">tilt() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#id13">tilt0 (pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.tilt0">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.tilt_run">tilt_run() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.DataCollector.tilts">tilts (pyextal.callBloch.DataCollector attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/callBloch/index.html#id20">(pyextal.callBloch.SimParams attribute)</a>, <a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.SimParams.tilts">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.tiltUnit">tiltUnit() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id2">tiltX (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.tiltX">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id3">tiltY (pyextal.dinfo.BaseDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.tiltY">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.transformDP">transformDP() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.transformDP">(pyextal.roi.CBEDROI method)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.transformDP">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/symmetry/index.html#id3">Ugh_dict (pyextal.symmetry.GroupSymmetry attribute)</a>, <a href="autoapi/pyextal/symmetry/index.html#pyextal.symmetry.GroupSymmetry.Ugh_dict">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.updateExpGrid">updateExpGrid() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.CBEDROI.updateExpGrid">(pyextal.roi.CBEDROI method)</a>
+</li>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.updateExpGrid">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo.updateSF">updateSF() (pyextal.dinfo.BaseDiffractionInfo method)</a>
+</li>
+        <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.BaseROI.updateSimGrid">updateSimGrid() (pyextal.roi.BaseROI method)</a>
+
+        <ul>
+          <li><a href="autoapi/pyextal/roi/index.html#pyextal.roi.LARBEDROI.updateSimGrid">(pyextal.roi.LARBEDROI method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.updateSymUgh">updateSymUgh() (in module pyextal.callBloch)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.updateUgh">updateUgh() (in module pyextal.callBloch)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/dinfo/index.html#id11">varianceMaps (pyextal.dinfo.LARBEDDiffractionInfo attribute)</a>, <a href="autoapi/pyextal/dinfo/index.html#pyextal.dinfo.LARBEDDiffractionInfo.varianceMaps">[1]</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.vi">vi (pyextal.callBloch.Data property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/optimize/index.html#pyextal.optimize.voigt_2d">voigt_2d() (in module pyextal.optimize)</a>
+</li>
+        <li><a href="autoapi/pyextal/metric/index.html#pyextal.metric.volume">volume() (in module pyextal.metric)</a>
+</li>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.Data.vr">vr (pyextal.callBloch.Data property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/callBloch/index.html#pyextal.callBloch.wavelength">wavelength() (in module pyextal.callBloch)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/densityMap/index.html#pyextal.densityMap.write_cube">write_cube() (in module pyextal.densityMap)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="X" class="genindex-section">
+  <h2>X</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/pyextal/gof/index.html#pyextal.gof.XCorrelation">XCorrelation (class in pyextal.gof)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, HCN, RB, and JMZ
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

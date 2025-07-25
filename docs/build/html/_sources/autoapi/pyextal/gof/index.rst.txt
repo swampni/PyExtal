@@ -1,0 +1,421 @@
+pyextal.gof
+===========
+
+.. py:module:: pyextal.gof
+
+.. autoapi-nested-parse::
+
+   Goodness-of-Fit (GOF) Metrics Module.
+
+   This module provides a collection of classes for calculating goodness-of-fit
+   metrics between simulated and experimental diffraction data. It is designed to be
+   extensible, allowing for new GOF metrics to be added easily.
+
+   GOF Class Interface
+   -------------------
+   All GOF classes in this module are expected to follow a common interface to ensure
+   they can be used interchangeably throughout the refinement process. While not
+   formally enforced by an Abstract Base Class, this interface includes:
+
+   -   **`name` (str)**: A class attribute that provides a human-readable name for
+       the metric (e.g., "Chi Square", "Cross Correlation").
+
+   -   **`__call__(self, simulation, experiment, mask=None)`**: The main method that
+       calculates the GOF value. It takes the simulation and experiment as input
+       and returns a single float value representing the goodness of fit.
+
+   -   **`scaling(self, simulation, experiment, mask=None)`**: An optional method
+       that can be implemented by subclasses to scale the simulation intensity to
+       the experimental intensity before the GOF calculation. If not implemented,
+       no scaling is performed.
+
+   The `BaseGOF` class is provided as a simple parent class that new metrics can
+   inherit from, but this is not a requirement.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.gof.BaseGOF
+   pyextal.gof.XCorrelation
+   pyextal.gof.Chi2
+   pyextal.gof.Chi2_multibackground
+   pyextal.gof.Chi2_const
+   pyextal.gof.Chi2_LARBED
+   pyextal.gof.Chi2_LARBED_multibackground
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseGOF
+
+   Base class for Goodness-of-Fit (GOF) metrics.
+
+   This class serves as a template and is not intended to be used directly.
+   Subclasses should implement the `__call__` method.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+
+   .. py:attribute:: name
+      :type:  str
+      :value: 'Base GOF (Not Implemented)'
+
+
+
+   .. py:method:: __call__(simulation: numpy.ndarray, experiment: numpy.ndarray, mask: numpy.ndarray[bool] = None)
+      :abstractmethod:
+
+
+      Computes the goodness-of-fit between simulation and experiment.
+
+      This method must be implemented by subclasses.
+
+      :param simulation: The simulated data.
+      :type simulation: np.ndarray
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray
+      :param mask: A boolean mask.
+      :type mask: np.ndarray[bool], optional
+
+      :raises NotImplementedError: If the method is not overridden in a subclass.
+
+
+
+.. py:class:: XCorrelation
+
+   Bases: :py:obj:`BaseGOF`
+
+
+   Calculates the cross-correlation between two datasets.
+
+   This metric is a measure of similarity between two series as a function of the
+   displacement of one relative to the other. It is computed using
+   `scipy.spatial.distance.correlation`.
+
+
+   .. py:attribute:: name
+      :value: 'Cross Correlation'
+
+
+
+   .. py:method:: __call__(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32]) -> numpy.float32
+
+      Calculates the correlation distance between simulation and experiment.
+
+      :param simulation: The simulated diffraction pattern.
+      :type simulation: np.ndarray[np.float32]
+      :param experiment: The experimental diffraction pattern.
+      :type experiment: np.ndarray[np.float32]
+
+      :returns: The correlation distance.
+      :rtype: np.float32
+
+
+
+.. py:class:: Chi2
+
+   Bases: :py:obj:`BaseGOF`
+
+
+   Chi-squared goodness-of-fit with a single background and Poisson noise.
+
+   This class calculates the chi-squared statistic assuming a constant background
+   across all diffraction disks and that the noise follows a Poisson distribution.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+   .. attribute:: sigma2
+
+      The variance of the experimental data.
+
+      :type: np.ndarray
+
+
+   .. py:attribute:: name
+      :value: 'Chi Square single background no detector'
+
+
+
+   .. py:method:: __call__(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32], mask: numpy.ndarray[bool] = None) -> numpy.float32
+
+      Calculates the chi-squared value.
+
+      :param simulation: The simulated diffraction pattern.
+      :type simulation: np.ndarray[np.float32]
+      :param experiment: The experimental diffraction pattern.
+      :type experiment: np.ndarray[np.float32]
+      :param mask: A boolean mask to include only
+                   specific regions in the calculation. Defaults to None.
+      :type mask: np.ndarray[bool], optional
+
+      :returns: The calculated chi-squared value.
+      :rtype: np.float32
+
+      :raises ValueError: If simulation and experiment arrays have different shapes.
+
+
+
+   .. py:method:: calVariance(experiment: numpy.ndarray[numpy.float32])
+
+      Calculates the variance of the experiment, assuming Poisson noise.
+
+      The variance is estimated as the absolute value of the experimental counts.
+
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray[np.float32]
+
+
+
+   .. py:method:: scaling(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32], mask: numpy.ndarray[bool] = None) -> numpy.ndarray[numpy.float32]
+
+      Scales the simulation to the experiment.
+
+      Determines the optimal scale and background that minimizes chi-squared,
+      then applies them to the simulation data.
+
+      :param simulation: The simulated data.
+      :type simulation: np.ndarray[np.float32]
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray[np.float32]
+      :param mask: A boolean mask to apply to the
+                   data. Defaults to None.
+      :type mask: np.ndarray[bool], optional
+
+      :returns: The scaled simulation data.
+      :rtype: np.ndarray[np.float32]
+
+
+
+   .. py:method:: calScaling(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32], mask: numpy.ndarray[bool] = None)
+
+      Calculates the optimal scale and background to minimize chi-squared.
+
+              Solves a system of linear equations to find the scale factor `c` and
+              background `b` that minimize the chi-squared statistic:
+
+              .. math::
+
+                  \chi^2 = \sum_d \sum_i \frac{(cI_{id}^t+ b - I_{id}^x)^2}{\sigma_{id}^2}
+
+              The derivatives with respect to `c` and `b` are set to zero:
+
+              .. math::
+                  \frac{\partial \chi^2}{\partial c} = 2(c\sum_d \sum_i \frac{{I_{id}^t}^2}{\sigma^2_{id}} + b\sum_d \sum_i \frac{I_{id}^t}{\sigma^2_{id}} - \sum_d\sum_i \frac{I^t_{id}I^x_{id}}{\sigma^2_{id}})=0
+
+              .. math::
+                  \frac{\partial \chi^2}{\partial b} = 2(c\sum_d \sum_i
+      rac{I_{id}^t}{\sigma^2_{id}} + b\sum_d \sum_i
+      rac{1}{\sigma^2_{id}} - \sum_d\sum_i
+      rac{I^x_{id}}{\sigma^2_{id}})=0
+
+              Args:
+                  simulation (np.ndarray[np.float32]): The simulated data.
+                  experiment (np.ndarray[np.float32]): The experimental data.
+                  mask (np.ndarray[bool], optional): A boolean mask to apply to the
+                  data. Defaults to None.
+
+              Returns:
+                  tuple[float, float]: The optimal scale and background values.
+
+
+
+
+.. py:class:: Chi2_multibackground(dinfo: pyextal.dinfo.BaseDiffractionInfo)
+
+   Bases: :py:obj:`Chi2`
+
+
+   Chi-squared GOF with a separate background for each diffraction disk.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+   .. attribute:: dinfo
+
+      a BaseDiffractionInfo object
+
+
+   .. py:attribute:: name
+      :value: 'Chi Square background for each disk'
+
+
+
+   .. py:attribute:: dinfo
+
+
+   .. py:method:: calVariance(experiment: numpy.ndarray[numpy.float32])
+
+      Calculates variance based on detector DQE.
+
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray[np.float32]
+
+
+
+   .. py:method:: calScaling(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32], mask: numpy.ndarray[bool] = None)
+
+      Calculates scale and per-disk backgrounds to minimize chi-squared.
+
+              This method is based on the `extal` `chisq.f` subroutine `tnorm0`.
+              It finds a single scale factor `c` and a separate background `b_d` for
+              each disk `d` that minimize the chi-squared statistic:
+
+              .. math::
+                  \chi^2 = \sum_d \sum_i \frac{(cI_{id}^t+ b_d - I_{id}^x)^2}{\sigma_{id}^2}
+
+              The derivatives are set to zero and solved:
+
+              .. math::
+                  \frac{\partial \chi^2}{\partial c} = 2(c\sum_d \sum_i \frac{{I_{id}^t}^2}{\sigma^2_{id}} + \sum_d b_d \sum_i \frac{I_{id}^t}{\sigma^2_{id}} - \sum_d\sum_i \frac{I^t_{id}I^x_{id}}{\sigma^2_{id}})=0
+
+              .. math::
+                  \frac{\partial \chi^2}{\partial b_d} = 2(c\sum_i
+      rac{I_{id}^t}{\sigma^2_{id}} + b_d\sum_i
+      rac{1}{\sigma^2_{id}} - \sum_i
+      rac{I^x_{id}}{\sigma^2_{id}})=0
+
+              Args:
+                  simulation (np.ndarray[np.float32]): The simulated data.
+                  experiment (np.ndarray[np.float32]): The experimental data.
+                  mask (np.ndarray[bool], optional): A boolean mask to apply to the
+                  data. Defaults to None.
+
+              Returns:
+                  tuple[float, np.ndarray]: The optimal scale factor and an array of
+                  background values for each disk.
+
+
+
+
+.. py:class:: Chi2_const(dinfo)
+
+   Bases: :py:obj:`Chi2`
+
+
+   Chi-squared GOF with a single background and DQE-based variance.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+   .. attribute:: dinfo
+
+      An object containing diffraction information, used for DQE calculation.
+
+
+   .. py:attribute:: name
+      :value: 'Chi Square single background'
+
+
+
+   .. py:attribute:: dinfo
+
+
+   .. py:method:: calVariance(experiment: numpy.ndarray[numpy.float32])
+
+      Calculates variance based on detector DQE.
+
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray[np.float32]
+
+
+
+.. py:class:: Chi2_LARBED(roi: pyextal.roi.LARBEDROI)
+
+   Bases: :py:obj:`Chi2`
+
+
+   Chi-squared GOF for LARBED data with a single background.
+
+   This class uses a pre-calculated variance map, specific to LARBED experiments.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+   .. attribute:: roi
+
+      A LARBEDROI object, including the variance map.
+
+
+   .. py:attribute:: name
+      :value: 'Chi Square single background LARBED'
+
+
+
+   .. py:attribute:: roi
+
+
+   .. py:method:: calVariance(experiment: numpy.ndarray[numpy.float32])
+
+      Sets the variance from the pre-calculated LARBED variance map.
+
+      :param experiment: The experimental data (not used,
+                         but maintained for compatibility).
+      :type experiment: np.ndarray[np.float32]
+
+
+
+.. py:class:: Chi2_LARBED_multibackground(roi: pyextal.roi.LARBEDROI)
+
+   Bases: :py:obj:`Chi2_LARBED`
+
+
+   Chi-squared GOF for LARBED with per-disk backgrounds.
+
+   Combines the pre-calculated variance from `Chi2_LARBED` with the per-disk
+   background calculation from `Chi2_multibackground`.
+
+   .. attribute:: name
+
+      The name of the GOF metric.
+
+      :type: str
+
+
+   .. py:attribute:: name
+      :value: 'Chi Square multiple bacckground LARBED'
+
+
+
+   .. py:method:: calScaling(simulation: numpy.ndarray[numpy.float32], experiment: numpy.ndarray[numpy.float32], mask: numpy.ndarray[bool] = None)
+
+      Calculates scale and per-disk backgrounds for LARBED data.
+
+      This method is an alias for the multi-background scaling calculation,
+      but it uses the pre-calculated variance from the LARBED ROI.
+
+      :param simulation: The simulated data.
+      :type simulation: np.ndarray[np.float32]
+      :param experiment: The experimental data.
+      :type experiment: np.ndarray[np.float32]
+      :param mask: A boolean mask to apply to the
+                   data. Defaults to None.
+      :type mask: np.ndarray[bool], optional
+
+      :returns: The optimal scale factor and an array of
+                background values for each disk.
+      :rtype: tuple[float, np.ndarray]
+
+
+

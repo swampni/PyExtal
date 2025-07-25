@@ -1,0 +1,1428 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="pyextal.densityMap" href="../densityMap/index.html" /><link rel="prev" title="pyextal.LucyRichardson" href="../LucyRichardson/index.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>pyextal.callBloch - PyExtal 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">PyExtal 0.0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">PyExtal 0.0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../architecture.html">Package Architecture</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Package Architecture</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../LARBEDindex.html">Understand How to Define/Index LARBED Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration.html">Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROI.html">Overview of ROI definition in pyextal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CoarseRefine.html">Coarse Refinement (Correlation based refinement)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../FineRefine.html">Fine Refientment (Intensity based Refinement)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemnt_si04.html">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemntLARBEDSi111sys0420.html">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemnt_HVcal.html">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Bloch Engine API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bloch Engine API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../generated/pyextal.blochwave.html">pyextal.blochwave</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generated/pyextal.cbedpy.html">pyextal.cbedpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">pyextal</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of pyextal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../Constants/index.html">pyextal.Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../LucyRichardson/index.html">pyextal.LucyRichardson</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">pyextal.callBloch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../densityMap/index.html">pyextal.densityMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dinfo/index.html">pyextal.dinfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gof/index.html">pyextal.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metric/index.html">pyextal.metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../optimize/index.html">pyextal.optimize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../roi/index.html">pyextal.roi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../symmetry/index.html">pyextal.symmetry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../_sources/autoapi/pyextal/callBloch/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-pyextal.callBloch">
+<span id="pyextal-callbloch"></span><h1>pyextal.callBloch<a class="headerlink" href="#module-pyextal.callBloch" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.Data" title="pyextal.callBloch.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p>Data class to store the data of each tilt calculated by the bloch engine.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimParams</span></code></a></p></td>
+<td><p>Data class to store the data and parameters from the simulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.DataCollector" title="pyextal.callBloch.DataCollector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCollector</span></code></a></p></td>
+<td><p>Data collector class to retrieve data as a callback function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.updateUgh" title="pyextal.callBloch.updateUgh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateUgh</span></code></a>(reflections, values[, beamDict])</p></td>
+<td><p>Update the Ugh matrix in the common block with the given values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.updateSymUgh" title="pyextal.callBloch.updateSymUgh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateSymUgh</span></code></a>(reflections, values[, sym])</p></td>
+<td><p>Update the Ugh matrix with given values, including all symmetry-related beams.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.symmetrizeVHKL" title="pyextal.callBloch.symmetrizeVHKL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">symmetrizeVHKL</span></code></a>()</p></td>
+<td><p>Symmetrize the structure factor adjusted in the .dat file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.lookupSF" title="pyextal.callBloch.lookupSF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookupSF</span></code></a>(reflections[, IAM])</p></td>
+<td><p>Look up the default structure factor for given reflections.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.lookupReflections" title="pyextal.callBloch.lookupReflections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookupReflections</span></code></a>()</p></td>
+<td><p>Look up all non-zero reflections.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.bloch" title="pyextal.callBloch.bloch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch</span></code></a>(fname[, t_x, t_y, reflections, values, HKL, ...])</p></td>
+<td><p>Simulate the diffraction pattern point-to-point (no interpolation).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.bloch_parse" title="pyextal.callBloch.bloch_parse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch_parse</span></code></a>(fname[, t_x, t_y, HKL])</p></td>
+<td><p>Parse the .dat file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.tilt_run" title="pyextal.callBloch.tilt_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt_run</span></code></a>(param, tilts[, indices, ncores, HKL])</p></td>
+<td><p>Run the simulation for a given set of tilts. The eigenvalue/vectors are stored in blochwave.bloch_module</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.bloch_run" title="pyextal.callBloch.bloch_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bloch_run</span></code></a>(param[, HKL, subaper, subnx, subny, pixsiz, ...])</p></td>
+<td><p>Construct a tilt net and run the simulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.simulate" title="pyextal.callBloch.simulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code></a>(fname, thickness, displayParam[, t_x, t_y, ...])</p></td>
+<td><p>Wrapper for bloch_run and cbedp to simulate and return the diffraction pattern.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.LARBED" title="pyextal.callBloch.LARBED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LARBED</span></code></a>(param, thickness[, height, width, tiltmap])</p></td>
+<td><p>Calculate the LARBED pattern for a given thickness.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.LARBED_tilt" title="pyextal.callBloch.LARBED_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LARBED_tilt</span></code></a>(param, thickness, nout)</p></td>
+<td><p>Calculate the LARBED pattern for a given thickness with eigenvector/values store in blochwave.bloch_module.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.terminate" title="pyextal.callBloch.terminate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">terminate</span></code></a>()</p></td>
+<td><p>Deallocate the arrays in the blochwave module.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.calibrateLARBED" title="pyextal.callBloch.calibrateLARBED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrateLARBED</span></code></a>(param, gl)</p></td>
+<td><p>Calibrate LARBED parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.calibrateCBED" title="pyextal.callBloch.calibrateCBED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrateCBED</span></code></a>(dp, center, centerTiltx, centerTilty, ...)</p></td>
+<td><p>Calibrate CBED parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.wavelength" title="pyextal.callBloch.wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength</span></code></a>()</p></td>
+<td><p>Return the wavelength of the electron beam in Angstroms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.tilt" title="pyextal.callBloch.tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt</span></code></a>(param, t_x, t_y)</p></td>
+<td><p>Calculate the tilt vector for a given tilt in x and y directions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.callBloch.tiltUnit" title="pyextal.callBloch.tiltUnit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tiltUnit</span></code></a>(param)</p></td>
+<td><p>Calculate the tilt unit vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.callBloch.e2Xray" title="pyextal.callBloch.e2Xray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">e2Xray</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Calculate the X-ray scattering factor for a given beam.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><a class="headerlink" href="#pyextal.callBloch.Data" title="Link to this definition">¶</a></dt>
+<dd><p>Data class to store the data of each tilt calculated by the bloch engine.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.ndiag">
+<span class="sig-name descname"><span class="pre">ndiag</span></span><a class="headerlink" href="#pyextal.callBloch.Data.ndiag" title="Link to this definition">¶</a></dt>
+<dd><p>Number of diagonal elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.itilt">
+<span class="sig-name descname"><span class="pre">itilt</span></span><a class="headerlink" href="#pyextal.callBloch.Data.itilt" title="Link to this definition">¶</a></dt>
+<dd><p>(3,) tilt vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.ix">
+<span class="sig-name descname"><span class="pre">ix</span></span><a class="headerlink" href="#pyextal.callBloch.Data.ix" title="Link to this definition">¶</a></dt>
+<dd><p>x index of the tilt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.iy">
+<span class="sig-name descname"><span class="pre">iy</span></span><a class="headerlink" href="#pyextal.callBloch.Data.iy" title="Link to this definition">¶</a></dt>
+<dd><p>y index of the tilt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.gamma">
+<span class="sig-name descname"><span class="pre">gamma</span></span><a class="headerlink" href="#pyextal.callBloch.Data.gamma" title="Link to this definition">¶</a></dt>
+<dd><p>Eigenvalues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.eigenvector">
+<span class="sig-name descname"><span class="pre">eigenvector</span></span><a class="headerlink" href="#pyextal.callBloch.Data.eigenvector" title="Link to this definition">¶</a></dt>
+<dd><p>Eigenvectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.cinv">
+<span class="sig-name descname"><span class="pre">cinv</span></span><a class="headerlink" href="#pyextal.callBloch.Data.cinv" title="Link to this definition">¶</a></dt>
+<dd><p>1st column of the inverse of the eigenvectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">ndiag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">itilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">ix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">iy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">eigenvector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">cinv</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.vr">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vr</span></span><a class="headerlink" href="#pyextal.callBloch.Data.vr" title="Link to this definition">¶</a></dt>
+<dd><p>Real part of the eigenvalues.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.vi">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vi</span></span><a class="headerlink" href="#pyextal.callBloch.Data.vi" title="Link to this definition">¶</a></dt>
+<dd><p>Imaginary part of the eigenvalues.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.ccr">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ccr</span></span><a class="headerlink" href="#pyextal.callBloch.Data.ccr" title="Link to this definition">¶</a></dt>
+<dd><p>Real part of the eigenvectors.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.callBloch.Data.cci">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cci</span></span><a class="headerlink" href="#pyextal.callBloch.Data.cci" title="Link to this definition">¶</a></dt>
+<dd><p>Imaginary part of the eigenvectors.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">SimParams</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams" title="Link to this definition">¶</a></dt>
+<dd><p>Data class to store the data and parameters from the simulation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.ntilt">
+<span class="sig-name descname"><span class="pre">ntilt</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.ntilt" title="Link to this definition">¶</a></dt>
+<dd><p>Number of tilts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.nout">
+<span class="sig-name descname"><span class="pre">nout</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.nout" title="Link to this definition">¶</a></dt>
+<dd><p>Number of reflections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.nx">
+<span class="sig-name descname"><span class="pre">nx</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.nx" title="Link to this definition">¶</a></dt>
+<dd><p>Half width of sampling region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.hklout">
+<span class="sig-name descname"><span class="pre">hklout</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.hklout" title="Link to this definition">¶</a></dt>
+<dd><p>(3, nout) np.int32 np.array of reflection indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.disks">
+<span class="sig-name descname"><span class="pre">disks</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.disks" title="Link to this definition">¶</a></dt>
+<dd><p>Disk radius.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.alpha" title="Link to this definition">¶</a></dt>
+<dd><p>Angle incidence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.tilt0">
+<span class="sig-name descname"><span class="pre">tilt0</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.tilt0" title="Link to this definition">¶</a></dt>
+<dd><p>(3,) np.float32 np.array of incident tilt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.gg">
+<span class="sig-name descname"><span class="pre">gg</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.gg" title="Link to this definition">¶</a></dt>
+<dd><p>(3,) np.float32 np.array horizontal reciprocal vector of dp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.gh">
+<span class="sig-name descname"><span class="pre">gh</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.gh" title="Link to this definition">¶</a></dt>
+<dd><p>(3,) np.float32 np.array vertical reciprocal vector of dp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.gmx">
+<span class="sig-name descname"><span class="pre">gmx</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.gmx" title="Link to this definition">¶</a></dt>
+<dd><p>(3, 3) np.float32 np.array of gram tensor (gram matrix).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.gmxr">
+<span class="sig-name descname"><span class="pre">gmxr</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.gmxr" title="Link to this definition">¶</a></dt>
+<dd><p>(3, 3) np.float32 np.array of inverse of gram tensor (gram matrix).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.snorm">
+<span class="sig-name descname"><span class="pre">snorm</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.snorm" title="Link to this definition">¶</a></dt>
+<dd><p>(3,) np.float32 np.array of surface normal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.bigK">
+<span class="sig-name descname"><span class="pre">bigK</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.bigK" title="Link to this definition">¶</a></dt>
+<dd><p>Magnitude of refraction adjusted wave vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.tilts">
+<span class="sig-name descname"><span class="pre">tilts</span></span><a class="headerlink" href="#pyextal.callBloch.SimParams.tilts" title="Link to this definition">¶</a></dt>
+<dd><p>List of Data class, each element is the data of each tilt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">ntilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">nout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">nx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">hklout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">disks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">alpha</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">tilt0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">gg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">gh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">gmx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">gmxr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">snorm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">bigK</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">tilts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.SimParams.__post_init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itilt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.SimParams.__call__" title="Link to this definition">¶</a></dt>
+<dd><p>Update blochwave parameters and pass data to cbedp common block.
+callback for bloch engine intensity calculation! DO NOT CALL THIS DIRECTLY!
+:param i1: 1-based index for the tilt.
+:type i1: int
+:param itilt: Array to be updated with the x, y index of the tilt.
+:type itilt: np.ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Updated itilt array.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.larbedCall">
+<span class="sig-name descname"><span class="pre">larbedCall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.SimParams.larbedCall" title="Link to this definition">¶</a></dt>
+<dd><p>Pass data to cbedp common block for LARBED calculation.
+Callback for bloch engine intensity calculation! DO NOT CALL THIS DIRECTLY!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i1</strong> (<em>int</em>) – 1-based index for the tilt.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The tilt vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.simParam">
+<span class="sig-name descname"><span class="pre">simParam</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.SimParams.simParam" title="Link to this definition">¶</a></dt>
+<dd><p>Return the simulation parameters as a tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the simulation parameters.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.SimParams.store">
+<span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'simParam.h5'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.SimParams.store" title="Link to this definition">¶</a></dt>
+<dd><p>Store the simulation parameters to a file in HDF5 format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the file to save to.
+Defaults to ‘simParam.h5’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyextal.callBloch.DataCollector">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">DataCollector</span></span><a class="headerlink" href="#pyextal.callBloch.DataCollector" title="Link to this definition">¶</a></dt>
+<dd><p>Data collector class to retrieve data as a callback function.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.callBloch.DataCollector.tilts">
+<span class="sig-name descname"><span class="pre">tilts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#pyextal.callBloch.DataCollector.tilts" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.callBloch.DataCollector.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndiag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.DataCollector.__call__" title="Link to this definition">¶</a></dt>
+<dd><p>Callback function to collect data from bloch engine diagonalization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ndiag</strong> (<em>int</em>) – Number of diagonal elements.</p></li>
+<li><p><strong>itilt</strong> (<em>tuple</em>) – The tilt vector.</p></li>
+<li><p><strong>ix</strong> (<em>int</em>) – The x index of the tilt.</p></li>
+<li><p><strong>iy</strong> (<em>int</em>) – The y index of the tilt.</p></li>
+<li><p><strong>nout</strong> (<em>int</em>) – The number of reflections.</p></li>
+<li><p><strong>ib</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Beam indices. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Always returns 0.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.updateUgh">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">updateUgh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reflections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beamDict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.updateUgh" title="Link to this definition">¶</a></dt>
+<dd><p>Update the Ugh matrix in the common block with the given values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reflections</strong> (<em>list</em>) – List of tuples (nref,) for reflection indices,
+e.g., [(1, 1, 1), (1, 1, 0)].</p></li>
+<li><p><strong>values</strong> (<em>np.ndarray</em>) – (nref, 4) or (nref, 2) array of structure factor
+values. For (nref, 4): Ugh, phase, U’gh, phase. Ugh should always
+be positive. For (nref, 2): Ugh, U’gh.</p></li>
+<li><p><strong>beamDict</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary mapping beam pairs to their
+positions in the Ugh matrix. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.updateSymUgh">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">updateSymUgh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reflections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.updateSymUgh" title="Link to this definition">¶</a></dt>
+<dd><p>Update the Ugh matrix with given values, including all symmetry-related beams.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reflections</strong> (<em>list</em>) – List of tuples (nref,) for reflection indices,
+e.g., [(1, 1, 1), (1, 1, 0)].</p></li>
+<li><p><strong>values</strong> (<em>np.ndarray</em>) – (nref, 4) or (nref, 2) array of structure factor
+values. For (nref, 4): Ugh, phase, U’gh, phase. For (nref, 2): Ugh, U’gh.</p></li>
+<li><p><strong>sym</strong> (<a class="reference internal" href="../symmetry/index.html#pyextal.symmetry.GroupSymmetry" title="pyextal.symmetry.GroupSymmetry"><em>GroupSymmetry</em></a><em>, </em><em>optional</em>) – GroupSymmetry class instance for symmetry-related
+beams. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.symmetrizeVHKL">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">symmetrizeVHKL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.symmetrizeVHKL" title="Link to this definition">¶</a></dt>
+<dd><p>Symmetrize the structure factor adjusted in the .dat file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.lookupSF">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">lookupSF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reflections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IAM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.lookupSF" title="Link to this definition">¶</a></dt>
+<dd><p>Look up the default structure factor for given reflections.
+The default values are from Bird and King, Acta Cryst. A 46 (1990) 202.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reflections</strong> (<em>list</em>) – List of tuples (nref,) for reflection indices,
+e.g., [(1, 1, 1), (1, 1, 0)].</p></li>
+<li><p><strong>IAM</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use the independent atom model (IAM) for
+all structure factors. If False, return the adjusted structure
+factor from the .dat file. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nref, 4) array of structure factor values
+(Ugh, phase (deg), U’gh, phase (deg)).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.lookupReflections">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">lookupReflections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.lookupReflections" title="Link to this definition">¶</a></dt>
+<dd><p>Look up all non-zero reflections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all reflections excluding the (0, 0, 0) beam.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.bloch">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">bloch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HKL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subaper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subnx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixsiz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dryrun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.bloch" title="Link to this definition">¶</a></dt>
+<dd><p>Simulate the diffraction pattern point-to-point (no interpolation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<em>str</em>) – Path to the .dat file.</p></li>
+<li><p><strong>t_x</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the x direction (deg). Defaults to 0.</p></li>
+<li><p><strong>t_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the y direction (deg). Defaults to 0.</p></li>
+<li><p><strong>reflections</strong> (<em>list</em><em>, </em><em>optional</em>) – List of tuples (nref,) for reflection to adjust
+indices, e.g., [(1, 1, 1), (1, 1, 0)]. Defaults to None.</p></li>
+<li><p><strong>values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – (4, nref) array of structure factor
+values (Ugh, phase (deg), U’gh, phase (deg)) to adjust. Defaults to None.</p></li>
+<li><p><strong>HKL</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the hkl indices of the included
+beams. Defaults to False.</p></li>
+<li><p><strong>subaper</strong> (<em>int</em><em>, </em><em>optional</em>) – Aperture function.
+0 or None: No aperture.
+1: Circular aperture of input size nx (Standard CBED).
+2: Custom circular aperture of radius (subnx1+subnx2).
+3: Custom rectangular aperture of shape (subnx),(subny).
+Defaults to 0.</p></li>
+<li><p><strong>subnx</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>subny</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>pixsiz</strong> (<em>float</em><em>, </em><em>optional</em>) – Pixel size in diffraction space. Defaults to 0.</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use. Defaults to 1.</p></li>
+<li><p><strong>xaxis</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – (3,) array for the x-axis of the
+diffraction space. Defaults to None.</p></li>
+<li><p><strong>dryrun</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, perform a dry run to estimate memory
+usage without running the full simulation. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SimParams object containing simulation results, or
+estimated memory usage if dryrun is True.
+np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+reflection indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a> or float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.bloch_parse">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">bloch_parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HKL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.bloch_parse" title="Link to this definition">¶</a></dt>
+<dd><p>Parse the .dat file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<em>str</em>) – Path to the .dat file.</p></li>
+<li><p><strong>t_x</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the x direction (deg). Defaults to 0.</p></li>
+<li><p><strong>t_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the y direction (deg). Defaults to 0.</p></li>
+<li><p><strong>HKL</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the hkl indices of the included</p></li>
+<li><p><strong>False.</strong> (<em>beams. Defaults to</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An empty SimParams object with simulation info.
+np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+reflection indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.tilt_run">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">tilt_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HKL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.tilt_run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the simulation for a given set of tilts. The eigenvalue/vectors are stored in blochwave.bloch_module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>tilts</strong> (<em>np.ndarray</em>) – (n, 3) array of tilt vectors.</p></li>
+<li><p><strong>indices</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – (n,) array of indices. Defaults to None.</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use. Defaults to 1.</p></li>
+<li><p><strong>HKL</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the hkl indices of the included</p></li>
+<li><p><strong>False.</strong> (<em>beams. Defaults to</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated SimParams object.
+np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+reflection indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.bloch_run">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">bloch_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HKL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subaper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subnx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixsiz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.bloch_run" title="Link to this definition">¶</a></dt>
+<dd><p>Construct a tilt net and run the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>HKL</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the hkl indices of the included
+beams. Defaults to False.</p></li>
+<li><p><strong>subaper</strong> (<em>int</em><em>, </em><em>optional</em>) – Aperture function.
+0 or None: No aperture.
+1: Circular aperture of input size nx (Standard CBED).
+2: Custom circular aperture of radius (subnx1+subnx2).
+3: Custom rectangular aperture of shape (subnx),(subny).
+Defaults to 0.</p></li>
+<li><p><strong>subnx</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>subny</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>pixsiz</strong> (<em>float</em><em>, </em><em>optional</em>) – Pixel size in diffraction space. Defaults to 0.</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use. Defaults to 1.</p></li>
+<li><p><strong>xaxis</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – (3,) array for the x-axis of the</p></li>
+<li><p><strong>None.</strong> (<em>diffraction space. Defaults to</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated SimParams object.
+np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+reflection indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.simulate">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displayParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HKL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subaper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subnx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixsiz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dryrun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.simulate" title="Link to this definition">¶</a></dt>
+<dd><p>Wrapper for bloch_run and cbedp to simulate and return the diffraction pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<em>str</em>) – Path to the .dat file.</p></li>
+<li><p><strong>thickness</strong> (<em>float</em>) – Thickness of the sample in Angstroms.</p></li>
+<li><p><strong>displayParam</strong> (<em>list</em>) – List of parameters for display:
+[x0, y0, gl, xs, ys, theta].</p></li>
+<li><p><strong>t_x</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the x direction (deg). Defaults to 0.</p></li>
+<li><p><strong>t_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Tilt in the y direction (deg). Defaults to 0.</p></li>
+<li><p><strong>reflections</strong> (<em>list</em><em>, </em><em>optional</em>) – List of tuples (nref,) for reflection
+indices, e.g., [(1, 1, 1), (1, 1, 0)]. Defaults to None.</p></li>
+<li><p><strong>values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – (4, nref) array of structure factor
+values (Ugh, phase (deg), U’gh, phase (deg)). Defaults to None.</p></li>
+<li><p><strong>HKL</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the hkl indices of the included
+beams. Defaults to False.</p></li>
+<li><p><strong>subaper</strong> (<em>int</em><em>, </em><em>optional</em>) – Aperture function.
+0 or None: No aperture.
+1: Circular aperture of input size nx (Standard CBED).
+2: Custom circular aperture of radius (subnx1+subnx2).
+3: Custom rectangular aperture of shape (subnx),(subny).
+Defaults to 0.</p></li>
+<li><p><strong>subnx</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>subny</strong> (<em>int</em><em>, </em><em>optional</em>) – Dependent on subaper parameter. Defaults to None.</p></li>
+<li><p><strong>pixsiz</strong> (<em>float</em><em>, </em><em>optional</em>) – Pixel size in diffraction space. Defaults to 0.</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use. Defaults to 1.</p></li>
+<li><p><strong>dryrun</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, perform a dry run to estimate memory</p></li>
+<li><p><strong>False.</strong> (<em>usage. Defaults to</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(xs, ys) array of the diffraction pattern.
+SimParams: SimParams object with simulation parameters.
+np.ndarray, optional: If HKL is True, returns a (nout, 3) array of
+reflection indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.LARBED">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">LARBED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.LARBED" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the LARBED pattern for a given thickness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>thickness</strong> (<em>int</em><em> or </em><em>np.ndarray</em>) – Thickness of the sample in Angstroms.
+Can be a single int or a (ntilt,) array.</p></li>
+<li><p><strong>height</strong> (<em>int</em><em>, </em><em>optional</em>) – Height of the diffraction pattern. Defaults to None.</p></li>
+<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – Width of the diffraction pattern. Defaults to None.</p></li>
+<li><p><strong>tiltmap</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the tilt map. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nout, height, width) array of diffraction patterns.
+np.ndarray, optional: If tiltmap is True, returns a (nx, nx, 3)
+array of the tilt map.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.LARBED_tilt">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">LARBED_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.LARBED_tilt" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the LARBED pattern for a given thickness with eigenvector/values store in blochwave.bloch_module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>thickness</strong> (<em>int</em><em> or </em><em>np.ndarray</em>) – Thickness of the sample in Angstroms.
+Can be a single int or a (ntilt,) array.</p></li>
+<li><p><strong>nout</strong> (<em>int</em>) – Number of output points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nout, ntilt) array of diffraction patterns.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.terminate">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.terminate" title="Link to this definition">¶</a></dt>
+<dd><p>Deallocate the arrays in the blochwave module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.calibrateLARBED">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">calibrateLARBED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.calibrateLARBED" title="Link to this definition">¶</a></dt>
+<dd><p>Calibrate LARBED parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>gl</strong> (<em>float</em>) – Geometric scaling factor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the side length and scale factor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.calibrateCBED">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">calibrateCBED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centerTiltx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centerTilty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.calibrateCBED" title="Link to this definition">¶</a></dt>
+<dd><p>Calibrate CBED parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dp</strong> (<em>np.ndarray</em>) – The diffraction pattern.</p></li>
+<li><p><strong>center</strong> (<em>tuple</em>) – The center of the diffraction pattern.</p></li>
+<li><p><strong>centerTiltx</strong> (<em>float</em>) – The tilt in the x direction at the center.</p></li>
+<li><p><strong>centerTilty</strong> (<em>float</em>) – The tilt in the y direction at the center.</p></li>
+<li><p><strong>gl</strong> (<em>float</em>) – Geometric scaling factor.</p></li>
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the x and y tilt maps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.wavelength">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">wavelength</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.wavelength" title="Link to this definition">¶</a></dt>
+<dd><p>Return the wavelength of the electron beam in Angstroms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The wavelength in Angstroms.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.tilt">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.tilt" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the tilt vector for a given tilt in x and y directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p></li>
+<li><p><strong>t_x</strong> (<em>float</em>) – Tilt in the x direction (deg).</p></li>
+<li><p><strong>t_y</strong> (<em>float</em>) – Tilt in the y direction (deg).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.tiltUnit">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">tiltUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.callBloch.tiltUnit" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the tilt unit vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<a class="reference internal" href="#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams"><em>SimParams</em></a>) – SimParams object with simulation parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the tilt unit vectors in the x and y directions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.callBloch.e2Xray">
+<span class="sig-prename descclassname"><span class="pre">pyextal.callBloch.</span></span><span class="sig-name descname"><span class="pre">e2Xray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getESF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#pyextal.callBloch.e2Xray" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the X-ray scattering factor for a given beam.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beam</strong> (<em>tuple</em>) – The beam for which the X-ray scattering factor is to be
+calculated.</p></li>
+<li><p><strong>getESF</strong> (<em>callable</em>) – A function to get the electron scattering factor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The X-ray scattering factor for the given beam.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../densityMap/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">pyextal.densityMap</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../LucyRichardson/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">pyextal.LucyRichardson</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, HCN, RB, and JMZ
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">pyextal.callBloch</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#pyextal.callBloch.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a><ul>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.ndiag"><code class="docutils literal notranslate"><span class="pre">Data.ndiag</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.itilt"><code class="docutils literal notranslate"><span class="pre">Data.itilt</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.ix"><code class="docutils literal notranslate"><span class="pre">Data.ix</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.iy"><code class="docutils literal notranslate"><span class="pre">Data.iy</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.gamma"><code class="docutils literal notranslate"><span class="pre">Data.gamma</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.eigenvector"><code class="docutils literal notranslate"><span class="pre">Data.eigenvector</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.cinv"><code class="docutils literal notranslate"><span class="pre">Data.cinv</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Data.ndiag</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Data.itilt</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Data.ix</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Data.iy</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">Data.gamma</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">Data.eigenvector</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">Data.cinv</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.vr"><code class="docutils literal notranslate"><span class="pre">Data.vr</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.vi"><code class="docutils literal notranslate"><span class="pre">Data.vi</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.ccr"><code class="docutils literal notranslate"><span class="pre">Data.ccr</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.Data.cci"><code class="docutils literal notranslate"><span class="pre">Data.cci</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams"><code class="docutils literal notranslate"><span class="pre">SimParams</span></code></a><ul>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.ntilt"><code class="docutils literal notranslate"><span class="pre">SimParams.ntilt</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.nout"><code class="docutils literal notranslate"><span class="pre">SimParams.nout</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.nx"><code class="docutils literal notranslate"><span class="pre">SimParams.nx</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.hklout"><code class="docutils literal notranslate"><span class="pre">SimParams.hklout</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.disks"><code class="docutils literal notranslate"><span class="pre">SimParams.disks</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.alpha"><code class="docutils literal notranslate"><span class="pre">SimParams.alpha</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.tilt0"><code class="docutils literal notranslate"><span class="pre">SimParams.tilt0</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.gg"><code class="docutils literal notranslate"><span class="pre">SimParams.gg</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.gh"><code class="docutils literal notranslate"><span class="pre">SimParams.gh</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.gmx"><code class="docutils literal notranslate"><span class="pre">SimParams.gmx</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.gmxr"><code class="docutils literal notranslate"><span class="pre">SimParams.gmxr</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.snorm"><code class="docutils literal notranslate"><span class="pre">SimParams.snorm</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.bigK"><code class="docutils literal notranslate"><span class="pre">SimParams.bigK</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.tilts"><code class="docutils literal notranslate"><span class="pre">SimParams.tilts</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SimParams.ntilt</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">SimParams.nout</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">SimParams.nx</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">SimParams.hklout</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">SimParams.disks</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">SimParams.alpha</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">SimParams.tilt0</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">SimParams.gg</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">SimParams.gh</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">SimParams.gmx</span></code></a></li>
+<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">SimParams.gmxr</span></code></a></li>
+<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">SimParams.snorm</span></code></a></li>
+<li><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">SimParams.bigK</span></code></a></li>
+<li><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">SimParams.tilts</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.__post_init__"><code class="docutils literal notranslate"><span class="pre">SimParams.__post_init__()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.__call__"><code class="docutils literal notranslate"><span class="pre">SimParams.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.larbedCall"><code class="docutils literal notranslate"><span class="pre">SimParams.larbedCall()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.simParam"><code class="docutils literal notranslate"><span class="pre">SimParams.simParam()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.SimParams.store"><code class="docutils literal notranslate"><span class="pre">SimParams.store()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pyextal.callBloch.DataCollector"><code class="docutils literal notranslate"><span class="pre">DataCollector</span></code></a><ul>
+<li><a class="reference internal" href="#pyextal.callBloch.DataCollector.tilts"><code class="docutils literal notranslate"><span class="pre">DataCollector.tilts</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.DataCollector.__call__"><code class="docutils literal notranslate"><span class="pre">DataCollector.__call__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pyextal.callBloch.updateUgh"><code class="docutils literal notranslate"><span class="pre">updateUgh()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.updateSymUgh"><code class="docutils literal notranslate"><span class="pre">updateSymUgh()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.symmetrizeVHKL"><code class="docutils literal notranslate"><span class="pre">symmetrizeVHKL()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.lookupSF"><code class="docutils literal notranslate"><span class="pre">lookupSF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.lookupReflections"><code class="docutils literal notranslate"><span class="pre">lookupReflections()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.bloch"><code class="docutils literal notranslate"><span class="pre">bloch()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.bloch_parse"><code class="docutils literal notranslate"><span class="pre">bloch_parse()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.tilt_run"><code class="docutils literal notranslate"><span class="pre">tilt_run()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.bloch_run"><code class="docutils literal notranslate"><span class="pre">bloch_run()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.simulate"><code class="docutils literal notranslate"><span class="pre">simulate()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.LARBED"><code class="docutils literal notranslate"><span class="pre">LARBED()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.LARBED_tilt"><code class="docutils literal notranslate"><span class="pre">LARBED_tilt()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.terminate"><code class="docutils literal notranslate"><span class="pre">terminate()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.calibrateLARBED"><code class="docutils literal notranslate"><span class="pre">calibrateLARBED()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.calibrateCBED"><code class="docutils literal notranslate"><span class="pre">calibrateCBED()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.wavelength"><code class="docutils literal notranslate"><span class="pre">wavelength()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.tilt"><code class="docutils literal notranslate"><span class="pre">tilt()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.tiltUnit"><code class="docutils literal notranslate"><span class="pre">tiltUnit()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.callBloch.e2Xray"><code class="docutils literal notranslate"><span class="pre">e2Xray()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

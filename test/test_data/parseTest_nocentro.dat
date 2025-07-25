@@ -1,0 +1,53 @@
+#Si 110 zone axis
+
+# define crystal here
+
+crystal silicon : dw = iso occ = par
+
+cell 5.4307 5.4307 5.4307 90.0 90.0 90.0
+
+atom Si#1   0.25000  0.25000  0.25000  0.4688 1
+atom Si#2   0.0000  0.0000  0.0000  0.4688 1
+
+
+spg 216 1
+
+
+# define diffraction condition
+
+hv 300.85
+zone 1 1 0
+norm 1 1 0
+kt 0 0 0
+xaxis 0 0 -4
+conv 2.0
+samp 30
+
+hkl 19
+ 0   0   0
+ 1  -1  -1
+-1   1  -1
+ 1  -1   1
+-1   1   1
+ 0   0  -2
+ 0   0   2
+ 2  -2   0
+-2   2   0
+ 1  -1  -3
+-1   1  -3
+ 1  -1   3
+-1   1   3
+ 2  -2  -2
+-2   2  -2
+ 2  -2   2
+-2   2   2
+ 0   0  -4
+ 0   0   4
+ 
+sgmax 3.5
+sgmin 0.15
+omeg 10.0
+
+# define output
+aper 1.0
+abs 0.0

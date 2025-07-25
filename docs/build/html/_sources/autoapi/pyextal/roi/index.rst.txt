@@ -1,0 +1,645 @@
+pyextal.roi
+===========
+
+.. py:module:: pyextal.roi
+
+.. autoapi-nested-parse::
+
+   Region of Interest (ROI) Management.
+
+   This module provides classes for defining, managing, and sampling Regions of
+   Interest (ROIs) from experimental and simulated diffraction patterns. It includes
+   base classes and specific implementations for Convergent Beam Electron Diffraction
+   (CBED) and Large Angle Rocking Beam Electron Diffraction (LARBED).
+
+   The core functionalities include:
+   -   Defining ROIs with geometric shapes.
+   -   Generating sampling grids for both simulation and experiment.
+   -   Handling coordinate transformations (rotation, scaling, shifting).
+   -   Creating interpolation functions for experimental data.
+   -   Extracting intensity templates from experimental patterns.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.roi.ROITYPE
+   pyextal.roi.BaseROI
+   pyextal.roi.CBEDROI
+   pyextal.roi.LARBEDROI
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.roi.pix2Tilt
+   pyextal.roi.split_array_by_lengths
+   pyextal.roi.rotation
+
+
+Module Contents
+---------------
+
+.. py:class:: ROITYPE(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Enumeration for the type of Region of Interest.
+
+
+   .. py:attribute:: BASE
+      :value: 0
+
+
+
+   .. py:attribute:: CBED
+      :value: 1
+
+
+
+   .. py:attribute:: LARBED
+      :value: 2
+
+
+
+.. py:class:: BaseROI(dinfo, rotation, gx, gInclude)
+
+   Base class for defining and managing a Region of Interest (ROI).
+
+   This class handles the common functionalities for defining sampling grids for
+   both simulation and experiment, storing experimental intensity data, and
+   managing coordinate transformations. It is intended to be subclassed for
+   specific diffraction techniques like CBED or LARBED.
+
+   .. attribute:: dinfo
+
+      The main diffraction information object.
+
+      :type: BaseDiffractionInfo
+
+   .. attribute:: dp
+
+      The experimental diffraction pattern.
+
+      :type: np.ndarray
+
+   .. attribute:: rotation
+
+      The rotation angle in degrees.
+
+      :type: float
+
+   .. attribute:: gl
+
+      The geometric scaling factor.
+
+      :type: float
+
+   .. attribute:: gInclude
+
+      A list of Miller indices (h, k, l) for the reflections
+      to be included in the ROI.
+
+      :type: list
+
+   .. attribute:: gx
+
+      The vector defining the primary (horizontal) systematic
+      row direction.
+
+      :type: np.ndarray
+
+   .. attribute:: allshift
+
+      A global shift applied to all ROIs.
+
+      :type: np.ndarray
+
+   .. attribute:: indices
+
+      An array of indices mapping the `gInclude` reflections
+      to the output of the Bloch wave simulation.
+
+      :type: np.ndarray
+
+   .. attribute:: pixsiz
+
+      The pixel size in the simulation space.
+
+      :type: float
+
+   .. attribute:: initPixsiz
+
+      The initial pixel size, stored for scaling calculations.
+
+      :type: float
+
+
+   .. py:attribute:: roitype
+
+
+   .. py:attribute:: dinfo
+
+
+   .. py:attribute:: dp
+
+
+   .. py:attribute:: _rotation
+
+
+   .. py:attribute:: _gl
+
+
+   .. py:attribute:: gInclude
+
+
+   .. py:attribute:: gx
+
+
+   .. py:attribute:: allshift
+
+
+   .. py:method:: __str__()
+
+      Returns a string representation of the ROI object.
+
+
+
+   .. py:method:: initialize()
+      :abstractmethod:
+
+
+      Initializes the Bloch simulation and calculates initial pixel size.
+
+      This method sets up the fortran module for the Bloch simulation, stores the
+      resulting parameters in the `dinfo` object, and calculates the initial
+      pixel size based on the simulation geometry. It should be overridden by
+      subclasses to add technique-specific initializations.
+
+
+
+   .. py:method:: matchIndex()
+
+      Matches the included reflections to the simulation output indices.
+
+
+
+   .. py:method:: createInterp()
+      :abstractmethod:
+
+
+      Creates an interpolation function for the experimental diffraction pattern.
+
+      This method must be implemented by subclasses to handle the specific data
+      format of the diffraction experiment (e.g., a single 2D pattern for CBED,
+      or a stack of 2D patterns for LARBED).
+
+
+
+   .. py:method:: selectROI(regions, mask=None, padding=0)
+
+      Selects and configures the regions of interest for refinement.
+
+      This method defines the geometric regions to be sampled, generates the
+      corresponding sampling grids, and sets up masks to include or exclude
+      specific disks within each region.
+
+      The region is defined by three corner points (1, 2, 3) and the number of
+      sampling points along the vectors 1->2 and 1->3.
+
+      ::
+
+          1-------(n_12 points)-------2
+          |
+          (n_13 points)
+          |
+          3
+
+      :param regions: An array of shape `(n_regions, 4, 2)` where each
+                      row defines a region. The format is `[[x1,y1], [x2,y2], [x3,y3], [n_12, n_13]]`.
+                      Coordinates are relative to the diffraction pattern center.
+      :type regions: np.ndarray
+      :param mask: A boolean array of shape `(n_regions, n_disks)`
+                   where a value of 1 includes the disk in the refinement and 0 excludes
+                   it. If None, all disks in all regions are included. Defaults to None.
+      :type mask: np.ndarray, optional
+      :param padding: Number of pixels to pad around the ROI, used
+                      for probe convolution. Defaults to 0.
+      :type padding: int, optional
+
+
+
+   .. py:method:: updateSimGrid()
+
+      Updates the simulation grid based on the current geometry.
+
+      This method calculates the required tilt angles for each point in the
+      sampling grid and prepares the `simGrid` attribute for the Bloch wave
+      simulation.
+
+
+
+   .. py:method:: updateExpGrid()
+      :abstractmethod:
+
+
+      Updates the experimental sampling grid and extracts intensity templates.
+
+      This method must be implemented by subclasses. It should calculate the
+      coordinates for sampling the experimental data based on the current
+      rotation, scaling, and shift parameters, and then use the interpolation
+      function to extract the intensity values (`templates`).
+
+
+
+   .. py:method:: transformDP(coordinates)
+      :abstractmethod:
+
+
+      Transforms coordinates from the ROI frame to the original DP frame.
+
+      This method must be implemented by subclasses. It should account for the
+      rotation and shifts applied to the diffraction pattern during preprocessing.
+
+      :param coordinates: An array of (row, col) coordinates in the
+                          (potentially rotated and shifted) ROI frame.
+      :type coordinates: np.ndarray
+
+
+
+   .. py:method:: calculatePixelSize()
+
+      Calculates the pixel size based on the geometric scaling factor `gl`.
+
+
+
+   .. py:method:: generateGrid(regions)
+
+      Generates a sampling grid from a set of region definitions.
+
+      For each region, it creates a grid of points by linearly interpolating
+      between the corner points.
+
+      :param regions: The region definitions, as described in `selectROI`.
+      :type regions: np.ndarray
+
+      :returns: A concatenated array of (row, col) coordinates for all
+                sampling points in all regions.
+      :rtype: np.ndarray
+
+
+
+   .. py:property:: gl
+
+      The geometric scaling factor. Recalculates grids upon modification.
+
+      :type: float
+
+
+   .. py:property:: rotation
+
+      The rotation angle in degrees. Recalculates grids upon modification.
+
+      :type: float
+
+
+   .. py:property:: templates
+
+      The extracted experimental intensity templates for the ROIs.
+
+      :type: np.ndarray
+
+
+   .. py:method:: __add__(other)
+
+      Adds two ROI objects together. Not yet implemented.
+
+
+
+.. py:class:: CBEDROI(dinfo, rotation, gx, gInclude, dpCenter, dpSize, gy=None)
+
+   Bases: :py:obj:`BaseROI`
+
+
+   A Region of Interest (ROI) class specifically for CBED patterns.
+
+   This class extends `BaseROI` to handle the specific geometry and data
+   associated with a single, large Convergent Beam Electron Diffraction pattern.
+   It manages the alignment of the experimental pattern to a simulation and
+   defines the positions of diffraction disks based on crystallographic vectors.
+
+   .. attribute:: dpCenter
+
+      The (row, col) coordinates of the (000) disk center.
+
+      :type: tuple
+
+   .. attribute:: dpSize
+
+      The (rows, cols) size of the simulation output.
+
+      :type: tuple
+
+   .. attribute:: diskshift
+
+      An array of (row, col) shifts applied individually
+      to each diffraction disk.
+
+      :type: np.ndarray
+
+   .. attribute:: gCoff
+
+      A list of tuples containing the projection coefficients of
+      each `gInclude` vector onto the `gx` and `gy` axes.
+
+      :type: list
+
+
+   .. py:attribute:: roitype
+
+
+   .. py:attribute:: dpCenter
+
+
+   .. py:attribute:: dpSize
+
+
+   .. py:attribute:: diskshift
+
+
+   .. py:attribute:: gCoff
+      :value: []
+
+
+
+   .. py:method:: initialize()
+
+      Pre-processes the CBED pattern and initializes the simulation.
+
+      This method performs the following steps:
+      1.  Rotates the experimental DP to align the systematic row horizontally.
+      2.  Runs an initial Bloch simulation to get the geometry.
+      3.  Aligns the experimental DP to the simulated DP using phase cross-correlation
+      on their Sobel-filtered edge maps.
+      4.  Crops the aligned experimental DP to match the simulation size.
+      5.  Calculates the initial pixel size.
+
+
+
+   .. py:method:: createInterp()
+
+      Creates a 2D interpolation function for the entire CBED pattern.
+
+
+
+   .. py:method:: displayROI()
+
+      Displays the pre-processed CBED pattern and the selected ROIs.
+
+      Overlays the defined ROI polygons on the horizontally-aligned experimental
+      diffraction pattern.
+
+
+
+   .. py:method:: transformDP(coordinates)
+
+      Transforms ROI coordinates back to the original, un-rotated DP frame.
+
+      This method calculates the inverse transformation, accounting for the
+      rotation and phase-correlation shift applied during initialization.
+
+      :param coordinates: An array of (row, col) coordinates in the
+                          horizontally-aligned ROI frame.
+      :type coordinates: np.ndarray
+
+      :returns: The corresponding (row, col) coordinates in the original
+                diffraction pattern.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: updateExpGrid()
+
+      Samples the experimental DP to generate intensity templates.
+
+      This method calculates the final sampling coordinates for each disk by
+      applying the geometric scaling (`gl`), rotation, global shift (`allshift`),
+      and individual disk shifts (`diskshift`). It then uses the interpolation
+      function to extract the intensity values.
+
+
+
+   .. py:method:: setTilt0(tilt, refPoint)
+
+      Sets the central tilt of the simulation based on a reference point.
+
+      This allows re-centering the simulation's tilt space (`tilt0`) to a
+      specific feature (e.g., a zone axis) identified at `refPoint` in the
+      experimental pattern.
+
+      :param tilt: The new tilt vector to be set as the center.
+      :type tilt: np.ndarray
+      :param refPoint: The (row, col) coordinates in the horizontal DP
+                       that correspond to the new `tilt`.
+      :type refPoint: tuple
+
+
+
+   .. py:method:: kt2pixel(kt)
+
+      Converts a tangential tilt vector (kt) to pixel coordinates.
+
+      :param kt: A tilt vector in the simulation's tangential plane.
+      :type kt: np.ndarray
+
+      :returns: The corresponding (row, col) pixel coordinates relative
+                to the `dpCenter` in the horizontally-aligned DP.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: pixel2exp(pixel)
+
+      Converts pixel coordinates to experimental coordinates.
+
+      :param pixel: (row, col) pixel coordinates in the horizontal
+                    diffraction pattern, relative to `dpCenter`.
+      :type pixel: np.ndarray
+
+      :returns: The corresponding coordinates in the original experimental
+                diffraction pattern space.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: getSampling()
+
+      Returns the raw sampling coordinates for debugging purposes.
+
+
+
+.. py:class:: LARBEDROI(dinfo, rotation, gx, gInclude, probe=None)
+
+   Bases: :py:obj:`BaseROI`
+
+
+   A Region of Interest (ROI) class specifically for LARBED patterns.
+
+       This class extends `BaseROI` to handle LARBED data, which consists of a
+       stack of images, one for each diffraction disk. It creates a separate
+   2D
+       interpolation function for each disk's image and its corresponding variance map.
+
+       Attributes:
+           diskshift (np.ndarray): An array of (row, col) shifts applied individually
+               to each diffraction disk.
+           indices (np.ndarray): An array of indices mapping the `gInclude` reflections
+               to the output of the Bloch wave simulation.
+           varianceMaps (np.ndarray): A stack of variance maps corresponding to the
+               diffraction pattern images.
+           interp (list): A list of interpolation functions, one for each disk image.
+           varInterp (list): A list of interpolation functions for the variance maps.
+
+
+
+   .. py:attribute:: roitype
+
+
+   .. py:attribute:: diskshift
+
+
+   .. py:attribute:: indices
+      :value: []
+
+
+
+   .. py:method:: initialize()
+
+      Initializes the simulation parameters from the LARBED `.dat` file.
+
+
+
+   .. py:method:: createInterp()
+
+      Creates interpolation functions for each disk image and variance map.
+
+
+
+   .. py:method:: matchIndex()
+
+      Matches `gInclude` reflections to simulation and experimental data indices.
+
+      This method maps the desired `gInclude` reflections to both the output
+      order of the Bloch simulation (`self.indices`) and the order of the images
+      in the experimental data stack (`dpIndex`), then reorders the `dp` and
+      `varianceMaps` arrays accordingly.
+
+
+
+   .. py:method:: displayROI()
+
+      Displays the LARBED disk images and the selected ROIs.
+
+
+
+   .. py:method:: transformDP(coordinates)
+
+      Transforms ROI coordinates back to the original, un-rotated DP frame.
+
+      :param coordinates: An array of (row, col) coordinates in the
+      :type coordinates: np.ndarray
+      :param ROI frame.:
+
+      :returns: The corresponding (row, col) coordinates in the original
+                diffraction pattern image frame.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: updateExpGrid()
+
+      Samples the LARBED images to generate intensity and variance templates.
+
+
+
+   .. py:method:: updateSimGrid()
+
+      Updates the simulation grid based on the LARBED geometry.
+
+      For LARBED, the center of the rocking pattern is assumed to be the center
+      of the image. This method calculates the tilt vectors corresponding to
+      each pixel in the ROI relative to this center.
+
+
+
+   .. py:method:: setTilt0(tilt, refPoint)
+
+      Sets the central tilt of the simulation based on a reference point.
+
+      :param tilt: The new tilt vector to be set as the center.
+      :type tilt: np.ndarray
+      :param refPoint: The (row, col) coordinates in the LARBED image
+      :type refPoint: tuple
+      :param that correspond to the new `tilt`.:
+
+
+
+   .. py:method:: getSampling()
+
+      Returns the raw sampling coordinates for debugging purposes.
+
+
+
+.. py:function:: pix2Tilt(param, pixsiz)
+
+   Converts a pixel displacement to a tilt vector in simulation units.
+
+   :param param: The Bloch simulation parameters object, containing
+   :type param: SimParams
+   :param the reciprocal lattice vectors `gg` and `gh`.:
+   :param pixsiz: The size of a pixel in reciprocal space units (e.g., Å⁻¹).
+   :type pixsiz: float
+
+   :returns: A tuple containing the tilt vectors
+             corresponding to a one-pixel displacement along the x and y axes.
+   :rtype: tuple[np.ndarray, np.ndarray]
+
+
+.. py:function:: split_array_by_lengths(A, B, axis=0)
+
+   Splits an array into subarrays of specified lengths.
+
+   :param A: The array to be split.
+   :type A: np.ndarray
+   :param B: A list of lengths for each subarray. The sum of lengths
+   :type B: list[int]
+   :param in B must equal the size of A along the specified axis.:
+   :param axis: The axis along which to split the array.
+   :type axis: int, optional
+   :param Defaults to 0.:
+
+   :returns: A list of subarrays.
+   :rtype: list[np.ndarray]
+
+   :raises ValueError: If the sum of lengths in B does not match the array size.
+
+
+.. py:function:: rotation(vec, theta)
+
+   Rotates a 2D vector by a given angle.
+
+   :param vec: The 2D vector to rotate.
+   :type vec: np.ndarray
+   :param theta: The rotation angle in radians.
+   :type theta: float
+
+   :returns: The rotated 2D vector.
+   :rtype: np.ndarray
+
+

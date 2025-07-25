@@ -1,0 +1,955 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Bloch Engine API" href="../api.html" /><link rel="prev" title="Structure Factor refinement of Si LARBED 111 systematic row" href="refinemntLARBEDSi111sys0420.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>High voltage calibration example - PyExtal 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PyExtal 0.0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">PyExtal 0.0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../architecture.html">Package Architecture</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Package Architecture</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LARBEDindex.html">Understand How to Define/Index LARBED Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ROI.html">Overview of ROI definition in pyextal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CoarseRefine.html">Coarse Refinement (Correlation based refinement)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../FineRefine.html">Fine Refientment (Intensity based Refinement)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="refinemnt_si04.html">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinemntLARBEDSi111sys0420.html">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Bloch Engine API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bloch Engine API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pyextal.blochwave.html">pyextal.blochwave</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pyextal.cbedpy.html">pyextal.cbedpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/pyextal/index.html">pyextal</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of pyextal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/Constants/index.html">pyextal.Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/LucyRichardson/index.html">pyextal.LucyRichardson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/callBloch/index.html">pyextal.callBloch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/densityMap/index.html">pyextal.densityMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/dinfo/index.html">pyextal.dinfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/gof/index.html">pyextal.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/metric/index.html">pyextal.metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/optimize/index.html">pyextal.optimize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/roi/index.html">pyextal.roi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/pyextal/symmetry/index.html">pyextal.symmetry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/notebooks/refinemnt_HVcal.ipynb.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="High-voltage-calibration-example">
+<h1>High voltage calibration example<a class="headerlink" href="#High-voltage-calibration-example" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="kn">import</span> <span class="n">farid</span><span class="p">,</span> <span class="n">sobel</span><span class="p">,</span> <span class="n">scharr</span><span class="p">,</span> <span class="n">prewitt</span><span class="p">,</span> <span class="n">roberts</span>
+<span class="kn">from</span> <span class="nn">pyextal.dinfo</span> <span class="kn">import</span> <span class="n">LARBEDDiffractionInfo</span>
+<span class="kn">from</span> <span class="nn">pyextal.roi</span> <span class="kn">import</span> <span class="n">LARBEDROI</span>
+
+<span class="kn">from</span> <span class="nn">pyextal.optimize</span> <span class="kn">import</span> <span class="n">CoarseOptimize</span><span class="p">,</span> <span class="n">FineOptimize</span>
+<span class="kn">from</span> <span class="nn">pyextal.gof</span> <span class="kn">import</span> <span class="n">Chi2</span><span class="p">,</span> <span class="n">Chi2_const</span>
+
+<span class="c1"># set the plotting colormap</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inferno&#39;</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pyextal package imported. Version: 0.0.1
+</pre></div></div>
+</div>
+<section id="load-data">
+<h2>load data<a class="headerlink" href="#load-data" title="Link to this heading">¶</a></h2>
+<p>load the off zone axis LARBED data</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111-002 holz area1/raw_stack_ri4.npy&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111-002 holz area1/deconv3_ri3_subpixel_realconvstd2.npy&quot;</span><span class="p">)</span>
+<span class="n">gindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;box/20250420/111-002 holz area1/deconv3_ri3_subpixel_realconv_g_vectors.npy&quot;</span><span class="p">)</span>
+<span class="c1"># dp = data[0]</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">21</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.image.AxesImage at 0x73cc52399410&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_3_1.png" src="../_images/notebooks_refinemnt_HVcal_3_1.png" />
+</div>
+</div>
+</section>
+<section id="initialize-diffraction-info-class">
+<h2>initialize diffraction info class<a class="headerlink" href="#initialize-diffraction-info-class" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>data: LARBED intensity</p></li>
+<li><p>thickness</p></li>
+<li><p>tiltx</p></li>
+<li><p>tilty</p></li>
+<li><p>gl</p></li>
+<li><p>.dat file</p></li>
+<li><p>gindex for LARBED</p></li>
+<li><p>variance: actually not needed here, but required for the class</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dinfo</span> <span class="o">=</span> <span class="n">LARBEDDiffractionInfo</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>  <span class="mi">1100</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">63.646</span><span class="p">,</span> <span class="s1">&#39;si110_111_002holz.dat&#39;</span><span class="p">,</span> <span class="n">gindex</span><span class="p">,</span> <span class="n">varianceMaps</span><span class="o">=</span><span class="n">variance</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="region-of-interest-parameters:">
+<h2>region of interest parameters:<a class="headerlink" href="#region-of-interest-parameters:" title="Link to this heading">¶</a></h2>
+<p>defines the region of interest for refinement</p>
+<ul class="simple">
+<li><p>rotation: relative to the xaxis set in .dat</p></li>
+<li><p>gInclude: g vector to include in the refinement</p></li>
+<li><p>gx: horizontal g vector</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">rotation</span> <span class="o">=</span> <span class="o">-</span><span class="mf">112.07</span> <span class="o">+</span><span class="mf">1.66</span>
+<span class="n">gInclude</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">gx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span> <span class="o">=</span> <span class="n">LARBEDROI</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">,</span> <span class="n">gx</span><span class="o">=</span><span class="n">gx</span><span class="p">,</span> <span class="n">gInclude</span><span class="o">=</span><span class="n">gInclude</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+include beam initialized
+group symmetry initialized
+</pre></div></div>
+</div>
+</section>
+<section id="specify-the-region-of-interest">
+<h2>specify the region of interest<a class="headerlink" href="#specify-the-region-of-interest" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">105</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">105</span><span class="p">,</span> <span class="mi">270</span><span class="p">],</span> <span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">150</span><span class="p">,</span><span class="mi">150</span><span class="p">]]]))</span>
+<span class="n">roi</span><span class="o">.</span><span class="n">displayROI</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_10_0.png" src="../_images/notebooks_refinemnt_HVcal_10_0.png" />
+</div>
+</div>
+</section>
+<section id="initialize-coarse-refine">
+<h2>initialize coarse refine<a class="headerlink" href="#initialize-coarse-refine" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>only support rectangular ROI, and only one region for coarse refine</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span> <span class="o">=</span> <span class="n">CoarseOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_12_0.png" src="../_images/notebooks_refinemnt_HVcal_12_0.png" />
+</div>
+</div>
+</section>
+<section id="define-a-customize-image-filtering-function-for-coarse-refinement">
+<h2>define a customize image filtering function for coarse refinement<a class="headerlink" href="#define-a-customize-image-filtering-function-for-coarse-refinement" title="Link to this heading">¶</a></h2>
+<p>function signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">filter_func</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param image: 2D numpy array</span>
+<span class="sd">    :param sim: if True, the image is a simulated image, otherwise it is experimental</span>
+<span class="sd">    :return: 2D numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Since experimental data and simulated data have very different ranges, it might be desirable to have different filtering for them. This is supported by the <code class="docutils literal notranslate"><span class="pre">sim</span></code> parameter.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="kn">import</span> <span class="n">meijering</span>
+
+<span class="k">def</span> <span class="nf">meij_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">meijering</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">black_ridges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">optimizeOrientationThickness</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">meij_filter</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 0.001 )
+thickness: 1129.580194918737, gl: 63.646, tiltY: -0.31703060406687156, tiltX: 0.5191950472399494
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">displayCoarseSearch</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">meij_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_16_0.png" src="../_images/notebooks_refinemnt_HVcal_16_0.png" />
+</div>
+</div>
+</section>
+<section id="redefine-ROI-and-coarse-refine">
+<h2>redefine ROI and coarse refine<a class="headerlink" href="#redefine-ROI-and-coarse-refine" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>here we only want to keep the bright field pattern for refining high voltage, as we already refined the thickness, so the dark-field rocking curve spacing is not needed</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roi</span> <span class="o">=</span> <span class="n">LARBEDROI</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">,</span> <span class="n">gx</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">gInclude</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),])</span>
+<span class="n">roi</span><span class="o">.</span><span class="n">selectROI</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">105</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">105</span><span class="p">,</span> <span class="mi">270</span><span class="p">],</span> <span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">150</span><span class="p">,</span><span class="mi">150</span><span class="p">]]]))</span>
+
+<span class="n">coarse</span> <span class="o">=</span> <span class="n">CoarseOptimize</span><span class="p">(</span><span class="n">dinfo</span><span class="o">=</span><span class="n">dinfo</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+include beam initialized
+group symmetry initialized
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_18_1.png" src="../_images/notebooks_refinemnt_HVcal_18_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">optimizeOrientationGL</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">meij_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 0.001 )
+thickness: 1129.580194918737, gl: 63.50489040498052, tiltY: -0.31703060406687156, tiltX: 0.5191950472399494
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">displayCoarseSearch</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">meij_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_20_0.png" src="../_images/notebooks_refinemnt_HVcal_20_0.png" />
+</div>
+</div>
+</section>
+<section id="optimize-high-voltage">
+<h2>optimize high voltage<a class="headerlink" href="#optimize-high-voltage" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse</span><span class="o">.</span><span class="n">optimzeHV</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">meij_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+HV: 300.56040649414064kV
+correlation: 0.19798288940777709
+HV: 300.9604064941406kV
+correlation: 0.16808618462773484
+HV: 301.6076200941406kV
+correlation: 0.3699509259463487
+HV: 301.2076200840782kV
+correlation: 0.21365249066045977
+HV: 300.80762009414065kV
+correlation: 0.1642921776118692
+HV: 300.8528734232853kV
+correlation: 0.16343406286675322
+HV: 300.85588195202956kV
+correlation: 0.1634176254043087
+HV: 300.86414461674855kV
+correlation: 0.16349430039872093
+HV: 300.8590380090216kV
+correlation: 0.1634385765381372
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 1e-05 )
+final HV: 300.85588195202956
+
+Optimization terminated successfully;
+The returned value satisfies the termination criteria
+(using xtol = 0.001 )
+thickness: 1129.580194918737, gl: 63.289405762452965, tiltY: -0.3216493693815512, tiltX: 0.5145762819252697
+</pre></div></div>
+</div>
+</section>
+<section id="we-can-plot-out-the-error-surface">
+<h2>we can plot out the error surface<a class="headerlink" href="#we-can-plot-out-the-error-surface" title="Link to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">kv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">300.2</span><span class="p">,</span><span class="mf">301.2</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">template_match</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kv</span><span class="p">:</span>
+    <span class="n">template_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coarse</span><span class="o">.</span><span class="n">HVTarget</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">coarse</span><span class="p">))</span>
+<span class="n">coarse</span><span class="o">.</span><span class="n">HVTarget</span><span class="p">(</span><span class="n">kv</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">template_match</span><span class="p">)],</span> <span class="n">coarse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+HV: 300.2kV
+correlation: 0.3580068969154303
+HV: 300.21010101010097kV
+correlation: 0.35349265483177994
+HV: 300.220202020202kV
+correlation: 0.34872787302382735
+HV: 300.230303030303kV
+correlation: 0.3442719935592098
+HV: 300.24040404040403kV
+correlation: 0.3398057559353532
+HV: 300.250505050505kV
+correlation: 0.3352727168210642
+HV: 300.26060606060605kV
+correlation: 0.33080303862331384
+HV: 300.27070707070703kV
+correlation: 0.3262885313090841
+HV: 300.2808080808081kV
+correlation: 0.3219769806676619
+HV: 300.29090909090905kV
+correlation: 0.3177224010408827
+HV: 300.3010101010101kV
+correlation: 0.31349837466019836
+HV: 300.3111111111111kV
+correlation: 0.3092920059033637
+HV: 300.3212121212121kV
+correlation: 0.30517852857527716
+HV: 300.3313131313131kV
+correlation: 0.3010602062300114
+HV: 300.34141414141413kV
+correlation: 0.297066364223743
+HV: 300.3515151515151kV
+correlation: 0.29308107008245465
+HV: 300.36161616161615kV
+correlation: 0.28929369269162464
+HV: 300.37171717171714kV
+correlation: 0.28522023463527735
+HV: 300.3818181818182kV
+correlation: 0.28139509219866665
+HV: 300.39191919191916kV
+correlation: 0.2775954431124469
+HV: 300.4020202020202kV
+correlation: 0.27392362944605897
+HV: 300.4121212121212kV
+correlation: 0.27014198864204864
+HV: 300.4222222222222kV
+correlation: 0.26652446762248216
+HV: 300.4323232323232kV
+correlation: 0.2630588029337936
+HV: 300.44242424242424kV
+correlation: 0.2595629314176
+HV: 300.4525252525252kV
+correlation: 0.2562114056654169
+HV: 300.46262626262626kV
+correlation: 0.25284411183510036
+HV: 300.47272727272724kV
+correlation: 0.24956584910428414
+HV: 300.4828282828283kV
+correlation: 0.2464113332209391
+HV: 300.49292929292926kV
+correlation: 0.24327086205946957
+HV: 300.5030303030303kV
+correlation: 0.2402060390163181
+HV: 300.5131313131313kV
+correlation: 0.23710508553733767
+HV: 300.5232323232323kV
+correlation: 0.2341637189404816
+HV: 300.5333333333333kV
+correlation: 0.23134510633413952
+HV: 300.54343434343434kV
+correlation: 0.22851926664200972
+HV: 300.5535353535353kV
+correlation: 0.22575701002220405
+HV: 300.56363636363636kV
+correlation: 0.22308881845631645
+HV: 300.57373737373734kV
+correlation: 0.22034076117542234
+HV: 300.5838383838384kV
+correlation: 0.21774151784573648
+HV: 300.59393939393937kV
+correlation: 0.21534997473297157
+HV: 300.6040404040404kV
+correlation: 0.21301339779162465
+HV: 300.6141414141414kV
+correlation: 0.21070917117077215
+HV: 300.6242424242424kV
+correlation: 0.20858837652644113
+HV: 300.6343434343434kV
+correlation: 0.20630512921122768
+HV: 300.64444444444445kV
+correlation: 0.2040963467283683
+HV: 300.6545454545454kV
+correlation: 0.20218295290269828
+HV: 300.66464646464647kV
+correlation: 0.2002901993491789
+HV: 300.67474747474745kV
+correlation: 0.19841852172724528
+HV: 300.6848484848485kV
+correlation: 0.19668326877524756
+HV: 300.69494949494947kV
+correlation: 0.19498037261100598
+HV: 300.7050505050505kV
+correlation: 0.19328849459015252
+HV: 300.7151515151515kV
+correlation: 0.19172316009361035
+HV: 300.72525252525253kV
+correlation: 0.1902566640880996
+HV: 300.7353535353535kV
+correlation: 0.18879236602006644
+HV: 300.74545454545455kV
+correlation: 0.18747159819036985
+HV: 300.75555555555553kV
+correlation: 0.18609022761079008
+HV: 300.76565656565657kV
+correlation: 0.18489855617977757
+HV: 300.77575757575755kV
+correlation: 0.18386108790670852
+HV: 300.7858585858586kV
+correlation: 0.18285438638953733
+HV: 300.7959595959596kV
+correlation: 0.18180972509619986
+HV: 300.8060606060606kV
+correlation: 0.18099879744329528
+HV: 300.8161616161616kV
+correlation: 0.1802749307969227
+HV: 300.82626262626263kV
+correlation: 0.1795369524440702
+HV: 300.8363636363636kV
+correlation: 0.17899645015764087
+HV: 300.84646464646465kV
+correlation: 0.17850194190367408
+HV: 300.85656565656564kV
+correlation: 0.17814938100473987
+HV: 300.8666666666667kV
+correlation: 0.17789400524659038
+HV: 300.87676767676766kV
+correlation: 0.1776336291331383
+HV: 300.8868686868687kV
+correlation: 0.17743746154080242
+HV: 300.8969696969697kV
+correlation: 0.1773267062466708
+HV: 300.9070707070707kV
+correlation: 0.17732052008831134
+HV: 300.9171717171717kV
+correlation: 0.17722039985152516
+HV: 300.92727272727274kV
+correlation: 0.17740639779801393
+HV: 300.9373737373737kV
+correlation: 0.1775966246100239
+HV: 300.94747474747476kV
+correlation: 0.1779231457488687
+HV: 300.95757575757574kV
+correlation: 0.17830743938030735
+HV: 300.9676767676768kV
+correlation: 0.17881855291692927
+HV: 300.97777777777776kV
+correlation: 0.17941014615089124
+HV: 300.9878787878788kV
+correlation: 0.1800055824977549
+HV: 300.9979797979798kV
+correlation: 0.18067540756661116
+HV: 301.0080808080808kV
+correlation: 0.1814648881656753
+HV: 301.0181818181818kV
+correlation: 0.18245121796077202
+HV: 301.02828282828284kV
+correlation: 0.1834607247129424
+HV: 301.0383838383838kV
+correlation: 0.18460129266117165
+HV: 301.04848484848486kV
+correlation: 0.18575966586510617
+HV: 301.05858585858584kV
+correlation: 0.186918208710928
+HV: 301.0686868686869kV
+correlation: 0.1881209880915813
+HV: 301.07878787878786kV
+correlation: 0.18949959270130512
+HV: 301.0888888888889kV
+correlation: 0.19092584676266555
+HV: 301.0989898989899kV
+correlation: 0.1924787512968873
+HV: 301.1090909090909kV
+correlation: 0.19420319238245587
+HV: 301.1191919191919kV
+correlation: 0.1958286870982059
+HV: 301.12929292929294kV
+correlation: 0.197527463730098
+HV: 301.1393939393939kV
+correlation: 0.19932511285658638
+HV: 301.14949494949497kV
+correlation: 0.20127644855611027
+HV: 301.15959595959595kV
+correlation: 0.20331492534582818
+HV: 301.169696969697kV
+correlation: 0.20539574482440448
+HV: 301.17979797979797kV
+correlation: 0.20748935866398688
+HV: 301.189898989899kV
+correlation: 0.20975267232929806
+HV: 301.2kV
+correlation: 0.21213638664924783
+HV: 300.9171717171717kV
+correlation: 0.17722039985152516
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.17722039985152516
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kv</span><span class="p">,</span> <span class="n">template_match</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x73cc3c364bd0&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_refinemnt_HVcal_25_1.png" src="../_images/notebooks_refinemnt_HVcal_25_1.png" />
+</div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../api.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Bloch Engine API</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="refinemntLARBEDSi111sys0420.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Structure Factor refinement of Si LARBED 111 systematic row</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, HCN, RB, and JMZ
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">High voltage calibration example</a><ul>
+<li><a class="reference internal" href="#load-data">load data</a></li>
+<li><a class="reference internal" href="#initialize-diffraction-info-class">initialize diffraction info class</a></li>
+<li><a class="reference internal" href="#region-of-interest-parameters:">region of interest parameters:</a></li>
+<li><a class="reference internal" href="#specify-the-region-of-interest">specify the region of interest</a></li>
+<li><a class="reference internal" href="#initialize-coarse-refine">initialize coarse refine</a></li>
+<li><a class="reference internal" href="#define-a-customize-image-filtering-function-for-coarse-refinement">define a customize image filtering function for coarse refinement</a></li>
+<li><a class="reference internal" href="#redefine-ROI-and-coarse-refine">redefine ROI and coarse refine</a></li>
+<li><a class="reference internal" href="#optimize-high-voltage">optimize high voltage</a></li>
+<li><a class="reference internal" href="#we-can-plot-out-the-error-surface">we can plot out the error surface</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

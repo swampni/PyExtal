@@ -1,0 +1,258 @@
+pyextal.dinfo
+=============
+
+.. py:module:: pyextal.dinfo
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.dinfo.BaseDiffractionInfo
+   pyextal.dinfo.CBEDDiffractionInfo
+   pyextal.dinfo.LARBEDDiffractionInfo
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseDiffractionInfo
+
+   Base class for storing diffraction information and refined results.
+
+   .. attribute:: dp
+
+      The diffraction pattern as a NumPy array of np.float32.
+
+      :type: np.ndarray
+
+   .. attribute:: thickness
+
+      Thickness of the sample in Angstroms.
+
+      :type: float
+
+   .. attribute:: tiltX
+
+      Tilt angle around the x-axis in degrees.
+
+      :type: float
+
+   .. attribute:: tiltY
+
+      Tilt angle around the y-axis in degrees.
+
+      :type: float
+
+   .. attribute:: gl
+
+      X-axis length in experimental diffraction pattern space.
+
+      :type: float
+
+   .. attribute:: datpath
+
+      Path to the .dat file containing crystal information.
+
+      :type: str
+
+
+   .. py:attribute:: dp
+      :type:  numpy.ndarray[numpy.float32]
+
+
+   .. py:attribute:: thickness
+      :type:  float
+
+
+   .. py:attribute:: tiltX
+      :type:  float
+
+
+   .. py:attribute:: tiltY
+      :type:  float
+
+
+   .. py:attribute:: gl
+      :type:  float
+
+
+   .. py:attribute:: datpath
+      :type:  str
+
+
+   .. py:method:: __post_init__()
+
+      Initializes additional attributes after the dataclass is created.
+
+
+
+   .. py:property:: includeBeam
+
+      Gets the list of Miller indices for beams included in the simulation.
+
+
+   .. py:method:: updateSF(beam: tuple, value: numpy.ndarray[numpy.float32])
+
+      Updates the structure factor for a given beam and its symmetric equivalents.
+
+      :param beam: The Miller index (h, k, l) of the beam to update.
+      :type beam: tuple
+      :param value: A 4-element NumPy array containing the new structure
+                    factor values.
+      :type value: np.ndarray
+
+      :raises ValueError: If the provided `value` is not a 4-element NumPy array.
+
+
+
+   .. py:method:: getSF(beam: tuple) -> numpy.ndarray
+
+      Retrieves the structure factor for a given beam.
+
+      If the beam is part of a symmetry group, the group's structure factor is
+      returned. Otherwise, it looks up the Independent Atom Model (IAM) value.
+
+      :param beam: The Miller index (h, k, l) of the beam.
+      :type beam: tuple
+
+      :returns: The structure factor of the beam.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: getAllSF() -> tuple[numpy.ndarray, numpy.ndarray]
+
+      Retrieves all unique structure factors and their corresponding beams.
+
+      :returns:
+
+                A tuple containing:
+                    - An array of all unique structure factors.
+                    - An array of one representative beam (h, k, l) for each factor.
+      :rtype: tuple[np.ndarray, np.ndarray]
+
+
+
+   .. py:method:: save(path: str | pathlib.Path)
+
+      Saves the diffraction information to a file.
+
+      Note: This method is not yet implemented.
+
+      :param path: The path to the file where the data will be saved.
+      :type path: str | Path
+
+
+
+   .. py:method:: save_hkl(path: str | pathlib.Path, glen: float = 5.0, minOutput: float = 0.001) -> None
+
+      Saves structure factors to a .hkl file for VESTA Fourier synthesis.
+
+      :param path: Path to the output .hkl file.
+      :type path: str | Path
+      :param glen: Maximum length of the g-vector to include,
+                   in inverse Angstroms. Defaults to 5.0.
+      :type glen: float, optional
+      :param minOutput: The minimum IAM structure factor magnitude
+                        to be included in the output file. Defaults to 1e-3.
+      :type minOutput: float, optional
+
+
+
+.. py:class:: CBEDDiffractionInfo
+
+   Bases: :py:obj:`BaseDiffractionInfo`
+
+
+   Stores and processes Convergent Beam Electron Diffraction (CBED) data.
+
+   This class extends `BaseDiffractionInfo` with attributes and methods specific
+   to CBED experiments, including detector parameters and background correction.
+
+   .. attribute:: dtpar
+
+      Detector DQE parameters [varB, delta, A, g, m].
+
+      :type: list[float]
+
+   .. attribute:: mtf
+
+      The Modulation Transfer Function as a NumPy array.
+
+      :type: np.ndarray
+
+   .. attribute:: background
+
+      Background level of the diffraction pattern.
+
+      :type: float
+
+   .. attribute:: numIter
+
+      Number of iterations for Lucy-Richardson
+      deconvolution. Defaults to 25.
+
+      :type: int, optional
+
+
+   .. py:attribute:: dtpar
+      :type:  list[float]
+
+
+   .. py:attribute:: mtf
+      :type:  numpy.ndarray[numpy.float32]
+
+
+   .. py:attribute:: background
+      :type:  float
+
+
+   .. py:attribute:: numIter
+      :type:  int
+      :value: 25
+
+
+
+.. py:class:: LARBEDDiffractionInfo
+
+   Bases: :py:obj:`BaseDiffractionInfo`
+
+
+   Stores and processes Large Angle Rocking Beam Electron Diffraction (LARBED) data.
+
+   This class extends `BaseDiffractionInfo` with attributes specific to LARBED
+   experiments, such as g-vector indices and variance maps.
+
+   .. attribute:: gindex
+
+      An array of g-vector indices.
+
+      :type: np.ndarray
+
+   .. attribute:: varianceMaps
+
+      Variance maps associated with the
+      diffraction pattern. If not provided, it defaults to a copy of the
+      diffraction pattern.
+
+      :type: np.ndarray, optional
+
+
+   .. py:attribute:: gindex
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: varianceMaps
+      :type:  numpy.ndarray[numpy.float32]
+      :value: None
+
+
+
+   .. py:method:: __post_init__()
+
+      Initializes variance maps if they are not provided.
+
+
+

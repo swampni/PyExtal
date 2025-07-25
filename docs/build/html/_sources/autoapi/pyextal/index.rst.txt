@@ -1,0 +1,24 @@
+pyextal
+=======
+
+.. py:module:: pyextal
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/pyextal/Constants/index
+   /autoapi/pyextal/LucyRichardson/index
+   /autoapi/pyextal/callBloch/index
+   /autoapi/pyextal/densityMap/index
+   /autoapi/pyextal/dinfo/index
+   /autoapi/pyextal/gof/index
+   /autoapi/pyextal/metric/index
+   /autoapi/pyextal/optimize/index
+   /autoapi/pyextal/roi/index
+   /autoapi/pyextal/symmetry/index
+
+

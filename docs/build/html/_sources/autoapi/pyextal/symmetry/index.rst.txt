@@ -1,0 +1,179 @@
+pyextal.symmetry
+================
+
+.. py:module:: pyextal.symmetry
+
+.. autoapi-nested-parse::
+
+   Symmetry Operations and Grouping.
+
+   This module provides tools for handling crystallographic symmetry operations.
+   It includes a class for grouping symmetry-equivalent reflections and functions
+   for applying symmetry operations to find all equivalent reflections for a given
+   vector. The functionalities rely on the `spgr` common block from the Fortran
+   Bloch wave code, which must be initialized before use.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.symmetry.GroupSymmetry
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.symmetry.appliedSymmetry
+   pyextal.symmetry.getSymmetry
+
+
+Module Contents
+---------------
+
+.. py:class:: GroupSymmetry(beams)
+
+   Groups symmetry-equivalent beams and manages their relationships.
+
+   This class takes a list of beams (reflections) and groups them based on the
+   crystal's symmetry operations. It creates a mapping from each beam to its
+   symmetry group and stores the positions of these beams in the `Ugh` matrix
+   used in Bloch wave calculations.
+
+   .. attribute:: centro
+
+      True if the crystal structure is centrosymmetric.
+
+      :type: bool
+
+   .. attribute:: beamGroup
+
+      A list of lists, where each inner list contains a group
+      of symmetry-equivalent beams.
+
+      :type: list
+
+   .. attribute:: beam2Group
+
+      A mapping from each beam (tuple) to its group
+      index in `beamGroup`.
+
+      :type: OrderedDict
+
+   .. attribute:: Ugh_dict
+
+      A dictionary mapping a group index to a list of
+      (i, j) positions in the `Ugh` matrix.
+
+      :type: defaultdict
+
+   .. attribute:: gp
+
+      The symmetry operations from the `spgr` module.
+
+      :type: np.ndarray
+
+   .. attribute:: phaseDict
+
+      A dictionary to store phase factors for each beam.
+
+      :type: dict
+
+
+   .. py:attribute:: centro
+
+
+   .. py:attribute:: beamGroup
+      :value: []
+
+
+
+   .. py:attribute:: beam2Group
+
+
+   .. py:attribute:: Ugh_dict
+
+
+   .. py:attribute:: beamDict
+
+
+   .. py:attribute:: gp
+
+
+   .. py:attribute:: phaseDict
+
+
+   .. py:method:: getGroup(beam)
+
+      Retrieves the symmetry group for a given beam.
+
+      :param beam: The Miller index (h, k, l) of the beam.
+      :type beam: tuple
+
+      :returns: A list of all beams that are symmetry-equivalent to the input beam.
+      :rtype: list
+
+
+
+   .. py:method:: getPos(beam)
+
+      Yields the Ugh matrix positions for a given beam's symmetry group.
+
+      :param beam: The Miller index (h, k, l) of the beam.
+      :type beam: tuple
+
+      :Yields: *tuple[int, int]* -- The (row, column) indices in the Ugh matrix for each
+               member of the beam's symmetry group.
+
+
+
+.. py:function:: appliedSymmetry(gg, sf=None)
+
+   Calculates symmetry-equivalent reflections and their structure factors.
+
+   This function applies the crystal's symmetry operations to a given reflection
+   vector `gg` to find all unique equivalent reflections. If structure factors
+   `sf` are provided, it also calculates the corresponding structure factors for
+   each equivalent reflection, including phase shifts.
+
+   .. note::
+
+      The `spgr` module from the Fortran code must be initialized
+      (e.g., by running a simulation) before calling this function.
+
+   :param gg: A 1D sequence (list, tuple, or np.ndarray) representing
+              the reflection vector (h, k, l).
+   :type gg: array_like
+   :param sf: A 1D NumPy array of shape (4,) containing the
+   :type sf: np.ndarray, optional
+   :param structure factor components [abs:
+   :type structure factor components [abs: U), phase(U), abs(UA), phase(UA
+   :param input reflection `gg`. Defaults to None.:
+
+   :returns:
+
+                 - If `sf` is None, returns a list of tuples, where each tuple is a
+                   symmetry-equivalent reflection (h, k, l).
+                 - If `sf` is not None, returns a tuple `(ggs, sfs)`, where `ggs` is
+                   the list of equivalent reflections and `sfs` is a 2D NumPy array
+                   of shape `(n_equivalent, 4)` containing the transformed structure
+                   factors.
+   :rtype: list[tuple] | tuple[list[tuple], np.ndarray]
+
+   :raises ValueError: If the `spgr.gp` symmetry parameters are not initialized or
+       if the input `gg` is not a 1D sequence.
+
+
+.. py:function:: getSymmetry()
+
+   Retrieves the active symmetry operations.
+
+   :returns: A 2D NumPy array containing the symmetry operations
+             (rotation matrices and translation vectors) from the `spgr` common block.
+   :rtype: np.ndarray
+
+

@@ -1,0 +1,724 @@
+pyextal.callBloch
+=================
+
+.. py:module:: pyextal.callBloch
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.callBloch.Data
+   pyextal.callBloch.SimParams
+   pyextal.callBloch.DataCollector
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.callBloch.updateUgh
+   pyextal.callBloch.updateSymUgh
+   pyextal.callBloch.symmetrizeVHKL
+   pyextal.callBloch.lookupSF
+   pyextal.callBloch.lookupReflections
+   pyextal.callBloch.bloch
+   pyextal.callBloch.bloch_parse
+   pyextal.callBloch.tilt_run
+   pyextal.callBloch.bloch_run
+   pyextal.callBloch.simulate
+   pyextal.callBloch.LARBED
+   pyextal.callBloch.LARBED_tilt
+   pyextal.callBloch.terminate
+   pyextal.callBloch.calibrateLARBED
+   pyextal.callBloch.calibrateCBED
+   pyextal.callBloch.wavelength
+   pyextal.callBloch.tilt
+   pyextal.callBloch.tiltUnit
+   pyextal.callBloch.e2Xray
+
+
+Module Contents
+---------------
+
+.. py:class:: Data
+
+   Data class to store the data of each tilt calculated by the bloch engine.
+
+   .. attribute:: ndiag
+
+      Number of diagonal elements.
+
+      :type: int
+
+   .. attribute:: itilt
+
+      (3,) tilt vector.
+
+      :type: tuple
+
+   .. attribute:: ix
+
+      x index of the tilt.
+
+      :type: int
+
+   .. attribute:: iy
+
+      y index of the tilt.
+
+      :type: int
+
+   .. attribute:: gamma
+
+      Eigenvalues.
+
+      :type: np.ndarray
+
+   .. attribute:: eigenvector
+
+      Eigenvectors.
+
+      :type: np.ndarray
+
+   .. attribute:: cinv
+
+      1st column of the inverse of the eigenvectors.
+
+      :type: np.ndarray
+
+
+   .. py:attribute:: ndiag
+      :type:  int
+
+
+   .. py:attribute:: itilt
+      :type:  tuple
+
+
+   .. py:attribute:: ix
+      :type:  int
+
+
+   .. py:attribute:: iy
+      :type:  int
+
+
+   .. py:attribute:: gamma
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: eigenvector
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: cinv
+      :type:  numpy.ndarray
+
+
+   .. py:property:: vr
+
+      Real part of the eigenvalues.
+
+
+   .. py:property:: vi
+
+      Imaginary part of the eigenvalues.
+
+
+   .. py:property:: ccr
+
+      Real part of the eigenvectors.
+
+
+   .. py:property:: cci
+
+      Imaginary part of the eigenvectors.
+
+
+.. py:class:: SimParams
+
+   Data class to store the data and parameters from the simulation.
+
+   .. attribute:: ntilt
+
+      Number of tilts.
+
+      :type: int
+
+   .. attribute:: nout
+
+      Number of reflections.
+
+      :type: int
+
+   .. attribute:: nx
+
+      Half width of sampling region.
+
+      :type: int
+
+   .. attribute:: hklout
+
+      (3, nout) np.int32 np.array of reflection indices.
+
+      :type: np.ndarray
+
+   .. attribute:: disks
+
+      Disk radius.
+
+      :type: float
+
+   .. attribute:: alpha
+
+      Angle incidence.
+
+      :type: float
+
+   .. attribute:: tilt0
+
+      (3,) np.float32 np.array of incident tilt.
+
+      :type: np.ndarray
+
+   .. attribute:: gg
+
+      (3,) np.float32 np.array horizontal reciprocal vector of dp.
+
+      :type: np.ndarray
+
+   .. attribute:: gh
+
+      (3,) np.float32 np.array vertical reciprocal vector of dp.
+
+      :type: np.ndarray
+
+   .. attribute:: gmx
+
+      (3, 3) np.float32 np.array of gram tensor (gram matrix).
+
+      :type: np.ndarray
+
+   .. attribute:: gmxr
+
+      (3, 3) np.float32 np.array of inverse of gram tensor (gram matrix).
+
+      :type: np.ndarray
+
+   .. attribute:: snorm
+
+      (3,) np.float32 np.array of surface normal.
+
+      :type: np.ndarray
+
+   .. attribute:: bigK
+
+      Magnitude of refraction adjusted wave vector.
+
+      :type: float
+
+   .. attribute:: tilts
+
+      List of Data class, each element is the data of each tilt.
+
+      :type: list
+
+
+   .. py:attribute:: ntilt
+      :type:  int
+
+
+   .. py:attribute:: nout
+      :type:  int
+
+
+   .. py:attribute:: nx
+      :type:  int
+
+
+   .. py:attribute:: hklout
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: disks
+      :type:  float
+
+
+   .. py:attribute:: alpha
+      :type:  float
+
+
+   .. py:attribute:: tilt0
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: gg
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: gh
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: gmx
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: gmxr
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: snorm
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: bigK
+      :type:  float
+
+
+   .. py:attribute:: tilts
+      :type:  list
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:method:: __call__(i1, itilt)
+
+      Update blochwave parameters and pass data to cbedp common block.
+      callback for bloch engine intensity calculation! DO NOT CALL THIS DIRECTLY!
+      :param i1: 1-based index for the tilt.
+      :type i1: int
+      :param itilt: Array to be updated with the x, y index of the tilt.
+      :type itilt: np.ndarray
+
+      :returns: Updated itilt array.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: larbedCall(i1)
+
+      Pass data to cbedp common block for LARBED calculation.
+      Callback for bloch engine intensity calculation! DO NOT CALL THIS DIRECTLY!
+
+      :param i1: 1-based index for the tilt.
+      :type i1: int
+
+      :returns: The tilt vector.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: simParam()
+
+      Return the simulation parameters as a tuple.
+
+      :returns: A tuple containing the simulation parameters.
+      :rtype: tuple
+
+
+
+   .. py:method:: store(filename='simParam.h5')
+
+      Store the simulation parameters to a file in HDF5 format.
+
+      :param filename: The name of the file to save to.
+                       Defaults to 'simParam.h5'.
+      :type filename: str, optional
+
+
+
+.. py:class:: DataCollector
+
+   Data collector class to retrieve data as a callback function.
+
+
+   .. py:attribute:: tilts
+      :value: []
+
+
+
+   .. py:method:: __call__(ndiag, itilt, ix, iy, nout, ib=None)
+
+      Callback function to collect data from bloch engine diagonalization.
+
+      :param ndiag: Number of diagonal elements.
+      :type ndiag: int
+      :param itilt: The tilt vector.
+      :type itilt: tuple
+      :param ix: The x index of the tilt.
+      :type ix: int
+      :param iy: The y index of the tilt.
+      :type iy: int
+      :param nout: The number of reflections.
+      :type nout: int
+      :param ib: Beam indices. Defaults to None.
+      :type ib: np.ndarray, optional
+
+      :returns: Always returns 0.
+      :rtype: int
+
+
+
+.. py:function:: updateUgh(reflections, values, beamDict=None)
+
+   Update the Ugh matrix in the common block with the given values.
+
+   :param reflections: List of tuples (nref,) for reflection indices,
+                       e.g., [(1, 1, 1), (1, 1, 0)].
+   :type reflections: list
+   :param values: (nref, 4) or (nref, 2) array of structure factor
+                  values. For (nref, 4): Ugh, phase, U'gh, phase. Ugh should always
+                  be positive. For (nref, 2): Ugh, U'gh.
+   :type values: np.ndarray
+   :param beamDict: Dictionary mapping beam pairs to their
+                    positions in the Ugh matrix. Defaults to None.
+   :type beamDict: dict, optional
+
+
+.. py:function:: updateSymUgh(reflections, values, sym=None)
+
+   Update the Ugh matrix with given values, including all symmetry-related beams.
+
+   :param reflections: List of tuples (nref,) for reflection indices,
+                       e.g., [(1, 1, 1), (1, 1, 0)].
+   :type reflections: list
+   :param values: (nref, 4) or (nref, 2) array of structure factor
+                  values. For (nref, 4): Ugh, phase, U'gh, phase. For (nref, 2): Ugh, U'gh.
+   :type values: np.ndarray
+   :param sym: GroupSymmetry class instance for symmetry-related
+               beams. Defaults to None.
+   :type sym: GroupSymmetry, optional
+
+
+.. py:function:: symmetrizeVHKL()
+
+   Symmetrize the structure factor adjusted in the .dat file.
+
+
+.. py:function:: lookupSF(reflections, IAM=False)
+
+   Look up the default structure factor for given reflections.
+   The default values are from Bird and King, Acta Cryst. A 46 (1990) 202.
+
+   :param reflections: List of tuples (nref,) for reflection indices,
+                       e.g., [(1, 1, 1), (1, 1, 0)].
+   :type reflections: list
+   :param IAM: If True, use the independent atom model (IAM) for
+               all structure factors. If False, return the adjusted structure
+               factor from the .dat file. Defaults to False.
+   :type IAM: bool, optional
+
+   :returns: (nref, 4) array of structure factor values
+             (Ugh, phase (deg), U'gh, phase (deg)).
+   :rtype: np.ndarray
+
+
+.. py:function:: lookupReflections()
+
+   Look up all non-zero reflections.
+
+   :returns: A list of all reflections excluding the (0, 0, 0) beam.
+   :rtype: list
+
+
+.. py:function:: bloch(fname, t_x=0, t_y=0, reflections=None, values=None, HKL=False, subaper=0, subnx=None, subny=None, pixsiz=0, ncores=1, xaxis=None, dryrun=False)
+
+   Simulate the diffraction pattern point-to-point (no interpolation).
+
+   :param fname: Path to the .dat file.
+   :type fname: str
+   :param t_x: Tilt in the x direction (deg). Defaults to 0.
+   :type t_x: float, optional
+   :param t_y: Tilt in the y direction (deg). Defaults to 0.
+   :type t_y: float, optional
+   :param reflections: List of tuples (nref,) for reflection to adjust
+                       indices, e.g., [(1, 1, 1), (1, 1, 0)]. Defaults to None.
+   :type reflections: list, optional
+   :param values: (4, nref) array of structure factor
+                  values (Ugh, phase (deg), U'gh, phase (deg)) to adjust. Defaults to None.
+   :type values: np.ndarray, optional
+   :param HKL: If True, return the hkl indices of the included
+               beams. Defaults to False.
+   :type HKL: bool, optional
+   :param subaper: Aperture function.
+                   0 or None: No aperture.
+                   1: Circular aperture of input size nx (Standard CBED).
+                   2: Custom circular aperture of radius (subnx1+subnx2).
+                   3: Custom rectangular aperture of shape (subnx),(subny).
+                   Defaults to 0.
+   :type subaper: int, optional
+   :param subnx: Dependent on subaper parameter. Defaults to None.
+   :type subnx: int, optional
+   :param subny: Dependent on subaper parameter. Defaults to None.
+   :type subny: int, optional
+   :param pixsiz: Pixel size in diffraction space. Defaults to 0.
+   :type pixsiz: float, optional
+   :param ncores: Number of cores to use. Defaults to 1.
+   :type ncores: int, optional
+   :param xaxis: (3,) array for the x-axis of the
+                 diffraction space. Defaults to None.
+   :type xaxis: np.ndarray, optional
+   :param dryrun: If True, perform a dry run to estimate memory
+                  usage without running the full simulation. Defaults to False.
+   :type dryrun: bool, optional
+
+   :returns: SimParams object containing simulation results, or
+             estimated memory usage if dryrun is True.
+             np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+             reflection indices.
+   :rtype: SimParams or float
+
+
+.. py:function:: bloch_parse(fname, t_x=0, t_y=0, HKL=False)
+
+   Parse the .dat file.
+
+   :param fname: Path to the .dat file.
+   :type fname: str
+   :param t_x: Tilt in the x direction (deg). Defaults to 0.
+   :type t_x: float, optional
+   :param t_y: Tilt in the y direction (deg). Defaults to 0.
+   :type t_y: float, optional
+   :param HKL: If True, return the hkl indices of the included
+   :type HKL: bool, optional
+   :param beams. Defaults to False.:
+
+   :returns: An empty SimParams object with simulation info.
+             np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+             reflection indices.
+   :rtype: SimParams
+
+
+.. py:function:: tilt_run(param, tilts, indices=None, ncores=1, HKL=False)
+
+   Run the simulation for a given set of tilts. The eigenvalue/vectors are stored in blochwave.bloch_module
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param tilts: (n, 3) array of tilt vectors.
+   :type tilts: np.ndarray
+   :param indices: (n,) array of indices. Defaults to None.
+   :type indices: np.ndarray, optional
+   :param ncores: Number of cores to use. Defaults to 1.
+   :type ncores: int, optional
+   :param HKL: If True, return the hkl indices of the included
+   :type HKL: bool, optional
+   :param beams. Defaults to False.:
+
+   :returns: The updated SimParams object.
+             np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+             reflection indices.
+   :rtype: SimParams
+
+
+.. py:function:: bloch_run(param, HKL=False, subaper=0, subnx=None, subny=None, pixsiz=0, ncores=1, xaxis=None)
+
+   Construct a tilt net and run the simulation.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param HKL: If True, return the hkl indices of the included
+               beams. Defaults to False.
+   :type HKL: bool, optional
+   :param subaper: Aperture function.
+                   0 or None: No aperture.
+                   1: Circular aperture of input size nx (Standard CBED).
+                   2: Custom circular aperture of radius (subnx1+subnx2).
+                   3: Custom rectangular aperture of shape (subnx),(subny).
+                   Defaults to 0.
+   :type subaper: int, optional
+   :param subnx: Dependent on subaper parameter. Defaults to None.
+   :type subnx: int, optional
+   :param subny: Dependent on subaper parameter. Defaults to None.
+   :type subny: int, optional
+   :param pixsiz: Pixel size in diffraction space. Defaults to 0.
+   :type pixsiz: float, optional
+   :param ncores: Number of cores to use. Defaults to 1.
+   :type ncores: int, optional
+   :param xaxis: (3,) array for the x-axis of the
+   :type xaxis: np.ndarray, optional
+   :param diffraction space. Defaults to None.:
+
+   :returns: The updated SimParams object.
+             np.ndarray, optional: If HKL is True, returns a (nbeams, 3) array of
+             reflection indices.
+   :rtype: SimParams
+
+
+.. py:function:: simulate(fname, thickness, displayParam, t_x=0, t_y=0, reflections=None, values=None, HKL=False, subaper=0, subnx=None, subny=None, pixsiz=0, ncores=1, dryrun=False)
+
+   Wrapper for bloch_run and cbedp to simulate and return the diffraction pattern.
+
+   :param fname: Path to the .dat file.
+   :type fname: str
+   :param thickness: Thickness of the sample in Angstroms.
+   :type thickness: float
+   :param displayParam: List of parameters for display:
+                        [x0, y0, gl, xs, ys, theta].
+   :type displayParam: list
+   :param t_x: Tilt in the x direction (deg). Defaults to 0.
+   :type t_x: float, optional
+   :param t_y: Tilt in the y direction (deg). Defaults to 0.
+   :type t_y: float, optional
+   :param reflections: List of tuples (nref,) for reflection
+                       indices, e.g., [(1, 1, 1), (1, 1, 0)]. Defaults to None.
+   :type reflections: list, optional
+   :param values: (4, nref) array of structure factor
+                  values (Ugh, phase (deg), U'gh, phase (deg)). Defaults to None.
+   :type values: np.ndarray, optional
+   :param HKL: If True, return the hkl indices of the included
+               beams. Defaults to False.
+   :type HKL: bool, optional
+   :param subaper: Aperture function.
+                   0 or None: No aperture.
+                   1: Circular aperture of input size nx (Standard CBED).
+                   2: Custom circular aperture of radius (subnx1+subnx2).
+                   3: Custom rectangular aperture of shape (subnx),(subny).
+                   Defaults to 0.
+   :type subaper: int, optional
+   :param subnx: Dependent on subaper parameter. Defaults to None.
+   :type subnx: int, optional
+   :param subny: Dependent on subaper parameter. Defaults to None.
+   :type subny: int, optional
+   :param pixsiz: Pixel size in diffraction space. Defaults to 0.
+   :type pixsiz: float, optional
+   :param ncores: Number of cores to use. Defaults to 1.
+   :type ncores: int, optional
+   :param dryrun: If True, perform a dry run to estimate memory
+   :type dryrun: bool, optional
+   :param usage. Defaults to False.:
+
+   :returns: (xs, ys) array of the diffraction pattern.
+             SimParams: SimParams object with simulation parameters.
+             np.ndarray, optional: If HKL is True, returns a (nout, 3) array of
+             reflection indices.
+   :rtype: np.ndarray
+
+
+.. py:function:: LARBED(param, thickness, height=None, width=None, tiltmap=False)
+
+   Calculate the LARBED pattern for a given thickness.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param thickness: Thickness of the sample in Angstroms.
+                     Can be a single int or a (ntilt,) array.
+   :type thickness: int or np.ndarray
+   :param height: Height of the diffraction pattern. Defaults to None.
+   :type height: int, optional
+   :param width: Width of the diffraction pattern. Defaults to None.
+   :type width: int, optional
+   :param tiltmap: If True, return the tilt map. Defaults to False.
+   :type tiltmap: bool, optional
+
+   :returns: (nout, height, width) array of diffraction patterns.
+             np.ndarray, optional: If tiltmap is True, returns a (nx, nx, 3)
+             array of the tilt map.
+   :rtype: np.ndarray
+
+
+.. py:function:: LARBED_tilt(param, thickness, nout)
+
+   Calculate the LARBED pattern for a given thickness with eigenvector/values store in blochwave.bloch_module.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param thickness: Thickness of the sample in Angstroms.
+                     Can be a single int or a (ntilt,) array.
+   :type thickness: int or np.ndarray
+   :param nout: Number of output points.
+   :type nout: int
+
+   :returns: (nout, ntilt) array of diffraction patterns.
+   :rtype: np.ndarray
+
+
+.. py:function:: terminate()
+
+   Deallocate the arrays in the blochwave module.
+
+
+.. py:function:: calibrateLARBED(param, gl)
+
+   Calibrate LARBED parameters.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param gl: Geometric scaling factor.
+   :type gl: float
+
+   :returns: A tuple containing the side length and scale factor.
+   :rtype: tuple
+
+
+.. py:function:: calibrateCBED(dp, center, centerTiltx, centerTilty, gl, param)
+
+   Calibrate CBED parameters.
+
+   :param dp: The diffraction pattern.
+   :type dp: np.ndarray
+   :param center: The center of the diffraction pattern.
+   :type center: tuple
+   :param centerTiltx: The tilt in the x direction at the center.
+   :type centerTiltx: float
+   :param centerTilty: The tilt in the y direction at the center.
+   :type centerTilty: float
+   :param gl: Geometric scaling factor.
+   :type gl: float
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+
+   :returns: A tuple containing the x and y tilt maps.
+   :rtype: tuple
+
+
+.. py:function:: wavelength()
+
+   Return the wavelength of the electron beam in Angstroms.
+
+   :returns: The wavelength in Angstroms.
+   :rtype: float
+
+
+.. py:function:: tilt(param, t_x, t_y)
+
+   Calculate the tilt vector for a given tilt in x and y directions.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+   :param t_x: Tilt in the x direction (deg).
+   :type t_x: float
+   :param t_y: Tilt in the y direction (deg).
+   :type t_y: float
+
+
+.. py:function:: tiltUnit(param)
+
+   Calculate the tilt unit vectors.
+
+   :param param: SimParams object with simulation parameters.
+   :type param: SimParams
+
+   :returns: A tuple containing the tilt unit vectors in the x and y directions.
+   :rtype: tuple
+
+
+.. py:function:: e2Xray(beam: tuple, getESF: callable) -> numpy.ndarray
+
+   Calculate the X-ray scattering factor for a given beam.
+
+   :param beam: The beam for which the X-ray scattering factor is to be
+                calculated.
+   :type beam: tuple
+   :param getESF: A function to get the electron scattering factor.
+   :type getESF: callable
+
+   :returns: The X-ray scattering factor for the given beam.
+   :rtype: np.ndarray
+
+

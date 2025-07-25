@@ -1,0 +1,1281 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="pyextal.roi" href="../roi/index.html" /><link rel="prev" title="pyextal.metric" href="../metric/index.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>pyextal.optimize - PyExtal 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">PyExtal 0.0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">PyExtal 0.0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Getting started with PyExtal</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../architecture.html">Package Architecture</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Package Architecture</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../LARBEDindex.html">Understand How to Define/Index LARBED Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration.html">Input <code class="docutils literal notranslate"><span class="pre">.dat</span></code> File Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROI.html">Overview of ROI definition in pyextal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CoarseRefine.html">Coarse Refinement (Correlation based refinement)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../FineRefine.html">Fine Refientment (Intensity based Refinement)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemnt_si04.html">PyExtal example for CBED refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemntLARBEDSi111sys0420.html">Structure Factor refinement of Si LARBED 111 systematic row</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/refinemnt_HVcal.html">High voltage calibration example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Bloch Engine API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bloch Engine API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../generated/pyextal.blochwave.html">pyextal.blochwave</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../generated/pyextal.cbedpy.html">pyextal.cbedpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">pyextal</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of pyextal</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../Constants/index.html">pyextal.Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../LucyRichardson/index.html">pyextal.LucyRichardson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../callBloch/index.html">pyextal.callBloch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../densityMap/index.html">pyextal.densityMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dinfo/index.html">pyextal.dinfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gof/index.html">pyextal.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metric/index.html">pyextal.metric</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">pyextal.optimize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../roi/index.html">pyextal.roi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../symmetry/index.html">pyextal.symmetry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../_sources/autoapi/pyextal/optimize/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-pyextal.optimize">
+<span id="pyextal-optimize"></span><h1>pyextal.optimize<a class="headerlink" href="#module-pyextal.optimize" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.optimize.CoarseOptimize" title="pyextal.optimize.CoarseOptimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoarseOptimize</span></code></a></p></td>
+<td><p>Class for coarse optimization of thickness, orientation, and gl.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyextal.optimize.FineOptimize" title="pyextal.optimize.FineOptimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FineOptimize</span></code></a></p></td>
+<td><p>Class for fine optimization of the structure factor.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyextal.optimize.voigt_2d" title="pyextal.optimize.voigt_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">voigt_2d</span></code></a>(sigma, gamma)</p></td>
+<td><p>Generates a 2D Voigt profile.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyextal.optimize.</span></span><span class="sig-name descname"><span class="pre">CoarseOptimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo" title="pyextal.dinfo.BaseDiffractionInfo"><span class="pre">pyextal.dinfo.BaseDiffractionInfo</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../roi/index.html#pyextal.roi.BaseROI" title="pyextal.roi.BaseROI"><span class="pre">pyextal.roi.BaseROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">searchRadius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize" title="Link to this definition">¶</a></dt>
+<dd><p>Class for coarse optimization of thickness, orientation, and gl.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.dinfo">
+<span class="sig-name descname"><span class="pre">dinfo</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.dinfo" title="Link to this definition">¶</a></dt>
+<dd><p>Diffraction information object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo" title="pyextal.dinfo.BaseDiffractionInfo">BaseDiffractionInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.param">
+<span class="sig-name descname"><span class="pre">param</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.param" title="Link to this definition">¶</a></dt>
+<dd><p>Bloch simulation from dinfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../callBloch/index.html#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.roi">
+<span class="sig-name descname"><span class="pre">roi</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.roi" title="Link to this definition">¶</a></dt>
+<dd><p>The region of interest object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../roi/index.html#pyextal.roi.BaseROI" title="pyextal.roi.BaseROI">BaseROI</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.thickness">
+<span class="sig-name descname"><span class="pre">thickness</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.thickness" title="Link to this definition">¶</a></dt>
+<dd><p>The sample thickness from dinfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.gl">
+<span class="sig-name descname"><span class="pre">gl</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.gl" title="Link to this definition">¶</a></dt>
+<dd><p>geometric scaling factor from dinfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.indices" title="Link to this definition">¶</a></dt>
+<dd><p>List of indices matching reflections to the exitwave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.exitwave">
+<span class="sig-name descname"><span class="pre">exitwave</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.exitwave" title="Link to this definition">¶</a></dt>
+<dd><p>The simulated exitwave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.side">
+<span class="sig-name descname"><span class="pre">side</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.side" title="Link to this definition">¶</a></dt>
+<dd><p>The side length of the simulation used for tilt mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.scale_factor">
+<span class="sig-name descname"><span class="pre">scale_factor</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.scale_factor" title="Link to this definition">¶</a></dt>
+<dd><p>The scale factor from LARBED calibration between simulation and experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.templates">
+<span class="sig-name descname"><span class="pre">templates</span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.templates" title="Link to this definition">¶</a></dt>
+<dd><p>The experimental templates extracted from the ROI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">dinfo</span></span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">param</span></span><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">roi</span></span><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">thickness</span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">gl</span></span><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">indices</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">exitwave</span></span><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">templates</span></span><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeOrientationGeometry">
+<span class="sig-name descname"><span class="pre">optimizeOrientationGeometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetValue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationGeometry" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes a single parameter (thickness or gl) and the sample orientation.</p>
+<p>This method uses <cite>scipy.optimize.minimize_scalar</cite> to find the optimal
+value for a given target function (e.g., thickness or gl). After finding
+the best parameter value, it determines the optimal sample tilt by finding
+the location of the maximum correlation in the template matching result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>Callable</em>) – The target function to minimize (e.g., <cite>thicknessTarget</cite>
+or <cite>glTarget</cite>).</p></li>
+<li><p><strong>targetValue</strong> (<em>float</em>) – The initial guess for the parameter being optimized.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimized value for the target parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeOrientationThickness">
+<span class="sig-name descname"><span class="pre">optimizeOrientationThickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationThickness" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the thickness and orientation of the experimental pattern.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeOrientationGL">
+<span class="sig-name descname"><span class="pre">optimizeOrientationGL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationGL" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the gl and orientation of the experimental pattern.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.thicknessTarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thicknessTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.thicknessTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for thickness optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>float</em>) – Thickness value.</p></li>
+<li><p><strong>*args</strong> – CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error, calculated as 1 - max_correlation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.glTarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">glTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.glTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for gl optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>float</em>) – gl value.</p></li>
+<li><p><strong>*args</strong> – CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error, calculated as 1 - max_correlation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeDWF">
+<span class="sig-name descname"><span class="pre">optimizeDWF</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeDWF" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the Debye-Waller factors (DWFs) for all atoms.</p>
+<p>This method uses <cite>scipy.optimize.minimize</cite> to find the optimal DWF values
+that maximize the correlation between simulated and experimental patterns.
+It assumes isotropic DWFs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.callbackDWF">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callbackDWF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.callbackDWF" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.correlationTargetDWF">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlationTargetDWF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.correlationTargetDWF" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for DWF optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> (<em>np.ndarray</em>) – Debye-Waller factors.</p></li>
+<li><p><strong>*args</strong> – a CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error, calculated as 1 - max_correlation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeXYZ">
+<span class="sig-name descname"><span class="pre">optimizeXYZ</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeXYZ" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the atomic (x, y, z) coordinates for all atoms.</p>
+<p>This method uses <cite>scipy.optimize.minimize</cite> to find the optimal atomic
+positions that maximize the correlation between simulated and
+experimental patterns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.callbackXYZ">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callbackXYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.callbackXYZ" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.correlationTargetXYZ">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlationTargetXYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.correlationTargetXYZ" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for XYZ coordinate optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> (<em>np.ndarray</em>) – XYZ coordinates for each atom.</p></li>
+<li><p><strong>*args</strong> – a CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error, calculated as 1 - max_correlation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeCell">
+<span class="sig-name descname"><span class="pre">optimizeCell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeCell" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the cell parameters.</p>
+<p>Currently, this method optimizes ‘a’ and ‘c’ for a tetragonal/hexagonal
+system, assuming a=b. It uses <cite>scipy.optimize.minimize</cite> to find the
+optimal cell parameters that maximize the correlation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.callbackCell">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callbackCell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.callbackCell" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.correlationTargetCell">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlationTargetCell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.correlationTargetCell" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for cell parameter optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> (<em>np.ndarray</em>) – Cell parameters.</p></li>
+<li><p><strong>*args</strong> – a CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error, calculated as 1 - max_correlation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.optimizeHV">
+<span class="sig-name descname"><span class="pre">optimizeHV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.optimizeHV" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes the high voltage (HV).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.HVTarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HVTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.HVTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for HV optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>float</em>) – High voltage value.</p></li>
+<li><p><strong>*args</strong> – a CoarseOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The correlation error.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.CoarseOptimize.displayCoarseSearch">
+<span class="sig-name descname"><span class="pre">displayCoarseSearch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.CoarseOptimize.displayCoarseSearch" title="Link to this definition">¶</a></dt>
+<dd><p>Displays the result of the coarse search.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyextal.optimize.</span></span><span class="sig-name descname"><span class="pre">FineOptimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo" title="pyextal.dinfo.BaseDiffractionInfo"><span class="pre">pyextal.dinfo.BaseDiffractionInfo</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../roi/index.html#pyextal.roi.BaseROI" title="pyextal.roi.BaseROI"><span class="pre">pyextal.roi.BaseROI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfMask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noncentro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../gof/index.html#pyextal.gof.BaseGOF" title="pyextal.gof.BaseGOF"><span class="pre">pyextal.gof.BaseGOF</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbROI</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shiftDisk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symUpdate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refineProbe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize" title="Link to this definition">¶</a></dt>
+<dd><p>Class for fine optimization of the structure factor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.dinfo">
+<span class="sig-name descname"><span class="pre">dinfo</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.dinfo" title="Link to this definition">¶</a></dt>
+<dd><p>The main diffraction information object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../dinfo/index.html#pyextal.dinfo.BaseDiffractionInfo" title="pyextal.dinfo.BaseDiffractionInfo">BaseDiffractionInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.thickness">
+<span class="sig-name descname"><span class="pre">thickness</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.thickness" title="Link to this definition">¶</a></dt>
+<dd><p>The thickness of the sample in Angstroms from dinfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.lastParam">
+<span class="sig-name descname"><span class="pre">lastParam</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.lastParam" title="Link to this definition">¶</a></dt>
+<dd><p>The last used simulation parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../callBloch/index.html#pyextal.callBloch.SimParams" title="pyextal.callBloch.SimParams">SimParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.roi">
+<span class="sig-name descname"><span class="pre">roi</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.roi" title="Link to this definition">¶</a></dt>
+<dd><p>The region of interest object for refinement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../roi/index.html#pyextal.roi.BaseROI" title="pyextal.roi.BaseROI">BaseROI</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.refineProbe">
+<span class="sig-name descname"><span class="pre">refineProbe</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.refineProbe" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to indicate if probe parameters should be refined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.reflections">
+<span class="sig-name descname"><span class="pre">reflections</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.reflections" title="Link to this definition">¶</a></dt>
+<dd><p>List of (h, k, l) Miller indices
+for the reflections being optimized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Tuple[int, int, int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.sfMask">
+<span class="sig-name descname"><span class="pre">sfMask</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.sfMask" title="Link to this definition">¶</a></dt>
+<dd><p>Mask to select which structure factor components to
+optimize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.noncentro">
+<span class="sig-name descname"><span class="pre">noncentro</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.noncentro" title="Link to this definition">¶</a></dt>
+<dd><p>Flag for non-centrosymmetric structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.errorFunc">
+<span class="sig-name descname"><span class="pre">errorFunc</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.errorFunc" title="Link to this definition">¶</a></dt>
+<dd><p>The goodness-of-fit function used for optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../gof/index.html#pyextal.gof.BaseGOF" title="pyextal.gof.BaseGOF">BaseGOF</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.symUpdate">
+<span class="sig-name descname"><span class="pre">symUpdate</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.symUpdate" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to update Ugh matrix with symmetry equivalents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.history">
+<span class="sig-name descname"><span class="pre">history</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.history" title="Link to this definition">¶</a></dt>
+<dd><p>A list to store the optimization history.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">dinfo</span></span><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">thickness</span></span><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">lastParam</span></span><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">roi</span></span><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize._probe">
+<span class="sig-name descname"><span class="pre">_probe</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyextal.optimize.FineOptimize._probe" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">refineProbe</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">reflections</span></span><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">sfMask</span></span><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">noncentro</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">errorFunc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize._perturbROI">
+<span class="sig-name descname"><span class="pre">_perturbROI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pyextal.optimize.FineOptimize._perturbROI" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize._shiftDisk">
+<span class="sig-name descname"><span class="pre">_shiftDisk</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pyextal.optimize.FineOptimize._shiftDisk" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">symUpdate</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">history</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize._nfit">
+<span class="sig-name descname"><span class="pre">_nfit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#pyextal.optimize.FineOptimize._nfit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.perturbROI">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perturbROI</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.perturbROI" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to indicate if ROI parameters (thickness, gl, rotation) should be refined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.probe">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">probe</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.probe" title="Link to this definition">¶</a></dt>
+<dd><p>Probe parameters (sigma, gamma) for convolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float, float] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.shiftDisk">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shiftDisk</span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.shiftDisk" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to indicate if individual disk shifts should be refined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.calDOF">
+<span class="sig-name descname"><span class="pre">calDOF</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.calDOF" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the degrees of freedom for the optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the degree of freedom for the optimization.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.getx0">
+<span class="sig-name descname"><span class="pre">getx0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.getx0" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the initial guess for the optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x0</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Initial guess for structure factors.
+Shape (len(reflections), 4) for non-centro,
+(len(reflections), 2) for centro. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.getRange">
+<span class="sig-name descname"><span class="pre">getRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0Range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.getRange" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the range to normalize the structure factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.normalizeX0">
+<span class="sig-name descname"><span class="pre">normalizeX0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.normalizeX0" title="Link to this definition">¶</a></dt>
+<dd><p>Normalizes the structure factor and applies the mask.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.denormalizeX0">
+<span class="sig-name descname"><span class="pre">denormalizeX0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.denormalizeX0" title="Link to this definition">¶</a></dt>
+<dd><p>Denormalizes the structure factor and removes the mask.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.optimize">
+<span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0Range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.optimize" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the fine optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Initial guess for structure factors.
+Defaults to None.</p></li>
+<li><p><strong>x0Range</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Range for structure factor normalization.
+Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.evaluateSF">
+<span class="sig-name descname"><span class="pre">evaluateSF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyextal.optimize.FineOptimize.evaluateSF" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluates the structure factor and solve for the eigenvector/values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x0</strong> (<em>np.ndarray</em>) – Structure factor values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.evaluateParam">
+<span class="sig-name descname"><span class="pre">evaluateParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.evaluateParam" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluates CBED intensity based on Bloch simulation results and geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thickness</strong> (<em>float</em><em>, </em><em>optional</em>) – Sample thickness. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Simulated CBED pattern.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.display" title="Link to this definition">¶</a></dt>
+<dd><p>Displays the optimization result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lines</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of line indices to plot.</p></li>
+<li><p><strong>savedir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to save the plot. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Experimental and simulated</dt><dd><p>regional patterns.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[List[np.ndarray], List[np.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.SFtarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SFtarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.SFtarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for structure factor optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>np.ndarray</em>) – Structure factor values.</p></li>
+<li><p><strong>*args</strong> – Variable length argument list, expects a FineOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.ROItarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ROItarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.ROItarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for ROI optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>np.ndarray</em>) – ROI parameters (thickness, gl, rotation, allshift).</p></li>
+<li><p><strong>*args</strong> – a FineOptimize instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The goodness of fit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.ShiftTarget">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ShiftTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.ShiftTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Error function for disk shift optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>np.ndarray</em>) – Disk shift values.</p></li>
+<li><p><strong>*args</strong> – a FineOptimize instance
+and the simulated CBED pattern.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The optimization error.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyextal.optimize.FineOptimize.callback">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intermediate_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.FineOptimize.callback" title="Link to this definition">¶</a></dt>
+<dd><p>Callback function for optimization visualization.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyextal.optimize.voigt_2d">
+<span class="sig-prename descclassname"><span class="pre">pyextal.optimize.</span></span><span class="sig-name descname"><span class="pre">voigt_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyextal.optimize.voigt_2d" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a 2D Voigt profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigma</strong> (<em>float</em>) – Standard deviation for the Gaussian component.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – Half-width at half-maximum for the Lorentzian component.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 2D array representing the Voigt profile.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../roi/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">pyextal.roi</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../metric/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">pyextal.metric</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, HCN, RB, and JMZ
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">pyextal.optimize</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize</span></code></a><ul>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.dinfo"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.dinfo</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.param"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.param</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.roi"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.roi</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.thickness"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.thickness</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.gl"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.gl</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.indices"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.indices</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.exitwave"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.exitwave</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.side"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.side</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.scale_factor"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.scale_factor</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.templates"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.templates</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.dinfo</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.param</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.roi</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.thickness</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.gl</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.indices</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.exitwave</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.templates</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationGeometry"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeOrientationGeometry()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationThickness"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeOrientationThickness()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeOrientationGL"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeOrientationGL()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.thicknessTarget"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.thicknessTarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.glTarget"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.glTarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeDWF"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeDWF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.callbackDWF"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.callbackDWF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.correlationTargetDWF"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.correlationTargetDWF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeXYZ"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeXYZ()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.callbackXYZ"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.callbackXYZ()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.correlationTargetXYZ"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.correlationTargetXYZ()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeCell"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeCell()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.callbackCell"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.callbackCell()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.correlationTargetCell"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.correlationTargetCell()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.optimizeHV"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.optimizeHV()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.HVTarget"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.HVTarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.CoarseOptimize.displayCoarseSearch"><code class="docutils literal notranslate"><span class="pre">CoarseOptimize.displayCoarseSearch()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize"><code class="docutils literal notranslate"><span class="pre">FineOptimize</span></code></a><ul>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.dinfo"><code class="docutils literal notranslate"><span class="pre">FineOptimize.dinfo</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.thickness"><code class="docutils literal notranslate"><span class="pre">FineOptimize.thickness</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.lastParam"><code class="docutils literal notranslate"><span class="pre">FineOptimize.lastParam</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.roi"><code class="docutils literal notranslate"><span class="pre">FineOptimize.roi</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.refineProbe"><code class="docutils literal notranslate"><span class="pre">FineOptimize.refineProbe</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.reflections"><code class="docutils literal notranslate"><span class="pre">FineOptimize.reflections</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.sfMask"><code class="docutils literal notranslate"><span class="pre">FineOptimize.sfMask</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.noncentro"><code class="docutils literal notranslate"><span class="pre">FineOptimize.noncentro</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.errorFunc"><code class="docutils literal notranslate"><span class="pre">FineOptimize.errorFunc</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.symUpdate"><code class="docutils literal notranslate"><span class="pre">FineOptimize.symUpdate</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.history"><code class="docutils literal notranslate"><span class="pre">FineOptimize.history</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">FineOptimize.dinfo</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">FineOptimize.thickness</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">FineOptimize.lastParam</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">FineOptimize.roi</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize._probe"><code class="docutils literal notranslate"><span class="pre">FineOptimize._probe</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">FineOptimize.refineProbe</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">FineOptimize.reflections</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">FineOptimize.sfMask</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">FineOptimize.noncentro</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">FineOptimize.errorFunc</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize._perturbROI"><code class="docutils literal notranslate"><span class="pre">FineOptimize._perturbROI</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize._shiftDisk"><code class="docutils literal notranslate"><span class="pre">FineOptimize._shiftDisk</span></code></a></li>
+<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">FineOptimize.symUpdate</span></code></a></li>
+<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">FineOptimize.history</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize._nfit"><code class="docutils literal notranslate"><span class="pre">FineOptimize._nfit</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.perturbROI"><code class="docutils literal notranslate"><span class="pre">FineOptimize.perturbROI</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.probe"><code class="docutils literal notranslate"><span class="pre">FineOptimize.probe</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.shiftDisk"><code class="docutils literal notranslate"><span class="pre">FineOptimize.shiftDisk</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.calDOF"><code class="docutils literal notranslate"><span class="pre">FineOptimize.calDOF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.getx0"><code class="docutils literal notranslate"><span class="pre">FineOptimize.getx0()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.getRange"><code class="docutils literal notranslate"><span class="pre">FineOptimize.getRange()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.normalizeX0"><code class="docutils literal notranslate"><span class="pre">FineOptimize.normalizeX0()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.denormalizeX0"><code class="docutils literal notranslate"><span class="pre">FineOptimize.denormalizeX0()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.optimize"><code class="docutils literal notranslate"><span class="pre">FineOptimize.optimize()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.evaluateSF"><code class="docutils literal notranslate"><span class="pre">FineOptimize.evaluateSF()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.evaluateParam"><code class="docutils literal notranslate"><span class="pre">FineOptimize.evaluateParam()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.display"><code class="docutils literal notranslate"><span class="pre">FineOptimize.display()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.SFtarget"><code class="docutils literal notranslate"><span class="pre">FineOptimize.SFtarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.ROItarget"><code class="docutils literal notranslate"><span class="pre">FineOptimize.ROItarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.ShiftTarget"><code class="docutils literal notranslate"><span class="pre">FineOptimize.ShiftTarget()</span></code></a></li>
+<li><a class="reference internal" href="#pyextal.optimize.FineOptimize.callback"><code class="docutils literal notranslate"><span class="pre">FineOptimize.callback()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pyextal.optimize.voigt_2d"><code class="docutils literal notranslate"><span class="pre">voigt_2d()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>
