@@ -1,0 +1,609 @@
+pyextal.optimize
+================
+
+.. py:module:: pyextal.optimize
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyextal.optimize.CoarseOptimize
+   pyextal.optimize.FineOptimize
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.optimize.voigt_2d
+
+
+Module Contents
+---------------
+
+.. py:class:: CoarseOptimize(dinfo: pyextal.dinfo.BaseDiffractionInfo, roi: pyextal.roi.BaseROI, searchRadius: float = None, nx: int = None)
+
+   Class for coarse optimization of thickness, orientation, and gl.
+
+   .. attribute:: dinfo
+
+      Diffraction information object.
+
+      :type: BaseDiffractionInfo
+
+   .. attribute:: param
+
+      Bloch simulation from dinfo.
+
+      :type: SimParams
+
+   .. attribute:: roi
+
+      The region of interest object.
+
+      :type: BaseROI
+
+   .. attribute:: thickness
+
+      The sample thickness from dinfo.
+
+      :type: float
+
+   .. attribute:: gl
+
+      geometric scaling factor from dinfo.
+
+      :type: float
+
+   .. attribute:: indices
+
+      List of indices matching reflections to the exitwave.
+
+      :type: List[int]
+
+   .. attribute:: exitwave
+
+      The simulated exitwave.
+
+      :type: np.ndarray
+
+   .. attribute:: side
+
+      The side length of the simulation used for tilt mapping.
+
+      :type: float
+
+   .. attribute:: scale_factor
+
+      The scale factor from LARBED calibration between simulation and experiment.
+
+      :type: float
+
+   .. attribute:: templates
+
+      The experimental templates extracted from the ROI.
+
+      :type: np.ndarray
+
+
+   .. py:attribute:: dinfo
+
+
+   .. py:attribute:: param
+
+
+   .. py:attribute:: roi
+
+
+   .. py:attribute:: thickness
+
+
+   .. py:attribute:: gl
+
+
+   .. py:attribute:: indices
+      :value: []
+
+
+
+   .. py:attribute:: exitwave
+
+
+   .. py:attribute:: templates
+
+
+   .. py:method:: optimizeOrientationGeometry(target: Callable, targetValue: float) -> float
+
+      Optimizes a single parameter (thickness or gl) and the sample orientation.
+
+      This method uses `scipy.optimize.minimize_scalar` to find the optimal
+      value for a given target function (e.g., thickness or gl). After finding
+      the best parameter value, it determines the optimal sample tilt by finding
+      the location of the maximum correlation in the template matching result.
+
+      :param target: The target function to minimize (e.g., `thicknessTarget`
+                     or `glTarget`).
+      :type target: Callable
+      :param targetValue: The initial guess for the parameter being optimized.
+      :type targetValue: float
+
+      :returns: The optimized value for the target parameter.
+      :rtype: float
+
+
+
+   .. py:method:: optimizeOrientationThickness(filter=None, threshold=None) -> None
+
+      Optimizes the thickness and orientation of the experimental pattern.
+
+
+
+   .. py:method:: optimizeOrientationGL(filter=None, threshold=None) -> None
+
+      Optimizes the gl and orientation of the experimental pattern.
+
+
+
+   .. py:method:: thicknessTarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for thickness optimization.
+
+      :param x0: Thickness value.
+      :type x0: float
+      :param \*args: CoarseOptimize instance.
+
+      :returns: The optimization error, calculated as 1 - max_correlation.
+      :rtype: float
+
+
+
+   .. py:method:: glTarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for gl optimization.
+
+      :param x0: gl value.
+      :type x0: float
+      :param \*args: CoarseOptimize instance.
+
+      :returns: The optimization error, calculated as 1 - max_correlation.
+      :rtype: float
+
+
+
+   .. py:method:: optimizeDWF() -> None
+
+      Optimizes the Debye-Waller factors (DWFs) for all atoms.
+
+      This method uses `scipy.optimize.minimize` to find the optimal DWF values
+      that maximize the correlation between simulated and experimental patterns.
+      It assumes isotropic DWFs.
+
+
+
+   .. py:method:: callbackDWF(y0)
+      :staticmethod:
+
+
+
+   .. py:method:: correlationTargetDWF(y0, *args)
+      :staticmethod:
+
+
+      Error function for DWF optimization.
+
+      :param y0: Debye-Waller factors.
+      :type y0: np.ndarray
+      :param \*args: a CoarseOptimize instance.
+
+      :returns: The optimization error, calculated as 1 - max_correlation.
+      :rtype: float
+
+
+
+   .. py:method:: optimizeXYZ() -> None
+
+      Optimizes the atomic (x, y, z) coordinates for all atoms.
+
+      This method uses `scipy.optimize.minimize` to find the optimal atomic
+      positions that maximize the correlation between simulated and
+      experimental patterns.
+
+
+
+   .. py:method:: callbackXYZ(y0)
+      :staticmethod:
+
+
+
+   .. py:method:: correlationTargetXYZ(y0, *args)
+      :staticmethod:
+
+
+      Error function for XYZ coordinate optimization.
+
+      :param y0: XYZ coordinates for each atom.
+      :type y0: np.ndarray
+      :param \*args: a CoarseOptimize instance.
+
+      :returns: The optimization error, calculated as 1 - max_correlation.
+      :rtype: float
+
+
+
+   .. py:method:: optimizeCell() -> None
+
+      Optimizes the cell parameters.
+
+      Currently, this method optimizes 'a' and 'c' for a tetragonal/hexagonal
+      system, assuming a=b. It uses `scipy.optimize.minimize` to find the
+      optimal cell parameters that maximize the correlation.
+
+
+
+   .. py:method:: callbackCell(y0)
+      :staticmethod:
+
+
+
+   .. py:method:: correlationTargetCell(y0, *args)
+      :staticmethod:
+
+
+      Error function for cell parameter optimization.
+
+      :param y0: Cell parameters.
+      :type y0: np.ndarray
+      :param \*args: a CoarseOptimize instance.
+
+      :returns: The optimization error, calculated as 1 - max_correlation.
+      :rtype: float
+
+
+
+   .. py:method:: optimizeHV(filter=None, threshold=None) -> None
+
+      Optimizes the high voltage (HV).
+
+
+
+   .. py:method:: HVTarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for HV optimization.
+
+      :param x0: High voltage value.
+      :type x0: float
+      :param \*args: a CoarseOptimize instance.
+
+      :returns: The correlation error.
+      :rtype: float
+
+
+
+   .. py:method:: displayCoarseSearch(filter=None, threshold=None)
+
+      Displays the result of the coarse search.
+
+
+
+.. py:class:: FineOptimize(dinfo: pyextal.dinfo.BaseDiffractionInfo, roi: pyextal.roi.BaseROI, reflections: List[Tuple[int, int, int]], sfMask: numpy.ndarray, noncentro: bool = False, errorFunc: pyextal.gof.BaseGOF = None, perturbROI: bool = False, shiftDisk: bool = False, symUpdate=False, probe: Tuple[float, float] = None, refineProbe: bool = True)
+
+   Class for fine optimization of the structure factor.
+
+   .. attribute:: dinfo
+
+      The main diffraction information object.
+
+      :type: BaseDiffractionInfo
+
+   .. attribute:: thickness
+
+      The thickness of the sample in Angstroms from dinfo.
+
+      :type: float
+
+   .. attribute:: lastParam
+
+      The last used simulation parameters.
+
+      :type: SimParams
+
+   .. attribute:: roi
+
+      The region of interest object for refinement.
+
+      :type: BaseROI
+
+   .. attribute:: refineProbe
+
+      Flag to indicate if probe parameters should be refined.
+
+      :type: bool
+
+   .. attribute:: reflections
+
+      List of (h, k, l) Miller indices
+      for the reflections being optimized.
+
+      :type: List[Tuple[int, int, int]]
+
+   .. attribute:: sfMask
+
+      Mask to select which structure factor components to
+      optimize.
+
+      :type: np.ndarray
+
+   .. attribute:: noncentro
+
+      Flag for non-centrosymmetric structures.
+
+      :type: bool
+
+   .. attribute:: errorFunc
+
+      The goodness-of-fit function used for optimization.
+
+      :type: BaseGOF
+
+   .. attribute:: symUpdate
+
+      Flag to update Ugh matrix with symmetry equivalents.
+
+      :type: bool
+
+   .. attribute:: history
+
+      A list to store the optimization history.
+
+      :type: List
+
+
+   .. py:attribute:: dinfo
+
+
+   .. py:attribute:: thickness
+
+
+   .. py:attribute:: lastParam
+
+
+   .. py:attribute:: roi
+
+
+   .. py:attribute:: _probe
+      :value: None
+
+
+
+   .. py:attribute:: refineProbe
+      :value: True
+
+
+
+   .. py:attribute:: reflections
+
+
+   .. py:attribute:: sfMask
+
+
+   .. py:attribute:: noncentro
+      :value: False
+
+
+
+   .. py:attribute:: errorFunc
+      :value: None
+
+
+
+   .. py:attribute:: _perturbROI
+      :value: False
+
+
+
+   .. py:attribute:: _shiftDisk
+      :value: False
+
+
+
+   .. py:attribute:: symUpdate
+      :value: False
+
+
+
+   .. py:attribute:: history
+      :value: []
+
+
+
+   .. py:attribute:: _nfit
+      :value: 0
+
+
+
+   .. py:property:: perturbROI
+
+      Flag to indicate if ROI parameters (thickness, gl, rotation) should be refined.
+
+      :type: bool
+
+
+   .. py:property:: probe
+
+      Probe parameters (sigma, gamma) for convolution.
+
+      :type: tuple[float, float] | None
+
+
+   .. py:property:: shiftDisk
+
+      Flag to indicate if individual disk shifts should be refined.
+
+      :type: bool
+
+
+   .. py:method:: calDOF() -> int
+
+      Calculates the degrees of freedom for the optimization.
+
+      :returns: the degree of freedom for the optimization.
+      :rtype: int
+
+
+
+   .. py:method:: getx0(x0=None) -> None
+
+      Gets the initial guess for the optimization.
+
+      :param x0: Initial guess for structure factors.
+                 Shape (len(reflections), 4) for non-centro,
+                 (len(reflections), 2) for centro. Defaults to None.
+      :type x0: np.ndarray, optional
+
+
+
+   .. py:method:: getRange(x0Range=None) -> None
+
+      Sets the range to normalize the structure factor.
+
+
+
+   .. py:method:: normalizeX0()
+
+      Normalizes the structure factor and applies the mask.
+
+
+
+   .. py:method:: denormalizeX0(x0)
+
+      Denormalizes the structure factor and removes the mask.
+
+
+
+   .. py:method:: optimize(x0: numpy.ndarray = None, x0Range: numpy.ndarray = None) -> None
+
+      Runs the fine optimization.
+
+      :param x0: Initial guess for structure factors.
+                 Defaults to None.
+      :type x0: np.ndarray, optional
+      :param x0Range: Range for structure factor normalization.
+                      Defaults to None.
+      :type x0Range: np.ndarray, optional
+
+
+
+   .. py:method:: evaluateSF(x0: numpy.ndarray) -> None
+
+      Evaluates the structure factor and solve for the eigenvector/values.
+
+      :param x0: Structure factor values.
+      :type x0: np.ndarray
+
+
+
+   .. py:method:: evaluateParam(thickness=None)
+
+      Evaluates CBED intensity based on Bloch simulation results and geometry.
+
+      :param thickness: Sample thickness. Defaults to None.
+      :type thickness: float, optional
+
+      :returns: Simulated CBED pattern.
+      :rtype: np.ndarray
+
+
+
+   .. py:method:: display(lines, savedir=None)
+
+      Displays the optimization result.
+
+      :param lines: List of line indices to plot.
+      :type lines: List[int]
+      :param savedir: Directory to save the plot. Defaults to None.
+      :type savedir: str, optional
+
+      :returns:
+
+                Experimental and simulated
+                    regional patterns.
+      :rtype: Tuple[List[np.ndarray], List[np.ndarray]]
+
+
+
+   .. py:method:: SFtarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for structure factor optimization.
+
+      :param x0: Structure factor values.
+      :type x0: np.ndarray
+      :param \*args: Variable length argument list, expects a FineOptimize instance.
+
+      :returns: The optimization error.
+      :rtype: float
+
+
+
+   .. py:method:: ROItarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for ROI optimization.
+
+      :param x0: ROI parameters (thickness, gl, rotation, allshift).
+      :type x0: np.ndarray
+      :param \*args: a FineOptimize instance.
+
+      :returns: The goodness of fit.
+      :rtype: float
+
+
+
+   .. py:method:: ShiftTarget(x0, *args)
+      :staticmethod:
+
+
+      Error function for disk shift optimization.
+
+      :param x0: Disk shift values.
+      :type x0: np.ndarray
+      :param \*args: a FineOptimize instance
+                     and the simulated CBED pattern.
+
+      :returns: The optimization error.
+      :rtype: float
+
+
+
+   .. py:method:: callback(intermediate_result, self=None)
+      :staticmethod:
+
+
+      Callback function for optimization visualization.
+
+
+
+.. py:function:: voigt_2d(sigma, gamma)
+
+   Generates a 2D Voigt profile.
+
+   :param sigma: Standard deviation for the Gaussian component.
+   :type sigma: float
+   :param gamma: Half-width at half-maximum for the Lorentzian component.
+   :type gamma: float
+
+   :returns: A 2D array representing the Voigt profile.
+   :rtype: np.ndarray
+
+

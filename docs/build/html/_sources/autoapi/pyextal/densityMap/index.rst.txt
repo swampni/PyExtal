@@ -1,0 +1,93 @@
+pyextal.densityMap
+==================
+
+.. py:module:: pyextal.densityMap
+
+.. autoapi-nested-parse::
+
+   This module provides functions for generating and visualizing 3D electron density maps.
+
+   It includes capabilities for Fourier synthesis from structure factors, plotting 3D
+   isosurfaces and 2D slices of the density map, and writing the volumetric data to
+   a Gaussian cube file for visualization in other software like VESTA.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.densityMap.fourierSynthesis
+   pyextal.densityMap.plotDensityMapIsosurface
+   pyextal.densityMap.plotDensityMap_2D
+   pyextal.densityMap.write_cube
+
+
+Module Contents
+---------------
+
+.. py:function:: fourierSynthesis(getSF: callable, order: int, sampling: int) -> numpy.ndarray
+
+   Performs Fourier synthesis to generate a 3D density map.
+
+   This function constructs a 3D electron density map by summing crystallographic
+   structure factors over a specified range of Miller indices.
+
+   :param getSF: A function that takes a Miller index tuple (h, k, l)
+                 and returns its complex structure factor.
+   :type getSF: callable
+   :param order: The maximum Miller index (h, k, l) to include in the synthesis.
+                 The range will be from -order to +order for each index.
+   :type order: int
+   :param sampling: The number of grid points along each dimension of the
+                    output density map.
+   :type sampling: int
+
+   :returns: A 3D real-valued density map, normalized by the unit cell volume.
+   :rtype: np.ndarray
+
+
+.. py:function:: plotDensityMapIsosurface(density_map: numpy.ndarray, threshold: float = 10) -> None
+
+   Plots a 3D isosurface of the density map.
+
+   Uses the marching cubes algorithm to extract and display a surface at a given
+   density threshold. Note: The orientation of X, Y, Z axes might need to be
+   verified with software like VESTA.
+
+   :param density_map: The 3D density map to be visualized.
+   :type density_map: np.ndarray
+   :param threshold: The density value at which to draw the
+                     isosurface. Defaults to 10.
+   :type threshold: float, optional
+
+
+.. py:function:: plotDensityMap_2D(density_map: numpy.ndarray, clim: tuple, cmap: str) -> None
+
+   Plots 2D slices of the density map.
+
+   Displays four 2D slices taken from the 3D density map along one axis.
+
+   :param density_map: The 3D density map.
+   :type density_map: np.ndarray
+   :param clim: A tuple (min, max) to set the color limits.
+   :type clim: tuple
+   :param cmap: The colormap to use for the plot.
+   :type cmap: str
+
+
+.. py:function:: write_cube(filename: str, data: numpy.ndarray) -> None
+
+   Writes volumetric data to a Gaussian cube file.
+
+   This function creates a .cube file, which is a standard format for volumetric
+   data like electron density, readable by visualization software (e.g., VESTA).
+   The atom and cell information is read from the global `cryst` object.
+
+   :param filename: The path to the output .cube file.
+   :type filename: str
+   :param data: A 3D NumPy array containing the charge density values.
+   :type data: np.ndarray
+
+

@@ -1,0 +1,28 @@
+pyextal.Constants
+=================
+
+.. py:module:: pyextal.Constants
+
+.. autoapi-nested-parse::
+
+   This module defines a dictionary of constants used throughout the PyExtal package.
+
+   The `constant` dictionary holds various configuration parameters for different
+   optimization routines, including method names, boundaries, and options for both
+   coarse and fine-grained optimizations.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyextal.Constants.constant
+
+
+Module Contents
+---------------
+
+.. py:data:: constant
+

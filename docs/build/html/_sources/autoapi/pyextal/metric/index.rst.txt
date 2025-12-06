@@ -1,0 +1,87 @@
+pyextal.metric
+==============
+
+.. py:module:: pyextal.metric
+
+.. autoapi-nested-parse::
+
+   Metric Tensor Calculations.
+
+   This module provides functions for performing crystallographic calculations using a
+   Gram matrix (metric tensor). These functions are essential for working with
+   crystal lattices where the basis vectors are not necessarily orthogonal.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyextal.metric.sumx
+   pyextal.metric.volume
+   pyextal.metric.angle
+   pyextal.metric.scale
+
+
+Module Contents
+---------------
+
+.. py:function:: sumx(gram: numpy.ndarray, v1: numpy.ndarray, v2: numpy.ndarray) -> float
+
+   Calculates the inner product of two vectors using a Gram matrix.
+
+   This function computes v2^T * G * v1, where G is the Gram matrix.
+
+   :param gram: The Gram matrix (metric tensor).
+   :type gram: np.ndarray
+   :param v1: The first vector.
+   :type v1: np.ndarray
+   :param v2: The second vector.
+   :type v2: np.ndarray
+
+   :returns: The inner product of the two vectors.
+   :rtype: float
+
+
+.. py:function:: volume(gram: numpy.ndarray) -> float
+
+   Calculates the volume of the unit cell from its Gram matrix.
+
+   The volume is the square root of the determinant of the Gram matrix.
+
+   :param gram: The Gram matrix of the unit cell.
+   :type gram: np.ndarray
+
+   :returns: The volume of the unit cell.
+   :rtype: float
+
+
+.. py:function:: angle(gram: numpy.ndarray, v1: numpy.ndarray, v2: numpy.ndarray) -> float
+
+   Calculates the angle between two vectors in a space defined by a Gram matrix.
+
+   :param gram: The Gram matrix.
+   :type gram: np.ndarray
+   :param v1: The first vector.
+   :type v1: np.ndarray
+   :param v2: The second vector.
+   :type v2: np.ndarray
+
+   :returns: The angle between the vectors in radians.
+   :rtype: float
+
+
+.. py:function:: scale(gram: numpy.ndarray, v: numpy.ndarray) -> float
+
+   Calculates the magnitude (norm) of a vector using a Gram matrix.
+
+   :param gram: The Gram matrix.
+   :type gram: np.ndarray
+   :param v: The vector whose magnitude is to be calculated.
+   :type v: np.ndarray
+
+   :returns: The magnitude of the vector.
+   :rtype: float
+
+

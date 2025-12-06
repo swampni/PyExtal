@@ -1,0 +1,11 @@
+usage
+=====
+
+Installation
+------------
+
+To install the package, you can use conda:
+
+..code-block:: console    
+
+    $ conda install -c conda-forge pyextal
